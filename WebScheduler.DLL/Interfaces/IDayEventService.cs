@@ -7,8 +7,8 @@ using WebScheduler.Domain.Models;
 
 namespace WebScheduler.BLL.Interfaces
 {
-    public interface IDayEventService : IBaseService<DayEvent>
+    public interface IDayEventService : IBaseService<Event>
     {
-        Task<IEnumerable<DayEvent>> GetUserDayEvents(int userId);
+        Task<IEnumerable<Event>> GetUserDayEvents(Guid userId);
     }
 }

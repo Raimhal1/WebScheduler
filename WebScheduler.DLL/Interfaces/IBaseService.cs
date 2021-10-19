@@ -9,9 +9,9 @@ namespace WebScheduler.BLL.Interfaces
     public interface IBaseService<TModel>
     {
         IEnumerable<TModel> GetAll();
-        Task<TModel> GetByIdAsync(int id);
+        Task<TModel> GetByIdAsync(Guid id);
         Task AddAsync(TModel model);
         Task UpdateAsync(TModel model);
-        Task DeleteByIdAsync(int id);
+        Task DeleteByIdAsync(Guid id);
     }
 }

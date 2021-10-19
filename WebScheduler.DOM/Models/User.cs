@@ -8,6 +8,13 @@ namespace WebScheduler.Domain.Models
 {
     public class User : IEntity<Guid>
     {
+        public User()
+        {
+            if (DayEvents == null)
+            {
+                DayEvents = new HashSet<Event>();
+            }
+        }
         public Guid Id { get; set; }
         public string UserName { get; set; }
         public string Email { get; set; }
@@ -15,7 +22,7 @@ namespace WebScheduler.Domain.Models
         public int? RoleId { get; set; }
         public Role Role { get; set; }
 
-        public virtual ICollection<DayEvent> DayEvents { get; set; } = new HashSet<DayEvent>();
+        public virtual ICollection<Event> DayEvents { get; set; }
     }
 }
 

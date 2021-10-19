@@ -7,7 +7,7 @@ using WebScheduler.Domain.Models;
 
 namespace WebScheduler.BLL.Interfaces
 {
-    public interface IUserService : IBaseService<DayEvent>
+    public interface IUserService : IBaseService<Event>
     {
         public Task<User> FindUserByEmailAsync(string email);
     }

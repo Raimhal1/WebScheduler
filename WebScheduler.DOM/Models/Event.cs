@@ -7,24 +7,29 @@ using WebScheduler.Domain.Interfaces;
 
 namespace WebScheduler.Domain.Models
 {
-    public class DayEvent : IEntity<Guid>
+    public class Event : IEntity<Guid>
     {
+        public Event()
+        {
+            if(Users == null)
+            {
+                Users = new HashSet<User>();
+            }
+        }
         public Guid Id { get; set; }
 
         public string EventName { get; set; }
 
-        [DataType(DataType.DateTime)]
         public DateTime StartEventDate { get; set; }
 
-        [DataType(DataType.DateTime)]
         public DateTime EndEventDate { get; set; }
 
         public string ShortDescription { get; set; }
 
         public string Description { get; set; }
 
-        public Guid? CreatorId { get; set; }
+        public Guid UserId { get; set; }
 
-        public virtual ICollection<User> Users { get; set; } = new HashSet<User>();
+        public virtual ICollection<User> Users { get; set; }
     }
 }

@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WebScheduler.Domain.Models;
-
+using WebScheduler.Domain.Interfaces;
 
 namespace WebScheduler.DAL.Data
 {
-    public class WebSchedulerContext : DbContext
+    public class WebSchedulerContext : DbContext, IEventDbContext
     {
         public WebSchedulerContext(DbContextOptions<WebSchedulerContext> options)
             : base(options)
@@ -18,7 +15,7 @@ namespace WebScheduler.DAL.Data
         }
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
-        public DbSet<DayEvent> DayEvents { get; set; }
+        public DbSet<Event> Events { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -35,26 +32,6 @@ namespace WebScheduler.DAL.Data
 
             modelBuilder.Entity<Role>().HasData(new Role[] { adminRole, userRole });
             modelBuilder.Entity<User>().HasData(new User[] { adminUser });
-
-
-
-            modelBuilder.Entity<DayEvent>()
-                .Property(p => p.StartEventDate)
-                .HasMaxLength(200)
-                .IsRequired();
-            modelBuilder.Entity<DayEvent>()
-                .Property(p => p.EndEventDate)
-                .IsRequired();
-            modelBuilder.Entity<DayEvent>().
-                Property(p => p.EventName)
-                .IsRequired();
-            modelBuilder.Entity<DayEvent>()
-                .Property(p => p.ShortDescription)
-                .HasMaxLength(30);
-
-            modelBuilder.Entity<User>()
-                .Property(p => p.UserName)
-                .HasMaxLength(30);
 
         }
     }
