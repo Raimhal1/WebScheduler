@@ -13,7 +13,7 @@ namespace WebScheduler.Domain.Models
         {
             if(Users == null)
             {
-                Users = new HashSet<User>();
+                Users = new List<User>();
             }
         }
         public Guid Id { get; set; }

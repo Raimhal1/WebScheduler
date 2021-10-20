@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace WebScheduler.BLL.Events.Queries.GetEventList
 {
-    class GetEventListQuery : IRequest<EventListVm>
+    public class GetEventListQuery : IRequest<EventListVm>
     {
         public Guid UserId { get; set; }
     }

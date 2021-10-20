@@ -2,10 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using WebScheduler.Domain.Models;
 using WebScheduler.Domain.Interfaces;
+using WebScheluder.DAL.EntityTypeConfigurations;
 
-namespace WebScheduler.DAL.Data
+namespace WebScheluder.DAL
 {
-    public class WebSchedulerContext : DbContext, IEventDbContext
+    public class WebSchedulerContext : DbContext, IEventDbContext, IUserDbContext
     {
         public WebSchedulerContext(DbContextOptions<WebSchedulerContext> options)
             : base(options)
@@ -13,12 +14,15 @@ namespace WebScheduler.DAL.Data
             Database.EnsureCreated();
 
         }
+
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Event> Events { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyConfiguration(new EventConfiguration());
+
             string adminRoleName = "admin";
             string userRoleName = "user";
 
@@ -32,6 +36,8 @@ namespace WebScheduler.DAL.Data
 
             modelBuilder.Entity<Role>().HasData(new Role[] { adminRole, userRole });
             modelBuilder.Entity<User>().HasData(new User[] { adminUser });
+
+            base.OnModelCreating(modelBuilder);
 
         }
     }

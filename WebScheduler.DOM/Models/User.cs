@@ -10,9 +10,9 @@ namespace WebScheduler.Domain.Models
     {
         public User()
         {
-            if (DayEvents == null)
+            if (Events == null)
             {
-                DayEvents = new HashSet<Event>();
+                Events = new List<Event>();
             }
         }
         public Guid Id { get; set; }
@@ -22,7 +22,7 @@ namespace WebScheduler.Domain.Models
         public int? RoleId { get; set; }
         public Role Role { get; set; }
 
-        public virtual ICollection<Event> DayEvents { get; set; }
+        public virtual ICollection<Event> Events { get; set; }
     }
 }
 

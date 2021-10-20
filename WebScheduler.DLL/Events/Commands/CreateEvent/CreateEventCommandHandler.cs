@@ -14,13 +14,17 @@ namespace WebScheduler.BLL.Events.Commands.CreateEvent
         : IRequestHandler<CreateEventCommand, Guid>
     {
         private readonly IEventDbContext _context;
+        private readonly IUserDbContext _users;
 
-        public CreateEventCommandHandler(IEventDbContext context) =>
-            _context = context;
+        public CreateEventCommandHandler(IEventDbContext context, IUserDbContext users) =>
+            (_context, _users) = (context, users);
+            
 
         public async Task<Guid> Handle(CreateEventCommand request,
             CancellationToken cancellationToken)
         {
+            //var user = await _users.Users.FindAsync(request.UserId);
+
             var dayEvent = new Event {
 
                 UserId = request.UserId,
@@ -30,7 +34,7 @@ namespace WebScheduler.BLL.Events.Commands.CreateEvent
                 ShortDescription = request.ShortDescription,
                 Description = request.Description,
 
-                Users = new List<User>(),
+                //Users = new List<User> { user },
                 Id = Guid.NewGuid()
 
             };

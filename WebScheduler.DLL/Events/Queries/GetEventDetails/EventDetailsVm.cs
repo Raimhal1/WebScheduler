@@ -5,7 +5,7 @@ using WebScheduler.Domain.Models;
 using AutoMapper;
 namespace WebScheduler.BLL.Events.Queries.GetEventDetails
 {
-    class EventDetailsVm : IMapWith<Event>
+    public class EventDetailsVm : IMapWith<Event>
     {
         public Guid Id { get; set; }
         public string EventName { get; set; }
