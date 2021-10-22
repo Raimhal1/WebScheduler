@@ -24,7 +24,6 @@ namespace WebScheduler.BLL.Events.Queries.GetEventDetails
         public async Task<EventDetailsVm> Handle(GetEventDetailsQuery request, CancellationToken cancellationToken)
         {
             var entity = await _context.Events
-                .Include(e => e.Users)
                 .FirstOrDefaultAsync(e => e.Id == request.Id, cancellationToken);
 
             if (entity == null || entity.UserId != request.UserId)

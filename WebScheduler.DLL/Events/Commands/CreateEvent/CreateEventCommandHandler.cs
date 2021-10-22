@@ -23,9 +23,9 @@ namespace WebScheduler.BLL.Events.Commands.CreateEvent
         public async Task<Guid> Handle(CreateEventCommand request,
             CancellationToken cancellationToken)
         {
-            //var user = await _users.Users.FindAsync(request.UserId);
+            var user = await _users.Users.FindAsync(request.UserId);
 
-            var dayEvent = new Event {
+            var entity = new Event {
 
                 UserId = request.UserId,
                 EventName = request.EventName,
@@ -33,15 +33,17 @@ namespace WebScheduler.BLL.Events.Commands.CreateEvent
                 EndEventDate = request.EndEventDate,
                 ShortDescription = request.ShortDescription,
                 Description = request.Description,
-
-                //Users = new List<User> { user },
                 Id = Guid.NewGuid()
-
             };
 
-            await _context.Events.AddAsync(dayEvent, cancellationToken);
+            if (user != null)
+            {
+                entity.Users.Add(user);
+            }
+
+            await _context.Events.AddAsync(entity, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
-            return dayEvent.Id;
+            return entity.Id;
         }
     }
 }

@@ -20,6 +20,7 @@ namespace WebScheduler.BLL.Events.Queries.GetEventList
         public string ShortDescription { get; set; }
 
         public string Description { get; set; }
+        public IList<User> Users { get; set; }
         public void Mapping(Profile profile)
         {
             profile.CreateMap<Event, EventLookupDto>()

@@ -17,7 +17,6 @@ namespace WebScheduler.BLL.Events.Commands.UpdateEvent
         public async Task<Unit> Handle(UpdateEventCommand request, CancellationToken cancellationToken)
         {
             var entity = await _context.Events
-                .Include(e => e.Users)
                 .FirstOrDefaultAsync(e => e.Id == request.Id, cancellationToken);
             if(entity == null || entity.UserId != request.UserId)
             {
