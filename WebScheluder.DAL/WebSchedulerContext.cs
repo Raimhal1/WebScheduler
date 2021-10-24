@@ -21,7 +21,10 @@ namespace WebScheluder.DAL
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             modelBuilder.ApplyConfiguration(new EventConfiguration());
+
+            base.OnModelCreating(modelBuilder);
 
             string adminRoleName = "admin";
             string userRoleName = "user";
@@ -31,13 +34,10 @@ namespace WebScheluder.DAL
 
             Role adminRole = new Role { Id = 1, Name = adminRoleName };
             Role userRole = new Role { Id = 2, Name = userRoleName };
+            modelBuilder.Entity<Role>().HasData(new Role[] { adminRole, userRole });
 
             User adminUser = new User { Id = Guid.NewGuid(), UserName = "Admin", Email = adminEmail, Password = adminPassword, RoleId = adminRole.Id };
-
-            modelBuilder.Entity<Role>().HasData(new Role[] { adminRole, userRole });
             modelBuilder.Entity<User>().HasData(new User[] { adminUser });
-
-            base.OnModelCreating(modelBuilder);
 
         }
     }

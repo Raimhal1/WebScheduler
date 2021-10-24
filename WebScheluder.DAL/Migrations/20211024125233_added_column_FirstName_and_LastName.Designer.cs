@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using WebScheduler.DAL.Data;
+using WebScheluder.DAL;
 
 namespace WebScheluder.DAL.Migrations
 {
     [DbContext(typeof(WebSchedulerContext))]
-    [Migration("20211017165814_initial")]
-    partial class initial
+    [Migration("20211024125233_added_column_FirstName_and_LastName")]
+    partial class added_column_FirstName_and_LastName
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,56 +21,60 @@ namespace WebScheluder.DAL.Migrations
                 .HasAnnotation("ProductVersion", "5.0.11")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("DayEventUser", b =>
+            modelBuilder.Entity("EventUser", b =>
                 {
-                    b.Property<Guid>("DayEventsDayEventId")
+                    b.Property<Guid>("EventsId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("UsersUserId")
+                    b.Property<Guid>("UsersId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("DayEventsDayEventId", "UsersUserId");
+                    b.HasKey("EventsId", "UsersId");
 
-                    b.HasIndex("UsersUserId");
+                    b.HasIndex("UsersId");
 
-                    b.ToTable("DayEventUser");
+                    b.ToTable("EventUser");
                 });
 
-            modelBuilder.Entity("WebScheduler.Domain.Models.DayEvent", b =>
+            modelBuilder.Entity("WebScheduler.Domain.Models.Event", b =>
                 {
-                    b.Property<Guid>("DayEventId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CreatorId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<DateTime>("EndEventDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("EventName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<string>("ShortDescription")
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("StartEventDate")
-                        .HasMaxLength(200)
                         .HasColumnType("datetime2");
 
-                    b.HasKey("DayEventId");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.ToTable("DayEvents");
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.ToTable("Events");
                 });
 
             modelBuilder.Entity("WebScheduler.Domain.Models.Role", b =>
                 {
-                    b.Property<int>("RoleId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -78,30 +82,36 @@ namespace WebScheluder.DAL.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("RoleId");
+                    b.HasKey("Id");
 
                     b.ToTable("Roles");
 
                     b.HasData(
                         new
                         {
-                            RoleId = 1,
+                            Id = 1,
                             Name = "admin"
                         },
                         new
                         {
-                            RoleId = 2,
+                            Id = 2,
                             Name = "user"
                         });
                 });
 
             modelBuilder.Entity("WebScheduler.Domain.Models.User", b =>
                 {
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Password")
@@ -111,10 +121,9 @@ namespace WebScheluder.DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UserName")
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("UserId");
+                    b.HasKey("Id");
 
                     b.HasIndex("RoleId");
 
@@ -123,7 +132,7 @@ namespace WebScheluder.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = new Guid("7d94bb10-a4b5-4519-bb38-ef81f88d1404"),
+                            Id = new Guid("a78bb934-e57e-4446-aa44-fdd7b77dd494"),
                             Email = "admin@gmail.com",
                             Password = "admin",
                             RoleId = 1,
@@ -131,17 +140,17 @@ namespace WebScheluder.DAL.Migrations
                         });
                 });
 
-            modelBuilder.Entity("DayEventUser", b =>
+            modelBuilder.Entity("EventUser", b =>
                 {
-                    b.HasOne("WebScheduler.Domain.Models.DayEvent", null)
+                    b.HasOne("WebScheduler.Domain.Models.Event", null)
                         .WithMany()
-                        .HasForeignKey("DayEventsDayEventId")
+                        .HasForeignKey("EventsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("WebScheduler.Domain.Models.User", null)
                         .WithMany()
-                        .HasForeignKey("UsersUserId")
+                        .HasForeignKey("UsersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

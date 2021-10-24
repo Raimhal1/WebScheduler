@@ -13,6 +13,7 @@ namespace WebScheduler.BLL.Events.Queries.GetEventDetails
         public DateTime EndEventDate { get; set; }
         public string ShortDescription { get; set; }
         public string Description { get; set; }
+        public IList<User> Users { get; set; }
 
         public void Mapping(Profile profile)
         {

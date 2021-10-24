@@ -3,15 +3,16 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using WebScheluder.DAL;
 
 namespace WebScheluder.DAL.Migrations
 {
     [DbContext(typeof(WebSchedulerContext))]
-    partial class WebSchedulerContextModelSnapshot : ModelSnapshot
+    [Migration("20211020100028_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,13 +22,13 @@ namespace WebScheluder.DAL.Migrations
 
             modelBuilder.Entity("EventUser", b =>
                 {
-                    b.Property<Guid>("EventsId")
+                    b.Property<Guid>("DayEventsId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("UsersId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("EventsId", "UsersId");
+                    b.HasKey("DayEventsId", "UsersId");
 
                     b.HasIndex("UsersId");
 
@@ -41,20 +42,16 @@ namespace WebScheluder.DAL.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("EndEventDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("EventName")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ShortDescription")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("StartEventDate")
                         .HasColumnType("datetime2");
@@ -63,9 +60,6 @@ namespace WebScheluder.DAL.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Id")
-                        .IsUnique();
 
                     b.ToTable("Events");
                 });
@@ -106,12 +100,6 @@ namespace WebScheluder.DAL.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
 
@@ -130,7 +118,7 @@ namespace WebScheluder.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("a78bb934-e57e-4446-aa44-fdd7b77dd494"),
+                            Id = new Guid("35b9f462-9f75-4663-b42f-466316d2c990"),
                             Email = "admin@gmail.com",
                             Password = "admin",
                             RoleId = 1,
@@ -142,7 +130,7 @@ namespace WebScheluder.DAL.Migrations
                 {
                     b.HasOne("WebScheduler.Domain.Models.Event", null)
                         .WithMany()
-                        .HasForeignKey("EventsId")
+                        .HasForeignKey("DayEventsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

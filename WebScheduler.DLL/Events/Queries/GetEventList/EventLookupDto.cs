@@ -35,7 +35,9 @@ namespace WebScheduler.BLL.Events.Queries.GetEventList
                 .ForMember(eDto => eDto.ShortDescription,
                     opt => opt.MapFrom(e => e.ShortDescription))
                 .ForMember(eDto => eDto.Description,
-                    opt => opt.MapFrom(e => e.Description));
+                    opt => opt.MapFrom(e => e.Description))
+                .ForMember(eDto => eDto.Users,
+                    opt => opt.MapFrom(e => e.Users));
 
         }
     }

@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WebScheduler.Domain.Interfaces
+namespace WebScheduler.BLL.DtoModels
 {
-    public interface IEntity<T>
+    public class UserListVm
     {
-       T Id { get; set; }
+        public IList<UserDto> Users { get; set; }
     }
 }

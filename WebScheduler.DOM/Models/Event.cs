@@ -9,13 +9,6 @@ namespace WebScheduler.Domain.Models
 {
     public class Event : IEntity<Guid>
     {
-        public Event()
-        {
-            if(Users == null)
-            {
-                Users = new List<User>();
-            }
-        }
         public Guid Id { get; set; }
 
         public string EventName { get; set; }

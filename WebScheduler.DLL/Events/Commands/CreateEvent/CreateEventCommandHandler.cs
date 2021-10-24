@@ -23,23 +23,21 @@ namespace WebScheduler.BLL.Events.Commands.CreateEvent
         public async Task<Guid> Handle(CreateEventCommand request,
             CancellationToken cancellationToken)
         {
-            var user = await _users.Users.FindAsync(request.UserId);
+            var userId = request.UserId;
+            var user = await _users.Users.FindAsync(userId);
+            //var user = await _users.Users.FindAsync(Guid.Parse("35b9f462-9f75-4663-b42f-466316d2c990")); // test
 
             var entity = new Event {
 
-                UserId = request.UserId,
+                UserId = userId,
                 EventName = request.EventName,
                 StartEventDate = request.StartEventDate,
                 EndEventDate = request.EndEventDate,
                 ShortDescription = request.ShortDescription,
                 Description = request.Description,
+                Users = new List<User> { user },
                 Id = Guid.NewGuid()
             };
-
-            if (user != null)
-            {
-                entity.Users.Add(user);
-            }
 
             await _context.Events.AddAsync(entity, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
