@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WebScheduler.BLL.Validation
 {
-    public static class DateValidation
+    public static class DateValidator
     {
         public static bool BeAValidDate(DateTime date)
         {

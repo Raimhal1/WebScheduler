@@ -23,7 +23,6 @@ namespace WebScheduler.BLL.Events.Queries.GetEventList
         public async Task<EventListVm> Handle(GetEventListQuery request, CancellationToken cancellationToken)
         {
             var eventQuery = await _context.Events
-                .Where(e => e.UserId == request.UserId)
                 .ProjectTo<EventLookupDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 

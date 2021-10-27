@@ -5,7 +5,7 @@ using WebScheduler.Domain.Models;
 
 namespace WebScheluder.DAL.EntityTypeConfigurations
 {
-    public class EventConfiguration : IEntityTypeConfiguration<Event>
+    public class EventTypeConfiguration : IEntityTypeConfiguration<Event>
     {
         public void Configure(EntityTypeBuilder<Event> builder)
         {

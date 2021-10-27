@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using WebScheduler.Domain.Models;
 using WebScheduler.Domain.Interfaces;
 using WebScheluder.DAL.EntityTypeConfigurations;
+using System.Collections.Generic;
 
 namespace WebScheluder.DAL
 {
@@ -22,22 +23,12 @@ namespace WebScheluder.DAL
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
-            modelBuilder.ApplyConfiguration(new EventConfiguration());
+            modelBuilder.ApplyConfiguration(new EventTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new UserTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new RoleEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new RefreshTokenEntityTypeConfiguration());
 
             base.OnModelCreating(modelBuilder);
-
-            string adminRoleName = "admin";
-            string userRoleName = "user";
-
-            string adminEmail = "admin@gmail.com";
-            string adminPassword = "admin";
-
-            Role adminRole = new Role { Id = 1, Name = adminRoleName };
-            Role userRole = new Role { Id = 2, Name = userRoleName };
-            modelBuilder.Entity<Role>().HasData(new Role[] { adminRole, userRole });
-
-            User adminUser = new User { Id = Guid.NewGuid(), UserName = "Admin", Email = adminEmail, Password = adminPassword, RoleId = adminRole.Id };
-            modelBuilder.Entity<User>().HasData(new User[] { adminUser });
 
         }
     }

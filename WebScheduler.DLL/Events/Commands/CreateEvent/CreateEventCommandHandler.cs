@@ -25,7 +25,6 @@ namespace WebScheduler.BLL.Events.Commands.CreateEvent
         {
             var userId = request.UserId;
             var user = await _users.Users.FindAsync(userId);
-            //var user = await _users.Users.FindAsync(Guid.Parse("35b9f462-9f75-4663-b42f-466316d2c990")); // test
 
             var entity = new Event {
 

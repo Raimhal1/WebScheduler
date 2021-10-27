@@ -15,9 +15,9 @@ namespace WebScheduler.BLL.Events.Commands.UpdateEvent
             RuleFor(createEventCommand =>
                createEventCommand.Id).NotEqual(Guid.Empty);
             RuleFor(createEventCommand =>
-                createEventCommand.StartEventDate).Must(DateValidation.BeAValidDate);
+                createEventCommand.StartEventDate).Must(DateValidator.BeAValidDate);
             RuleFor(createEventCommand =>
-                createEventCommand.EndEventDate).Must(DateValidation.BeAValidDate);
+                createEventCommand.EndEventDate).Must(DateValidator.BeAValidDate);
             RuleFor(createEventCommand =>
                 createEventCommand.ShortDescription).NotEmpty().MaximumLength(250);
             RuleFor(createEventCommand =>

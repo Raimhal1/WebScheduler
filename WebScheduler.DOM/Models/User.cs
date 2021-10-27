@@ -19,10 +19,10 @@ namespace WebScheduler.Domain.Models
 
         [DataType(DataType.Password)]
         public string Password { get; set; }
-        public int? RoleId { get; set; }
-        public Role Role { get; set; }
+        public IList<Role> Roles { get; set; }
 
         public virtual ICollection<Event> Events { get; set; }
+        public virtual ICollection<RefreshToken> RefreshTokens { get; set;  }
     }
 }
 
