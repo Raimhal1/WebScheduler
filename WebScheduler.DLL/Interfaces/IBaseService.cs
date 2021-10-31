@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace WebScheduler.BLL.Interfaces
 {
-    public interface IBaseService<TModel, TModelDto, TModelListVm>
+    public interface IBaseService<TFModelDto, TModelDto, TModelListVm>
     {
         Task<TModelListVm> GetAll();
-        Task<TModel> GetByIdAsync(Guid id);
-        Task<Guid> CreateAsync(TModelDto model, CancellationToken cancellationToken);
+        Task<TModelDto> GetByIdAsync(Guid id);
+        Task<Guid> CreateAsync(TFModelDto model, CancellationToken cancellationToken);
+        Task UpdateAsync(Guid id, TFModelDto model, CancellationToken cancellationToken);
         Task DeleteByIdAsync(Guid id, CancellationToken cancellationToken);
 
     }

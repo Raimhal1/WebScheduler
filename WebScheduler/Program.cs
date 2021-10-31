@@ -24,12 +24,9 @@ namespace WebScheduler
                     var context = serviceProvider.GetRequiredService<WebSchedulerContext>();
                     DbInitializer.Initialize(context);
                 }
-                catch (Exception exception)
-                {
-
-                }
+                catch (Exception exception) { }
             }
-                host.Run();
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

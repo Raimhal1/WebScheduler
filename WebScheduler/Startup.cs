@@ -28,7 +28,7 @@ namespace WebScheduler
 
         public void ConfigureServices(IServiceCollection services)
         {
-
+            
             services.AddAutoMapper(config =>
             {
                 config.AddProfile(new AssemblyMappingProfile(Assembly.GetExecutingAssembly()));
@@ -39,7 +39,8 @@ namespace WebScheduler
 
             services.AddApplication();
             services.AddPersistence(Configuration);
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddCors(option =>
             {
                 option.AddPolicy("AllowAll", policy =>

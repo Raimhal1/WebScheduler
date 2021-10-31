@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using MediatR;
 using WebScheduler.Domain.Interfaces;
 using WebScheduler.Domain.Models;
+using WebScheduler.BLL.Validation;
 
 namespace WebScheduler.BLL.Events.Commands.CreateEvent
 {
@@ -35,8 +36,11 @@ namespace WebScheduler.BLL.Events.Commands.CreateEvent
                 ShortDescription = request.ShortDescription,
                 Description = request.Description,
                 Users = new List<User> { user },
-                Id = Guid.NewGuid()
+                EventFiles = new List<EventFile>(),
+                Id = Guid.NewGuid(),
             };
+
+            entity.Status = Validation.Status.ChangeStatus(entity.StartEventDate, entity.EndEventDate);
 
             await _context.Events.AddAsync(entity, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);

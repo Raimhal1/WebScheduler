@@ -12,9 +12,8 @@ using WebScheduler.Domain.Interfaces;
 
 namespace WebScheduler.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]/[action]")]
-    public class AccountController : Controller
+    [Authorize]
+    public class AccountController : BaseController
     {
         private readonly IAccountService _accountService;
 
@@ -23,6 +22,7 @@ namespace WebScheduler.Controllers
 
         [AllowAnonymous]
         [HttpPost]
+        [Route("api/account/authenticate")]
         public async Task<IActionResult> Authenticate(AuthenticateRequest authenticateRequest, CancellationToken cancellationToken)
         {
             var tokens = await _accountService.Authenticate(authenticateRequest, GetIp(), cancellationToken);
@@ -37,6 +37,7 @@ namespace WebScheduler.Controllers
         }
 
         [HttpPost]
+        [Route("api/account/refresh-token")]
         public async Task<IActionResult> RefreshToken(CancellationToken cancellationToken)
         {
             var refreshToken = Request.Cookies["refreshToken"];
@@ -53,6 +54,7 @@ namespace WebScheduler.Controllers
         }
 
         [HttpPost]
+        [Route("api/account/revoke-token")]
         public async Task<IActionResult> RevokeToken(string token, CancellationToken cancellationToken)
         {
             var revokedToken = token ?? Request.Cookies["refreshToken"];

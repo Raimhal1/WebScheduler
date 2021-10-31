@@ -18,6 +18,7 @@ namespace WebScheduler.BLL.Events.Commands.UpdateEvent
         public string ShortDescription { get; set; }
 
         public string Description { get; set; }
+        public Status Status { get; set; }
         public IList<User> Users { get; set; }
     }
 }

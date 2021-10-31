@@ -9,7 +9,7 @@ using WebScheduler.BLL.Validation.Exceptions;
 
 namespace WebScheduler.BLL.Events.Commands.DeleteEvent
 {
-    class DeleteEventCommandHandler : IRequestHandler<DeleteEventCommand>
+    public class DeleteEventCommandHandler : IRequestHandler<DeleteEventCommand>
     {
         private readonly IEventDbContext _context;
         public DeleteEventCommandHandler(IEventDbContext context) =>

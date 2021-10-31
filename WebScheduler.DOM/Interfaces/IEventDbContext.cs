@@ -5,9 +5,8 @@ using WebScheduler.Domain.Models;
 
 namespace WebScheduler.Domain.Interfaces
 {
-    public interface IEventDbContext
+    public interface IEventDbContext : IBaseDbContext
     {
         DbSet<Event> Events { get; set; }
-        Task<int> SaveChangesAsync(CancellationToken cancelllationToken);
     }
 }

@@ -49,6 +49,24 @@ namespace WebScheluder.DAL.Migrations
                     b.ToTable("RoleUser");
                 });
 
+            modelBuilder.Entity("WebScheduler.Domain.Models.AllowedFileType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("FileSize")
+                        .HasColumnType("float");
+
+                    b.Property<string>("FileType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AllowedFileTypes");
+                });
+
             modelBuilder.Entity("WebScheduler.Domain.Models.Event", b =>
                 {
                     b.Property<Guid>("Id")
@@ -74,6 +92,9 @@ namespace WebScheluder.DAL.Migrations
                     b.Property<DateTime>("StartEventDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
@@ -83,6 +104,31 @@ namespace WebScheluder.DAL.Migrations
                         .IsUnique();
 
                     b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("WebScheduler.Domain.Models.EventFile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("Data")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("EventFiles");
                 });
 
             modelBuilder.Entity("WebScheduler.Domain.Models.RefreshToken", b =>
@@ -196,6 +242,17 @@ namespace WebScheluder.DAL.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("WebScheduler.Domain.Models.EventFile", b =>
+                {
+                    b.HasOne("WebScheduler.Domain.Models.Event", "Event")
+                        .WithMany("EventFiles")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+                });
+
             modelBuilder.Entity("WebScheduler.Domain.Models.RefreshToken", b =>
                 {
                     b.HasOne("WebScheduler.Domain.Models.User", "User")
@@ -205,6 +262,11 @@ namespace WebScheluder.DAL.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WebScheduler.Domain.Models.Event", b =>
+                {
+                    b.Navigation("EventFiles");
                 });
 
             modelBuilder.Entity("WebScheduler.Domain.Models.User", b =>

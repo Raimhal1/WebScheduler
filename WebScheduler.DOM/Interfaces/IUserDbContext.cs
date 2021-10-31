@@ -9,9 +9,8 @@ using WebScheduler.Domain.Models;
 
 namespace WebScheduler.Domain.Interfaces
 {
-    public interface IUserDbContext
+    public interface IUserDbContext : IBaseDbContext
     {
         DbSet<User> Users { get; set; }
-        Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

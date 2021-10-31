@@ -20,6 +20,8 @@ namespace WebScheduler.BLL.Events.Commands.CreateEvent
         public string ShortDescription { get; set; }
 
         public string Description { get; set; }
+        public Status Status { get; set; }
         public IList<User> Users { get; set; }
+        public IList<EventFile> EventFiles { get; set; }
     }
 }

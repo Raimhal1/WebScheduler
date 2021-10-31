@@ -8,20 +8,21 @@ namespace WebScheduler.BLL.Events.Commands.UpdateEvent
     {
         public UpdateEventCommandValidator()
         {
-            RuleFor(createEventCommand =>
-                createEventCommand.EventName).NotEmpty().MaximumLength(250);
-            RuleFor(createEventCommand =>
-               createEventCommand.UserId).NotEqual(Guid.Empty);
-            RuleFor(createEventCommand =>
-               createEventCommand.Id).NotEqual(Guid.Empty);
-            RuleFor(createEventCommand =>
-                createEventCommand.StartEventDate).Must(DateValidator.BeAValidDate);
-            RuleFor(createEventCommand =>
-                createEventCommand.EndEventDate).Must(DateValidator.BeAValidDate);
-            RuleFor(createEventCommand =>
-                createEventCommand.ShortDescription).NotEmpty().MaximumLength(250);
-            RuleFor(createEventCommand =>
-                createEventCommand.Description).NotEmpty().MaximumLength(5000);
+            RuleFor(updateEventCommand =>
+                updateEventCommand.EventName).NotEmpty().MaximumLength(250);
+            RuleFor(updateEventCommand =>
+               updateEventCommand.UserId).NotEqual(Guid.Empty);
+            RuleFor(updateEventCommand =>
+               updateEventCommand.Id).NotEqual(Guid.Empty);
+            RuleFor(updateEventCommand =>
+                updateEventCommand.StartEventDate).Must(DateValidator.BeAValidDate);
+            RuleFor(updateEventCommand =>
+                updateEventCommand.EndEventDate).Must(DateValidator.BeAValidDate)
+                .GreaterThan(updateEventCommand => updateEventCommand.StartEventDate);
+            RuleFor(updateEventCommand =>
+                updateEventCommand.ShortDescription).NotEmpty().MaximumLength(250);
+            RuleFor(updateEventCommand =>
+                updateEventCommand.Description).NotEmpty().MaximumLength(5000);
         }
     }
 }

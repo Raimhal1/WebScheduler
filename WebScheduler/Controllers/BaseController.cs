@@ -7,8 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebScheduler.Controllers
 {
     [ApiController]
-    [Route("api/[cotroller]/[action]")]
-
     public abstract class BaseController : ControllerBase
     {
         private IMediator _mediator;

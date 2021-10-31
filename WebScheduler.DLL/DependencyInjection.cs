@@ -19,6 +19,8 @@ namespace WebScheduler.BLL
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IFileSettingsService, FileSettingsService>();
+            services.AddScoped<IFileService, FileService>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>

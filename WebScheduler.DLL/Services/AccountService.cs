@@ -104,6 +104,7 @@ namespace WebScheduler.BLL.Services
         {
             var claims = new List<Claim> {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, user.Email),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
 
             foreach (var role in user.Roles)
@@ -127,7 +128,7 @@ namespace WebScheduler.BLL.Services
                 claims: identity.Claims,
                 expires: now.AddMinutes(AuthOptions.LIFETIME),
                 signingCredentials: new SigningCredentials(
-                    AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256Signature)
+                    AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256)
                 );
 
             return new JwtSecurityTokenHandler().WriteToken(jwtToken);

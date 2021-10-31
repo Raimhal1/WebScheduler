@@ -12,5 +12,6 @@ namespace WebScheduler.BLL.Validation
         {
             return !date.Equals(default(DateTime));
         }
+
     }
 }

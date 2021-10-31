@@ -19,6 +19,12 @@ namespace WebScheluder.DAL
                 provider.GetService<WebSchedulerContext>());
             services.AddScoped<IUserDbContext>(provider =>
                 provider.GetService<WebSchedulerContext>());
+            services.AddScoped<IRoleDbContext>(provider =>
+                provider.GetService<WebSchedulerContext>());
+            services.AddScoped<IFileDbContext>(provider =>
+                provider.GetService<WebSchedulerContext>());
+            services.AddScoped<IAllowedFileTypeDbContext>(provider =>
+                provider.GetService<WebSchedulerContext>());
 
             return services;
         }

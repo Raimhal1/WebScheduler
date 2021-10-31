@@ -23,9 +23,15 @@ namespace WebScheduler.BLL.Events.Queries.GetEventList
         public async Task<EventListVm> Handle(GetEventListQuery request, CancellationToken cancellationToken)
         {
             var eventQuery = await _context.Events
+                .Include(e => e.Users)
+                .Where(e => e.UserId == request.UserId)
                 .ProjectTo<EventLookupDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 
+            foreach (var entity in eventQuery)
+            {
+                entity.Status = Validation.Status.ChangeStatus(entity.StartEventDate, entity.EndEventDate);
+            }
             return new EventListVm { Events = eventQuery };
         }
     }

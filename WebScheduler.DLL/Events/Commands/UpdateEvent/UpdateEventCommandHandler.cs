@@ -28,7 +28,7 @@ namespace WebScheduler.BLL.Events.Commands.UpdateEvent
             entity.EndEventDate = request.EndEventDate;
             entity.ShortDescription = request.ShortDescription;
             entity.Description = request.Description;
-            entity.Users = request.Users;
+            entity.Status = Validation.Status.ChangeStatus(entity.StartEventDate, entity.EndEventDate);
 
             await _context.SaveChangesAsync(cancellationToken);
             return Unit.Value;

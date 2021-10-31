@@ -9,8 +9,8 @@ using WebScheduler.Domain.Models;
 
 namespace WebScheduler.BLL.Interfaces
 {
-    public interface IUserService : IBaseService<User, UserDto, UserListVm>
+    public interface IUserService : IBaseService<RegisterUserModel, UserDto, UserListVm>
     {
-        
+
     }
 }
