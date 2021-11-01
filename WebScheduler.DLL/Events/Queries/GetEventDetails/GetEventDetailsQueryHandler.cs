@@ -18,30 +18,52 @@ namespace WebScheduler.BLL.Events.Queries.GetEventDetails
     {
         private readonly IEventDbContext _context;
         private readonly IUserDbContext _userContext;
+        private readonly IRoleDbContext _roleContext;
         private readonly IMapper _mapper;
+        private string AdminRoleName = "Admin";
 
-        public GetEventDetailsQueryHandler(IEventDbContext context, IUserDbContext userContext, IMapper mapper) => 
-            (_context, _userContext, _mapper) = (context, userContext, mapper);
+        public GetEventDetailsQueryHandler(IEventDbContext context,
+            IUserDbContext userContext, IRoleDbContext roleContext, IMapper mapper) => 
+            (_context, _userContext, _roleContext, _mapper) 
+            = (context, userContext, roleContext, mapper);
 
         public async Task<EventDetailsVm> Handle(GetEventDetailsQuery request, CancellationToken cancellationToken)
         {
-            var user = await _userContext.Users.FirstOrDefaultAsync(u => u.Id == request.UserId);
+            var user = await _userContext.Users
+                .Include(u => u.Roles)
+                .FirstOrDefaultAsync(u => u.Id == request.UserId);
 
-            var entity = await _context.Events
+            if (user == null || user.Id == Guid.Empty)
+            {
+                throw new NotFoundException(nameof(User), request.UserId);
+            }
+            Event entity;
+
+            var role = await _roleContext.Roles
+                .FirstOrDefaultAsync(r => r.Name == AdminRoleName);
+
+            if(user.Roles.Contains(role))
+            {
+                entity = await _context.Events
                 .Include(e => e.Users)
-                .Where(e => e.UserId == request.UserId || e.Users.Contains(user))
                 .FirstOrDefaultAsync(e => e.Id == request.Id, cancellationToken);
-            entity.Status = Validation.Status.ChangeStatus(entity.StartEventDate, entity.EndEventDate);
-            _context.Events.Update(entity);
+            }
+            else
+            {
+                entity = await _context.Events
+               .Include(e => e.Users)
+               .Where(e => e.UserId == request.UserId || e.Users.Contains(user))
+               .FirstOrDefaultAsync(e => e.Id == request.Id, cancellationToken);
+            }
 
             if (entity == null)
             {
                 throw new NotFoundException(nameof(Event), request.Id);
             }
-            else if (user == null || user.Id == Guid.Empty)
-            {
-                throw new NotFoundException(nameof(User), request.UserId);
-            }
+
+
+            entity.Status = Validation.Status.ChangeStatus(entity.StartEventDate, entity.EndEventDate);
+            _context.Events.Update(entity);
 
             return _mapper.Map<EventDetailsVm>(entity);
         }

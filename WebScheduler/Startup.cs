@@ -31,8 +31,6 @@ namespace WebScheduler
             
             services.AddAutoMapper(config =>
             {
-                config.AddProfile(new AssemblyMappingProfile(Assembly.GetExecutingAssembly()));
-                config.AddProfile(new AssemblyMappingProfile(typeof(IEventDbContext).Assembly));
                 config.AddProfile(new AssemblyMappingProfile(typeof(IUserService).Assembly));
 
             });
@@ -41,6 +39,7 @@ namespace WebScheduler
             services.AddPersistence(Configuration);
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
             services.AddCors(option =>
             {
                 option.AddPolicy("AllowAll", policy =>
