@@ -22,7 +22,7 @@ namespace WebScheduler.Controllers
         [Route("api/events/report/{extension}")]
         public async Task<FileContentResult> GetUserEventsReport(string extension)
         {
-            var file = await _fileService.CreateEventListReport(UserId);
+            var file = await _fileService.CreateEventsReport(UserId, extension);
             var now = DateTime.UtcNow;
             var fileName = $"user_{UserId}_events_{now}" + $".{extension}";
             return File(Encoding.UTF8.GetBytes(file), $"files/{extension}", fileName);
@@ -32,9 +32,20 @@ namespace WebScheduler.Controllers
         [Route("api/events/member/report/{extension}")]
         public async Task<FileContentResult> GetUserEventsMemberReport(string extension)
         {
-            var file = await _fileService.CreateEventListMemberReport(UserId);
+            var file = await _fileService.CreateEventsMemberReport(UserId, extension);
             var now = DateTime.UtcNow;
             var fileName = $"user_{UserId}_events_{now}" + $".{extension}";
+            return File(Encoding.UTF8.GetBytes(file), $"files/{extension}", fileName);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        [Route("api/events/next-month-report/{extension}")]
+        public async Task<FileContentResult> GetUserEventsReportForNextMonth(string extension)
+        {
+            var file = await _fileService.CreateEventsReportForNextMonth(UserId, extension);
+            var now = DateTime.UtcNow;
+            var fileName = $"admin_{UserId}_events_{now}_to_{now.AddDays(30)}" + $".{extension}";
             return File(Encoding.UTF8.GetBytes(file), $"files/{extension}", fileName);
         }
 

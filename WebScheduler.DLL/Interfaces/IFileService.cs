@@ -9,8 +9,9 @@ namespace WebScheduler.BLL.Interfaces
 {
     public interface IFileService
     {
-        Task<string> CreateEventListReport(Guid id);
-        Task<string> CreateEventListMemberReport(Guid id);
+        Task<string> CreateEventsReport(Guid id, string extension);
+        Task<string> CreateEventsMemberReport(Guid id, string extension);
+        Task<string> CreateEventsReportForNextMonth(Guid id, string extension);
         Task<string> ConvertToByte64(IFormFile file);
     }
 }
