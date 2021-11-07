@@ -38,13 +38,6 @@ namespace WebScheduler.BLL.Events.Queries.GetEventList
                 .ProjectTo<EventLookupDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 
-            //foreach (var entity in eventQuery)
-            //{
-            //    entity.Status = entity.StartEventDate.UpdateStatus(entity.EndEventDate);
-            //}
-
-            //await _context.SaveChangesAsync(cancellationToken);
-
             var eventListVm = new EventListVm { Events = eventQuery };
 
             for (int i = 0; i < eventListVm.Events.Count; i++)
