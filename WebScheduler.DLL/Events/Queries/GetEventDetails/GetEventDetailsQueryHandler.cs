@@ -62,10 +62,14 @@ namespace WebScheduler.BLL.Events.Queries.GetEventDetails
             }
 
 
-            entity.Status = Validation.Status.ChangeStatus(entity.StartEventDate, entity.EndEventDate);
-            _context.Events.Update(entity);
+            //entity.Status = entity.StartEventDate.UpdateStatus(entity.EndEventDate);
 
-            return _mapper.Map<EventDetailsVm>(entity);
+            _context.Events.Update(entity);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            var eventVm = _mapper.Map<EventDetailsVm>(entity);
+            eventVm.Users = _mapper.Map<List<UserVm>>(entity.Users);
+            return eventVm;
         }
     }
 }

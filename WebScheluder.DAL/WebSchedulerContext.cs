@@ -7,7 +7,8 @@ using System.Collections.Generic;
 
 namespace WebScheluder.DAL
 {
-    public class WebSchedulerContext : DbContext, IEventDbContext, IUserDbContext, IRoleDbContext, IFileDbContext, IAllowedFileTypeDbContext
+    public class WebSchedulerContext : DbContext, IEventDbContext, IUserDbContext,
+        IRoleDbContext, IFileDbContext, IAllowedFileTypeDbContext, IEventFileDbContext
     {
         public WebSchedulerContext(DbContextOptions<WebSchedulerContext> options)
             : base(options)

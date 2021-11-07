@@ -5,14 +5,20 @@ using System.Threading.Tasks;
 using WebScheduler.Domain.Interfaces;
 using WebScheduler.BLL.Validation.Exceptions;
 using WebScheduler.Domain.Models;
+using WebScheduler.BLL.Interfaces;
+using AutoMapper;
+using System.Collections.Generic;
 
 namespace WebScheduler.BLL.Events.Commands.UpdateEvent
 {
     public class UpdateEventCommandHandler : IRequestHandler<UpdateEventCommand>
     {
         private readonly IEventDbContext _context;
-        public UpdateEventCommandHandler(IEventDbContext context) =>
-            _context = context;
+        private readonly IEventFileService _fileService;
+        private readonly IMapper _mapper;
+        public UpdateEventCommandHandler(IEventDbContext context,
+            IEventFileService fileService, IMapper mapper) =>
+            (_context, _fileService, _mapper) = (context, fileService, mapper);
 
         public async Task<Unit> Handle(UpdateEventCommand request, CancellationToken cancellationToken)
         {
@@ -28,7 +34,10 @@ namespace WebScheduler.BLL.Events.Commands.UpdateEvent
             entity.EndEventDate = request.EndEventDate;
             entity.ShortDescription = request.ShortDescription;
             entity.Description = request.Description;
-            entity.Status = Validation.Status.ChangeStatus(entity.StartEventDate, entity.EndEventDate);
+
+            var files = _fileService.GenerateEventFiles(request.formFiles);
+            if (files != null)
+                entity.EventFiles = _mapper.Map<List<EventFile>>(files);
 
             await _context.SaveChangesAsync(cancellationToken);
             return Unit.Value;

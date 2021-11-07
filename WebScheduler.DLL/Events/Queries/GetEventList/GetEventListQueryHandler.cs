@@ -8,6 +8,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using WebScheduler.BLL.DtoModels;
 using WebScheduler.BLL.Validation.Exceptions;
 using WebScheduler.Domain.Interfaces;
 using WebScheduler.Domain.Models;
@@ -48,11 +49,13 @@ namespace WebScheduler.BLL.Events.Queries.GetEventList
                 .ToListAsync(cancellationToken);
             }
 
-            foreach (var entity in eventQuery)
+            var eventListVm = new EventListVm { Events = eventQuery };
+
+            for(int i = 0; i < eventListVm.Events.Count; i++)
             {
-                entity.Status = Validation.Status.ChangeStatus(entity.StartEventDate, entity.EndEventDate);
+                eventListVm.Events[i].Users = _mapper.Map<List<UserVm>>(eventQuery[i].Users);
             }
-            return new EventListVm { Events = eventQuery };
+            return eventListVm;
         }
     }
 }

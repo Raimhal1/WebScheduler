@@ -12,7 +12,8 @@ namespace WebScheduler.Domain.Models
         public Guid Id { get; set; }
         public string FileName { get; set; }
         public string FileType { get; set; }
-        public byte[] Data { get; set; }
+        public string ContentType { get; set; }
+        public byte[] Content { get; set; }
         public Guid EventId { get; set; }
         public Event Event { get; set; }
 

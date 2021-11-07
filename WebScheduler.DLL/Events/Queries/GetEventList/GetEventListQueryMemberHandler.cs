@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using WebScheduler.BLL.DtoModels;
 using WebScheduler.BLL.Validation.Exceptions;
 using WebScheduler.Domain.Interfaces;
 using WebScheduler.Domain.Models;
@@ -37,12 +38,20 @@ namespace WebScheduler.BLL.Events.Queries.GetEventList
                 .ProjectTo<EventLookupDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 
-            foreach (var entity in eventQuery)
-            {
-                entity.Status = Validation.Status.ChangeStatus(entity.StartEventDate, entity.EndEventDate);
-            }
+            //foreach (var entity in eventQuery)
+            //{
+            //    entity.Status = entity.StartEventDate.UpdateStatus(entity.EndEventDate);
+            //}
 
-            return new EventListVm { Events = eventQuery };
+            //await _context.SaveChangesAsync(cancellationToken);
+
+            var eventListVm = new EventListVm { Events = eventQuery };
+
+            for (int i = 0; i < eventListVm.Events.Count; i++)
+            {
+                eventListVm.Events[i].Users = _mapper.Map<List<UserVm>>(eventQuery[i].Users);
+            }
+            return eventListVm;
         }
     }
 }

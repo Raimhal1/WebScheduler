@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebScheduler.BLL.DtoModels;
 using WebScheduler.BLL.Mapping;
 using WebScheduler.Domain.Models;
 
@@ -18,12 +19,10 @@ namespace WebScheduler.BLL.Events.Queries.GetEventList
         public string ShortDescription { get; set; }
         public string Description { get; set; }
         public Status Status { get; set; }
-        public int CountUsers { get; set; }
+        public IList<UserVm> Users { get; set; }
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<Event, EventLookupDto>()
-                .ForMember(eDto => eDto.CountUsers,
-                    opt => opt.MapFrom(e => e.Users.Count));
+            profile.CreateMap<Event, EventLookupDto>();
 
         }
     }
