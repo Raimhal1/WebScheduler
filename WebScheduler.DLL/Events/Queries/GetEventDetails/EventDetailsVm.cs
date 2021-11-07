@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using WebScheduler.BLL.Mapping;
 using WebScheduler.Domain.Models;
 using AutoMapper;
+using WebScheduler.BLL.DtoModels;
+
 namespace WebScheduler.BLL.Events.Queries.GetEventDetails
 {
     public class EventDetailsVm : IMapWith<Event>
@@ -14,7 +16,7 @@ namespace WebScheduler.BLL.Events.Queries.GetEventDetails
         public string ShortDescription { get; set; }
         public string Description { get; set; }
         public Status Status { get; set; }
-        public IList<User> Users { get; set; }
+        public IList<UserVm> Users { get; set; }
 
         public void Mapping(Profile profile)
         {

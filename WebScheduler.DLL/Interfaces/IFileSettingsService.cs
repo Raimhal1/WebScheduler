@@ -14,5 +14,6 @@ namespace WebScheduler.BLL.Interfaces
         Task<AllowedFileTypeListVm> GetAllowedFileTypes();
         Task<int> AddFileType(AllowedFileTypeDto fileTypeDto, CancellationToken cancellationToken);
         Task ChangeFileType(int id, AllowedFileTypeDto fileTypeDto, CancellationToken cancellationToken);
+        List<GeneralFileDto> CreateGeneralFiles(IList<IFormFile> fromFiles);
     }
 }

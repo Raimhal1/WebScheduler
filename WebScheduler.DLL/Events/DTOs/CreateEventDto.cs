@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace WebScheduler.BLL.Events.DTOs
         public DateTime EndEventDate { get; set; }
         public string ShortDescription { get; set; }
         public string Description { get; set; }
-        public IList<User> Users { get; set; }
+        public IList<IFormFile> formFiles { get; set; }
         public void Mapping(Profile profile)
         {
             profile.CreateMap<CreateEventDto, CreateEventCommand>();

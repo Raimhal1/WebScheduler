@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -29,21 +31,21 @@ namespace WebScheduler.BLL.Services
                .ProjectTo<AllowedFileTypeDto>(_mapper.ConfigurationProvider)
                .ToListAsync();
 
-            return new AllowedFileTypeListVm { AllowedFileTypes = allowedFileTypes};
+            return new AllowedFileTypeListVm { AllowedFileTypes = allowedFileTypes };
         }
 
         public async Task<int> AddFileType(AllowedFileTypeDto fileTypeDto, CancellationToken cancellationToken)
         {
-            var fileType = await _fileTypesContext.AllowedFileTypes    
-                .FirstOrDefaultAsync(t => t.FileType == fileTypeDto.FileType);    
+            var fileType = await _fileTypesContext.AllowedFileTypes
+                .FirstOrDefaultAsync(t => t.FileType == fileTypeDto.FileType);
 
-            if(fileType != null) return default;    
+            if (fileType != null) return default;
 
             var type = _mapper.Map<AllowedFileType>(fileTypeDto);
-            _fileTypesContext.AllowedFileTypes.Add(type);    
+            _fileTypesContext.AllowedFileTypes.Add(type);
 
-            await _fileTypesContext.SaveChangesAsync(cancellationToken);    
-            return type.Id;    
+            await _fileTypesContext.SaveChangesAsync(cancellationToken);
+            return type.Id;
         }
 
         public async Task ChangeFileType(int id, AllowedFileTypeDto fileTypeDto, CancellationToken cancellationToken)
@@ -63,6 +65,51 @@ namespace WebScheduler.BLL.Services
             }
         }
 
+        public List<GeneralFileDto> CreateGeneralFiles(IList<IFormFile> fromFiles)
+        {
+            var files = new List<GeneralFileDto>();
+            if (fromFiles != null || fromFiles.Count != default)
+            {
+                foreach (var file in fromFiles)
+                {
+                    if (file?.Length > 0)
+                    {
+                        var extension = Path.GetExtension(file.FileName);
 
+                        if (IsValidFile(extension, file.Length))
+                        {
+                            var generalFile = new GeneralFileDto
+                            {
+                                FileName = Guid.NewGuid().ToString(),
+                                FileType = extension,
+                                ContentType = file.ContentType
+                            };
+
+                            using(var stream = new MemoryStream())
+                            {
+                                file.CopyTo(stream);
+                                generalFile.Content = stream.ToArray();
+                                files.Add(generalFile);
+                            }
+                        }
+                    }
+
+                }
+            }
+            return files;
+        }
+
+
+
+        private bool IsValidFile(string extension, long fileSize)
+        {
+            var type = _fileTypesContext.AllowedFileTypes
+                .FirstOrDefault(t => t.FileType == extension);
+            if (type == null)
+                return false;
+            return (fileSize / Math.Pow(10, 6)) <= type.FileSize ? true : false;
+        }
     }
 }
+
+

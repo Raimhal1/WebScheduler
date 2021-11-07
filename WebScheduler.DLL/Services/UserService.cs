@@ -84,7 +84,14 @@ namespace WebScheduler.BLL.Services
                 .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
 
-            return new UserListVm { Users = users };
+            var userListVm = new UserListVm { Users = users };
+
+            for (int i = 0; i < userListVm.Users.Count; i++)
+            {
+                userListVm.Users[i].Events = _mapper.Map<List<EventDto>>(users[i].Events);
+            }
+
+            return userListVm;
         }
 
         public async Task<UserDto> GetByIdAsync(Guid id)
@@ -98,7 +105,9 @@ namespace WebScheduler.BLL.Services
                 throw new NotFoundException(nameof(User), id);
             }
 
-            return _mapper.Map<UserDto>(user);
+            var userDto = _mapper.Map<UserDto>(user);
+            userDto.Events = _mapper.Map<List<EventDto>>(user.Events);
+            return userDto;
         }
     }
 }

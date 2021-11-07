@@ -20,7 +20,9 @@ namespace WebScheduler.BLL
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IFileSettingsService, FileSettingsService>();
-            services.AddScoped<IFileService, FileService>();
+            services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<IEventFileService, EventFileService>();
+            services.AddScoped<IAssesService, AssesService>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
