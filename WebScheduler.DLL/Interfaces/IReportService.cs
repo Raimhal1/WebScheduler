@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -10,8 +11,8 @@ namespace WebScheduler.BLL.Interfaces
 {
     public interface IReportService
     {
-        Task<string> CreateEventsReport(Guid id, string extension);
-        Task<string> CreateEventsMemberReport(Guid id, string extension);
-        Task<string> CreateEventsReportForNextMonth(Guid id, string extension);
+        Task<byte[]> CreateEventsReport(Guid id, string extension, CancellationToken cancellationToken);
+        Task<byte[]> CreateEventsMemberReport(Guid id, string extension, CancellationToken cancellationToken);
+        Task<byte[]> CreateEventsReportForNextMonth(Guid id, string extension, CancellationToken cancellationToken);
     }
 }

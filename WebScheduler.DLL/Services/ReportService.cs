@@ -39,15 +39,15 @@ namespace WebScheduler.BLL.Services
             = (fileContext, context, userContext, roleContext, mapper);
 
         
-        private Dictionary<string, Func<EventListVm, Stream>> ReportDictionary 
-            = new Dictionary<string, Func<EventListVm, Stream>>()
+        private Dictionary<string, Func<EventListVm, byte[]>> ReportDictionary 
+            = new Dictionary<string, Func<EventListVm, byte[]>>()
         {
             { "csv",  CreateCsvReport },
             { "xml",  CreateXMLReport },
         };
 
 
-        private static Stream CreateCsvReport(EventListVm events)
+        private static byte[] CreateCsvReport(EventListVm events)
         {
             using(MemoryStream stream = new MemoryStream())
             {
@@ -57,25 +57,29 @@ namespace WebScheduler.BLL.Services
                     {
                         csv.WriteRecords(events.Events);
                         textWriter.Flush();
-                        return stream;
+                        return stream.ToArray();
                     }
                 }
             }
         }
 
-        private static Stream CreateXMLReport(EventListVm events)
+        private static byte[] CreateXMLReport(EventListVm events)
         {
 
-            XmlSerializer xml = new XmlSerializer(typeof(EventDto));
 
             using(MemoryStream stream = new MemoryStream())
             {
-                xml.Serialize(stream, events.Events);
-                return stream;
+                using (TextWriter textWriter = new StreamWriter(stream))
+                {
+
+                    XmlSerializer xml = new XmlSerializer(typeof(List<EventLookupDto>));
+                    xml.Serialize(stream, events.Events);
+                    return stream.ToArray();
+                }
             }
         }
 
-        public async Task<Stream> CreateEventsReport(Guid id, string extension, CancellationToken cancellationToken)
+        public async Task<byte[]> CreateEventsReport(Guid id, string extension, CancellationToken cancellationToken)
         {
             var role = await _roleContext.Roles
                 .Include(r => r.Users)
@@ -99,6 +103,9 @@ namespace WebScheduler.BLL.Services
                 .ToListAsync(cancellationToken);
             }
 
+            if (eventQuery.Count == 0)
+                throw new Exception(message: "Event list is empty");
+
             var eventListVm = new EventListVm { Events = eventQuery };
 
             for (int i = 0; i < eventListVm.Events.Count; i++)
@@ -109,14 +116,53 @@ namespace WebScheduler.BLL.Services
             return ReportDictionary[extension].Invoke(eventListVm);
         }
 
-        public async Task<string> CreateEventsMemberReport(Guid id, string extension)
+        public async Task<byte[]> CreateEventsMemberReport(Guid id, string extension, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var user = await _userContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+            if (user == null || user.Id == Guid.Empty)
+            {
+                throw new NotFoundException(nameof(User), id);
+            }
+
+            var eventQuery = await _context.Events
+                .Include(e => e.Users)
+                .Where(e => e.Users.Contains(user) && e.UserId != user.Id)
+                .ProjectTo<EventLookupDto>(_mapper.ConfigurationProvider)
+                .ToListAsync(cancellationToken);
+
+
+            if (eventQuery.Count == 0)
+                throw new Exception(message: "Event list is empty");
+
+            var eventListVm = new EventListVm { Events = eventQuery };
+
+            for (int i = 0; i < eventListVm.Events.Count; i++)
+            {
+                eventListVm.Events[i].Users = _mapper.Map<List<UserVm>>(eventQuery[i].Users);
+            }
+            return ReportDictionary[extension].Invoke(eventListVm);
         }
 
-        public async Task<string> CreateEventsReportForNextMonth(Guid id, string extension)
+        public async Task<byte[]> CreateEventsReportForNextMonth(Guid id, string extension, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var now = DateTime.UtcNow;
+            var eventQuery = await _context.Events    
+                .Include(e => e.Users)
+                .Where(e => e.StartEventDate >= now && e.StartEventDate <= now.AddDays(30))
+                .ProjectTo<EventLookupDto>(_mapper.ConfigurationProvider)    
+                .ToListAsync(cancellationToken);
+
+            if (eventQuery.Count == 0)
+                throw new Exception(message: "Event list is empty");
+
+            var eventListVm = new EventListVm { Events = eventQuery };
+
+            for (int i = 0; i < eventListVm.Events.Count; i++)
+            {
+                eventListVm.Events[i].Users = _mapper.Map<List<UserVm>>(eventQuery[i].Users);
+            }
+
+            return ReportDictionary[extension].Invoke(eventListVm);
         }
     }
 }

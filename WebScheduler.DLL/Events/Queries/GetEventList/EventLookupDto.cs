@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using WebScheduler.BLL.DtoModels;
 using WebScheduler.BLL.Mapping;
 using WebScheduler.Domain.Models;
@@ -19,6 +20,7 @@ namespace WebScheduler.BLL.Events.Queries.GetEventList
         public string ShortDescription { get; set; }
         public string Description { get; set; }
         public Status Status { get; set; }
+        [XmlIgnore]
         public IList<UserVm> Users { get; set; }
         public void Mapping(Profile profile)
         {
