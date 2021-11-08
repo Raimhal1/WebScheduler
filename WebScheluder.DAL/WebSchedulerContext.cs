@@ -8,7 +8,8 @@ using System.Collections.Generic;
 namespace WebScheluder.DAL
 {
     public class WebSchedulerContext : DbContext, IEventDbContext, IUserDbContext,
-        IRoleDbContext, IFileDbContext, IAllowedFileTypeDbContext, IEventFileDbContext
+        IRoleDbContext, IFileDbContext, IAllowedFileTypeDbContext, IEventFileDbContext,
+        IReportDbContext
     {
         public WebSchedulerContext(DbContextOptions<WebSchedulerContext> options)
             : base(options)
@@ -21,6 +22,7 @@ namespace WebScheluder.DAL
         public DbSet<Event> Events { get; set; }
         public DbSet<EventFile> EventFiles { get; set; }
         public DbSet<AllowedFileType> AllowedFileTypes { get; set; }
+        public DbSet<Report> Reports { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,6 +33,7 @@ namespace WebScheluder.DAL
             modelBuilder.ApplyConfiguration(new RefreshTokenEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new EventFileTypeConfiguration());
             modelBuilder.ApplyConfiguration(new AllowedFileTypeTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new ReportTypeConfiguration());
 
             base.OnModelCreating(modelBuilder);
 

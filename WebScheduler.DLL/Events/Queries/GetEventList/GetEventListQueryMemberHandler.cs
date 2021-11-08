@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,25 +27,12 @@ namespace WebScheduler.BLL.Events.Queries.GetEventList
 
         public async Task<EventListVm> Handle(GetEventListQueryMember request, CancellationToken cancellationToken)
         {
-            var user = await _userContext.Users.FirstOrDefaultAsync(u => u.Id == request.UserId);
-            if (user == null || user.Id == Guid.Empty)
-            {
-                throw new NotFoundException(nameof(User), request.UserId);
-            }
 
-            var eventQuery = await _context.Events
-                .Include(e => e.Users)
-                .Where(e => e.Users.Contains(user) && e.UserId != user.Id)
-                .ProjectTo<EventLookupDto>(_mapper.ConfigurationProvider)
-                .ToListAsync(cancellationToken);
+            Expression<Func<Event, bool>> expression = e =>
+                e.Users.Any(u => u.Id == request.UserId) && e.UserId != request.UserId;
 
-            var eventListVm = new EventListVm { Events = eventQuery };
-
-            for (int i = 0; i < eventListVm.Events.Count; i++)
-            {
-                eventListVm.Events[i].Users = _mapper.Map<List<UserVm>>(eventQuery[i].Users);
-            }
-            return eventListVm;
+            var eventQuery = await LookUp.GetLookupEventList(_context, _mapper, expression, cancellationToken);
+            return new EventListVm { Events = eventQuery};
         }
     }
 }

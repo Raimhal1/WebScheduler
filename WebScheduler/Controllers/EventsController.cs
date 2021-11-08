@@ -30,7 +30,7 @@ namespace WebScheduler.Controllers
 
 
         [HttpGet]
-        [Route("api/events")]
+        [Route("api/my/events")]
         public async Task<ActionResult<EventListVm>> GetEvents()
         {
             var query = new GetEventListQuery
@@ -42,7 +42,7 @@ namespace WebScheduler.Controllers
         }
 
         [HttpGet]
-        [Route("api/events/member")]
+        [Route("api/events")]
         public async Task<ActionResult<EventListVm>> GetEventsMember()
         {
             var query = new GetEventListQueryMember

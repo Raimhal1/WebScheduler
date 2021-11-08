@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,46 +30,34 @@ namespace WebScheduler.BLL.Events.Queries.GetEventDetails
 
         public async Task<EventDetailsVm> Handle(GetEventDetailsQuery request, CancellationToken cancellationToken)
         {
-            var user = await _userContext.Users
-                .Include(u => u.Roles)
-                .FirstOrDefaultAsync(u => u.Id == request.UserId);
-
-            if (user == null || user.Id == Guid.Empty)
-            {
-                throw new NotFoundException(nameof(User), request.UserId);
-            }
             Event entity;
 
             var role = await _roleContext.Roles
-                .FirstOrDefaultAsync(r => r.Name == AdminRoleName);
+                .Include(r => r.Users)
+                .FirstOrDefaultAsync(r => r.Name == AdminRoleName
+                && r.Users.Any(u => u.Id == request.UserId));
 
-            if(user.Roles.Contains(role))
+            Expression<Func<Event, bool>> expression;
+
+            if (role == null)
             {
-                entity = await _context.Events
-                .Include(e => e.Users)
-                .FirstOrDefaultAsync(e => e.Id == request.Id, cancellationToken);
+                expression = e => e.UserId == request.UserId
+                || e.Users.Any(u => e.UserId == request.UserId);
             }
             else
-            {
-                entity = await _context.Events
-               .Include(e => e.Users)
-               .Where(e => e.UserId == request.UserId || e.Users.Contains(user))
-               .FirstOrDefaultAsync(e => e.Id == request.Id, cancellationToken);
-            }
+                expression = e => true;
+
+            entity = await _context.Events
+              .Include(e => e.Users)
+              .Where(expression)
+              .FirstOrDefaultAsync(e => e.Id == request.Id, cancellationToken);
 
             if (entity == null)
-            {
                 throw new NotFoundException(nameof(Event), request.Id);
-            }
-
-
-            //entity.Status = entity.StartEventDate.UpdateStatus(entity.EndEventDate);
-
-            _context.Events.Update(entity);
-            await _context.SaveChangesAsync(cancellationToken);
 
             var eventVm = _mapper.Map<EventDetailsVm>(entity);
             eventVm.Users = _mapper.Map<List<UserVm>>(entity.Users);
+
             return eventVm;
         }
     }

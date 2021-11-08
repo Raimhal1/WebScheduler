@@ -23,6 +23,7 @@ namespace WebScheduler.Domain.Models
 
         public virtual ICollection<Event> Events { get; set; }
         public virtual ICollection<RefreshToken> RefreshTokens { get; set;  }
+        public virtual ICollection<Report> Reports { get; set;  }
     }
 }
 

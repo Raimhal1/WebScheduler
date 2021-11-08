@@ -27,6 +27,8 @@ namespace WebScheluder.DAL
                 provider.GetService<WebSchedulerContext>());
             services.AddScoped<IEventFileDbContext>(provider =>
                 provider.GetService<WebSchedulerContext>());
+            services.AddScoped<IReportDbContext>(provider =>
+                provider.GetService<WebSchedulerContext>());
 
             return services;
         }

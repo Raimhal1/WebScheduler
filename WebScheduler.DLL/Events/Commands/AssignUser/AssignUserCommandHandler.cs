@@ -26,18 +26,15 @@ namespace WebScheduler.BLL.Events.Commands.AssignUser
                 .FirstOrDefaultAsync(e => e.Id == request.Id, cancellationToken);
 
             if (entity == null)
-            {
                 throw new NotFoundException(nameof(Event), request.Id);
-            }
-            else if (entity.UserId != request.UserId)
+            else if (entity.UserId != request.UserId && !entity.Users.Any(u => u.Id == request.UserId))
             {
                 var user = await _users.Users
                     .FindAsync(request.UserId);
 
                 if (user == null || user.Id == Guid.Empty)
-                {
                     throw new NotFoundException(nameof(User), request.UserId);
-                }
+
                 entity.Users.Add(user);
             }
 
