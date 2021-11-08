@@ -6,48 +6,46 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using WebScheduler.BLL.Interfaces;
-using WebScheduler.BLL.Validation.Exceptions;
 using WebScheduler.Domain.Interfaces;
 using WebScheduler.Domain.Models;
 using CsvHelper;
 using System.Threading;
 using WebScheduler.BLL.Events.Queries.GetEventList;
 using System.Globalization;
-using System.Xml;
 using System.Xml.Serialization;
 using WebScheduler.BLL.DtoModels;
-using MediatR;
-using AutoMapper.QueryableExtensions;
+using System.Linq.Expressions;
+using WebScheduler.BLL.Events;
+using WebScheduler.BLL.Validation.Exceptions;
 
 namespace WebScheduler.BLL.Services
 {
 
     public class ReportService : IReportService
     {
-        private readonly IFileDbContext _fileContext;
         private readonly IEventDbContext _context;
-        private readonly IUserDbContext _userContext;
         private readonly IRoleDbContext _roleContext;
+        private readonly IReportDbContext _reportContext;
+        private readonly IUserDbContext _userContext;
         private readonly IMapper _mapper;
         private string AdminRoleName = "Admin";
-        public ReportService(IFileDbContext fileContext, IEventDbContext context,
-            IUserDbContext userContext, IRoleDbContext roleContext, IMapper mapper) =>
-            (_fileContext, _context, _userContext, _roleContext, _mapper)
-            = (fileContext, context, userContext, roleContext, mapper);
+        public ReportService( IEventDbContext context, IRoleDbContext roleContext,
+            IReportDbContext reportContext, IUserDbContext userContext, IMapper mapper) =>
+            (_context, _roleContext, _userContext, _reportContext, _mapper)
+            = (context, roleContext, userContext, reportContext, mapper);
 
         
-        private Dictionary<string, Func<EventListVm, byte[]>> ReportDictionary 
-            = new Dictionary<string, Func<EventListVm, byte[]>>()
+        private Dictionary<string, Func<List<EventLookupDto>, byte[]>> ReportDictionary 
+            = new Dictionary<string, Func<List<EventLookupDto>, byte[]>>()
         {
             { "csv",  CreateCsvReport },
             { "xml",  CreateXMLReport },
         };
 
 
-        private static byte[] CreateCsvReport(EventListVm events)
+        private static byte[] CreateCsvReport(List<EventLookupDto> events)
         {
             using(MemoryStream stream = new MemoryStream())
             {
@@ -55,7 +53,7 @@ namespace WebScheduler.BLL.Services
                 {
                     using (CsvWriter csv = new CsvWriter(textWriter, CultureInfo.InvariantCulture))
                     {
-                        csv.WriteRecords(events.Events);
+                        csv.WriteRecords(events);
                         textWriter.Flush();
                         return stream.ToArray();
                     }
@@ -63,106 +61,82 @@ namespace WebScheduler.BLL.Services
             }
         }
 
-        private static byte[] CreateXMLReport(EventListVm events)
+        private static byte[] CreateXMLReport(List<EventLookupDto> events)
         {
-
-
             using(MemoryStream stream = new MemoryStream())
             {
-                using (TextWriter textWriter = new StreamWriter(stream))
-                {
-
                     XmlSerializer xml = new XmlSerializer(typeof(List<EventLookupDto>));
-                    xml.Serialize(stream, events.Events);
+                    xml.Serialize(stream, events);
                     return stream.ToArray();
-                }
             }
         }
 
-        public async Task<byte[]> CreateEventsReport(Guid id, string extension, CancellationToken cancellationToken)
+        public async Task<ReportDto> CreateEventsReport(Guid id, string extension, CancellationToken cancellationToken)
         {
             var role = await _roleContext.Roles
                 .Include(r => r.Users)
-                .FirstOrDefaultAsync(r => r.Name == AdminRoleName);
+                .FirstOrDefaultAsync(r => r.Name == AdminRoleName 
+                && r.Users.Any(u => u.Id == id));
 
-            List<EventLookupDto> eventQuery;
+            Expression<Func<Event, bool>> expression;
 
             if (role == null)
-            {
-                eventQuery = await _context.Events
-                .Include(e => e.Users)
-                .Where(e => e.UserId == id)
-                .ProjectTo<EventLookupDto>(_mapper.ConfigurationProvider)
-                .ToListAsync(cancellationToken);
-            }
+                expression = e => e.UserId == id;
             else
-            {
-                eventQuery = await _context.Events
-                .Include(e => e.Users)
-                .ProjectTo<EventLookupDto>(_mapper.ConfigurationProvider)
-                .ToListAsync(cancellationToken);
-            }
+                expression = e => true;
 
-            if (eventQuery.Count == 0)
-                throw new Exception(message: "Event list is empty");
-
-            var eventListVm = new EventListVm { Events = eventQuery };
-
-            for (int i = 0; i < eventListVm.Events.Count; i++)
-            {
-                eventListVm.Events[i].Users = _mapper.Map<List<UserVm>>(eventQuery[i].Users);
-            }
-
-            return ReportDictionary[extension].Invoke(eventListVm);
+            return await GetReportTemplate(_context, _mapper, expression, extension, id, cancellationToken);
         }
 
-        public async Task<byte[]> CreateEventsMemberReport(Guid id, string extension, CancellationToken cancellationToken)
+        public async Task<ReportDto> CreateEventsMemberReport(Guid id, string extension, CancellationToken cancellationToken)
         {
-            var user = await _userContext.Users.FirstOrDefaultAsync(u => u.Id == id);
-            if (user == null || user.Id == Guid.Empty)
-            {
-                throw new NotFoundException(nameof(User), id);
-            }
+            Expression<Func<Event, bool>> expression = e =>
+                e.Users.Any(u => u.Id == id) && e.UserId != id;
 
-            var eventQuery = await _context.Events
-                .Include(e => e.Users)
-                .Where(e => e.Users.Contains(user) && e.UserId != user.Id)
-                .ProjectTo<EventLookupDto>(_mapper.ConfigurationProvider)
-                .ToListAsync(cancellationToken);
-
-
-            if (eventQuery.Count == 0)
-                throw new Exception(message: "Event list is empty");
-
-            var eventListVm = new EventListVm { Events = eventQuery };
-
-            for (int i = 0; i < eventListVm.Events.Count; i++)
-            {
-                eventListVm.Events[i].Users = _mapper.Map<List<UserVm>>(eventQuery[i].Users);
-            }
-            return ReportDictionary[extension].Invoke(eventListVm);
+            return await GetReportTemplate(_context, _mapper, expression, extension, id, cancellationToken);
         }
 
-        public async Task<byte[]> CreateEventsReportForNextMonth(Guid id, string extension, CancellationToken cancellationToken)
+        public async Task<ReportDto> CreateEventsReportForNextMonth(Guid id, string extension, CancellationToken cancellationToken)
         {
             var now = DateTime.UtcNow;
-            var eventQuery = await _context.Events    
-                .Include(e => e.Users)
-                .Where(e => e.StartEventDate >= now && e.StartEventDate <= now.AddDays(30))
-                .ProjectTo<EventLookupDto>(_mapper.ConfigurationProvider)    
-                .ToListAsync(cancellationToken);
 
-            if (eventQuery.Count == 0)
-                throw new Exception(message: "Event list is empty");
+            Expression<Func<Event,bool>> expression = e =>
+                e.StartEventDate >= now 
+                && e.StartEventDate <= now.AddDays(30);
 
-            var eventListVm = new EventListVm { Events = eventQuery };
-
-            for (int i = 0; i < eventListVm.Events.Count; i++)
-            {
-                eventListVm.Events[i].Users = _mapper.Map<List<UserVm>>(eventQuery[i].Users);
-            }
-
-            return ReportDictionary[extension].Invoke(eventListVm);
+            return await GetReportTemplate(_context, _mapper, expression, extension, id, cancellationToken);
         }
+
+        private async Task<ReportDto> GetReportTemplate(IEventDbContext _context, IMapper _mapper,
+            Expression<Func<Event, bool>> expression, string extension, Guid userId, CancellationToken cancellationToken)
+        {
+            var eventQuery = await LookUp.GetLookupEventList(_context, _mapper, expression, cancellationToken);
+
+            var content = ReportDictionary[extension].Invoke(eventQuery);
+            var now = DateTime.UtcNow;
+            var fileName = $"user_{userId}_events_{now}" + $".{extension}";
+            var contentType = $"files/{extension}";
+
+            var report = new Report
+            {
+                Id = Guid.NewGuid(),
+                FileName = fileName,
+                ContentType = contentType,
+                Content = content
+            };
+
+
+            var user = await _userContext.Users
+                .Include(u => u.Reports)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null)
+                throw new NotFoundException(nameof(User), userId);
+            report.UserId = user.Id;
+
+            await _reportContext.Reports.AddAsync(report);
+            await _reportContext.SaveChangesAsync(cancellationToken);
+            return _mapper.Map<ReportDto>(report);
+        }
+
     }
 }

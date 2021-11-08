@@ -9,12 +9,12 @@ using WebScheduler.Domain.Models;
 
 namespace WebScheluder.DAL.EntityTypeConfigurations
 {
-    public class EventFileTypeConfiguration : IEntityTypeConfiguration<EventFile>
+    public class ReportTypeConfiguration : IEntityTypeConfiguration<Report>
     {
-        public void Configure(EntityTypeBuilder<EventFile> builder)
+        public void Configure(EntityTypeBuilder<Report> builder)
         {
-            builder.ToTable("EventFiles").HasKey(ef => ef.Id);
-            builder.HasOne(ef => ef.Event).WithMany(e => e.EventFiles).HasForeignKey(ef => ef.EventId);
+            builder.ToTable("Reports").HasKey(r => r.Id);
+            builder.HasOne(r => r.User).WithMany(u => u.Reports);
         }
     }
 }

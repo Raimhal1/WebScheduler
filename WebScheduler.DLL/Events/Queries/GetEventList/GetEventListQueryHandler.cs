@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,34 +29,24 @@ namespace WebScheduler.BLL.Events.Queries.GetEventList
         public async Task<EventListVm> Handle(GetEventListQuery request, CancellationToken cancellationToken)
         {
             var role = await _roleContext.Roles
-                .Include(r => r.Users)
-                .FirstOrDefaultAsync(r => r.Name == AdminRoleName);
+               .Include(r => r.Users)
+               .FirstOrDefaultAsync(r => r.Name == AdminRoleName
+               && r.Users.Any(u => u.Id == request.UserId));
 
-            List<EventLookupDto> eventQuery;
+            Expression<Func<Event, bool>> expression;
 
-            if(role == null)
-            {
-                eventQuery = await _context.Events
-                .Include(e => e.Users)
-                .Where(e => e.UserId == request.UserId)
-                .ProjectTo<EventLookupDto>(_mapper.ConfigurationProvider)
-                .ToListAsync(cancellationToken);
-            }
+            if (role == null)
+                expression = e => e.UserId == request.UserId;
             else
-            {
-                eventQuery = await _context.Events
-                .Include(e => e.Users)
-                .ProjectTo<EventLookupDto>(_mapper.ConfigurationProvider)
-                .ToListAsync(cancellationToken);
-            }
+                expression = e => true;
 
-            var eventListVm = new EventListVm { Events = eventQuery };
+            var eventQuery = await LookUp.GetLookupEventList(_context, _mapper, expression, cancellationToken);
 
-            for(int i = 0; i < eventListVm.Events.Count; i++)
+            for(int i = 0; i < eventQuery.Count; i++)
             {
-                eventListVm.Events[i].Users = _mapper.Map<List<UserVm>>(eventQuery[i].Users);
+                eventQuery[i].Users = _mapper.Map<List<UserVm>>(eventQuery[i].Users);
             }
-            return eventListVm;
+            return new EventListVm {Events = eventQuery };
         }
     }
 }

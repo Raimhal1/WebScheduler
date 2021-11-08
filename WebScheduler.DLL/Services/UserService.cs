@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using WebScheduler.BLL.DtoModels;
 using WebScheduler.BLL.Interfaces;
 using WebScheduler.BLL.Validation.Exceptions;
-using WebScheduler.BLL.Validation.Serializer;
 using WebScheduler.Domain.Interfaces;
 using WebScheduler.Domain.Models;
 
@@ -35,6 +34,7 @@ namespace WebScheduler.BLL.Services
             var role = await _roleContext.Roles.FirstOrDefaultAsync(r => r.Name == "User");
             user.Roles = new List<Role> { role };
             user.RefreshTokens = new List<RefreshToken>();
+            user.Reports = new List<Report>();
 
             await _userContext.Users.AddAsync(user, cancellationToken);
             await _userContext.SaveChangesAsync(cancellationToken);
