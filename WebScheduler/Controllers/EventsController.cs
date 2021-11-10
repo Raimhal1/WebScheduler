@@ -13,7 +13,8 @@ using WebScheduler.BLL.Events.Queries.GetEventDetails;
 using WebScheduler.BLL.Events.Queries.GetEventList;
 using WebScheduler.BLL.Events.DTOs;
 using Microsoft.AspNetCore.Authorization;
-
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
 
 namespace WebScheduler.Controllers
 {
@@ -72,10 +73,11 @@ namespace WebScheduler.Controllers
 
         [HttpPost]
         [Route("api/events")]
-        public async Task<ActionResult<Guid>> CreateEvent([FromBody] CreateEventDto createEventDto)
+        public async Task<ActionResult<Guid>> CreateEvent([FromBody] CreateEventDto createEventDto, IList<IFormFile> fromFiles)
         {
             var command = _mapper.Map<CreateEventCommand>(createEventDto);
             command.UserId = UserId;
+            command.formFiles = fromFiles;
             var eventId = await Mediator.Send(command);
             return Ok(eventId);
         }
@@ -83,10 +85,11 @@ namespace WebScheduler.Controllers
 
         [HttpPut]
         [Route("api/events/update")]
-        public async Task<IActionResult> UpdateEvent([FromBody] UpdateEventDto updateEventDto)
+        public async Task<IActionResult> UpdateEvent([FromBody] UpdateEventDto updateEventDto, IList<IFormFile> fromFiles)
         {
             var command = _mapper.Map<UpdateEventCommand>(updateEventDto);
             command.UserId = UserId;
+            command.fromFiles = fromFiles;
             await Mediator.Send(command);
             return NoContent();
         }

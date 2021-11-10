@@ -21,7 +21,6 @@ namespace WebScheduler.BLL.Events.Commands.UpdateEvent
         public string Description { get; set; }
         public Status Status { get; set; }
         public IList<User> Users { get; set; }
-        public virtual ICollection<EventFile> EventFiles { get; set; }
-        public IList<IFormFile> formFiles { get; set; }
+        public IList<IFormFile> fromFiles { get; set; }
     }
 }

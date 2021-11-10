@@ -35,7 +35,7 @@ namespace WebScheduler.BLL.Events.Commands.UpdateEvent
             entity.ShortDescription = request.ShortDescription;
             entity.Description = request.Description;
 
-            var files = _fileService.GenerateEventFiles(request.formFiles);
+            var files = _fileService.GenerateEventFiles(request.fromFiles);
             if (files != null)
                 entity.EventFiles = _mapper.Map<List<EventFile>>(files);
 
