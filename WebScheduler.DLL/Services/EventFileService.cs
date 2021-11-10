@@ -27,9 +27,10 @@ namespace WebScheduler.BLL.Services
             (_context, _eventFilesContext, _mapper, _fileSettingsService) 
             = (context, eventFileContext, mapper, fileSettingsService);
 
-        public async Task<EventFileDto> GetFile(Guid fileId)
+        public async Task<EventFileDto> GetFile(Guid fileId, Guid eventId)
         {
-            var file = await _eventFilesContext.EventFiles.FirstOrDefaultAsync(f => f.Id == fileId);
+            var file = await _eventFilesContext.EventFiles
+                .FirstOrDefaultAsync(f => f.Id == fileId && f.EventId == eventId);
 
             if(file == null)
                 throw new NotFoundException(nameof(EventFile), fileId); 
@@ -37,13 +38,13 @@ namespace WebScheduler.BLL.Services
             return  _mapper.Map<EventFileDto>(file);
         }
 
-        public async Task ChangeFileName(Guid fileId, string Name, CancellationToken cancellationToken)
+        public async Task ChangeFileName(Guid fileId,  Guid eventId, string Name, CancellationToken cancellationToken)
         {
             if (String.IsNullOrEmpty(Name))
                 return;
 
             var file = await _eventFilesContext.EventFiles
-                .FirstOrDefaultAsync(f => f.Id == fileId);
+                .FirstOrDefaultAsync(f => f.Id == fileId && f.EventId == eventId);
 
             if(file == null)
                 throw new NotFoundException(nameof(EventFile), fileId);
@@ -87,16 +88,12 @@ namespace WebScheduler.BLL.Services
         }
 
 
-        public List<EventFileDto> GenerateEventFiles(IList<IFormFile> fromFiles)
+        public async Task<List<EventFileDto>> GenerateEventFiles(IList<IFormFile> fromFiles)
         {
-            var files = _fileSettingsService.CreateGeneralFiles(fromFiles);
+            var files = await _fileSettingsService.CreateGeneralFiles(fromFiles);
             if (files == null)
                 throw new NullReferenceException();
             return _mapper.Map<List<EventFileDto>>(files);
         }
-
-
-
-
     }
 }

@@ -19,12 +19,12 @@ namespace WebScheduler.Controllers
             (_eventFileService, _assesService) = (eventFileServvice, assesService);
 
         [HttpGet("id")]
-        [Route("api/events/files/{id}")]
-        public async Task<IActionResult> GetEventFile(Guid id)
+        [Route("api/events/{eventId}/files/{id}")]
+        public async Task<IActionResult> GetEventFile(Guid id, Guid eventId)
         {
-            if(_assesService.HasAssesToEventFile(UserId, id)){
+            if(await _assesService.HasAssesToEventFile(UserId, id)){
 
-                var file = await _eventFileService.GetFile(id);
+                var file = await _eventFileService.GetFile(id, eventId);
                 return File(file.Content, file.ContentType);
             }
             return StatusCode(401);
@@ -32,13 +32,13 @@ namespace WebScheduler.Controllers
 
 
         [HttpPut("{id}")]
-        [Route("api/events/files/{id}/change-name")]
-        public async Task<IActionResult> ChangeFileName(Guid id, [FromForm] string Name, CancellationToken cancellationToken)
+        [Route("api/events/{eventId}/files/{id}/change-name")]
+        public async Task<IActionResult> ChangeFileName(Guid id, Guid eventId,[FromForm] string Name, CancellationToken cancellationToken)
         {
 
-            if (_assesService.HasAssesToEventFile(UserId, id))
+            if (await _assesService.HasAssesToEvent(UserId, eventId))
             {
-                await _eventFileService.ChangeFileName(id, Name, cancellationToken);
+                await _eventFileService.ChangeFileName(id, eventId, Name, cancellationToken);
                 return NoContent();
             }
 
@@ -49,7 +49,7 @@ namespace WebScheduler.Controllers
         [Route("api/events/{eventId}/files/{id}/delete")]
         public async Task<IActionResult> DeleteFileFromEvent(Guid id, Guid eventId, CancellationToken cancellationToken)
         {
-            if(_assesService.HasAssesToEventFile(UserId, id))
+            if(await _assesService.HasAssesToEvent(UserId, eventId))
             {
                 await _eventFileService.DeleteFileFromEvent(id, eventId, cancellationToken);
                 return NoContent();
@@ -63,7 +63,7 @@ namespace WebScheduler.Controllers
         [Route("api/events/files/{id}/delete")]
         public async Task<IActionResult> DeleteFile(Guid id, CancellationToken cancellationToken)
         {
-            if (_assesService.HasAssesToEventFile(UserId, id))
+            if (await _assesService.HasAssesToEventFile(UserId, id))
             {
                 await _eventFileService.DeleteFile(id, cancellationToken);
                 return NoContent();

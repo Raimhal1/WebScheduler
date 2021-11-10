@@ -17,18 +17,18 @@ namespace WebScheduler.BLL.Services
         public AssesService(IUserDbContext userContext, IEventDbContext context) =>
             (_userContext, _context) = (userContext, context);
 
-        public bool HasAssesToEvent(Guid userId, Guid eventId)
+        public async Task<bool> HasAssesToEvent(Guid userId, Guid eventId)
         {
-            var user = _userContext.Users
+            var user = await _userContext.Users
                 .Include(u => u.Events)
                 .FirstOrDefaultAsync(u => u.Id == userId 
                 && u.Events.Any(e => e.Id == eventId));
             return user == null ? false : true;
         }
 
-        public bool HasAssesToEventFile(Guid userId, Guid fileId)
+        public async Task<bool> HasAssesToEventFile(Guid userId, Guid fileId)
         {
-            var Event = _context.Events
+            var Event = await _context.Events
                 .Include(e => e.Users)
                 .Include(e => e.EventFiles)
                 .FirstOrDefaultAsync(e =>

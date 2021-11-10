@@ -65,7 +65,7 @@ namespace WebScheduler.BLL.Services
             }
         }
 
-        public List<GeneralFileDto> CreateGeneralFiles(IList<IFormFile> fromFiles)
+        public async Task<List<GeneralFileDto>> CreateGeneralFiles(IList<IFormFile> fromFiles)
         {
             var files = new List<GeneralFileDto>();
             if (fromFiles != null || fromFiles.Count != default)
@@ -76,7 +76,7 @@ namespace WebScheduler.BLL.Services
                     {
                         var extension = Path.GetExtension(file.FileName);
 
-                        if (IsValidFile(extension, file.Length))
+                        if (await IsValidFile(extension, file.Length))
                         {
                             var generalFile = new GeneralFileDto
                             {
@@ -101,10 +101,10 @@ namespace WebScheduler.BLL.Services
 
 
 
-        private bool IsValidFile(string extension, long fileSize)
+        private async Task<bool> IsValidFile(string extension, long fileSize)
         {
-            var type = _fileTypesContext.AllowedFileTypes
-                .FirstOrDefault(t => t.FileType == extension);
+            var type = await _fileTypesContext.AllowedFileTypes
+                .FirstOrDefaultAsync(t => t.FileType == extension);
             if (type == null)
                 return false;
             return (fileSize / Math.Pow(10, 6)) <= type.FileSize ? true : false;

@@ -8,7 +8,7 @@ namespace WebScheduler.BLL.Interfaces
 {
     public interface IAssesService
     {
-        bool HasAssesToEvent(Guid userId, Guid eventId);
-        bool HasAssesToEventFile(Guid userId, Guid fileId);
+        Task<bool> HasAssesToEvent(Guid userId, Guid eventId);
+        Task<bool> HasAssesToEventFile(Guid userId, Guid fileId);
     }
 }
