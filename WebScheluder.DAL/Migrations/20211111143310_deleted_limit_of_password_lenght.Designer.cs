@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebScheluder.DAL;
 
 namespace WebScheluder.DAL.Migrations
 {
     [DbContext(typeof(WebSchedulerContext))]
-    partial class WebSchedulerContextModelSnapshot : ModelSnapshot
+    [Migration("20211111143310_deleted_limit_of_password_lenght")]
+    partial class deleted_limit_of_password_lenght
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

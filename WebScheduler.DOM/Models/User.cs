@@ -19,6 +19,7 @@ namespace WebScheduler.Domain.Models
 
         [DataType(DataType.Password)]
         public string Password { get; set; }
+        public string Salt { get; set; }
         public IList<Role> Roles { get; set; }
 
         public virtual ICollection<Event> Events { get; set; }

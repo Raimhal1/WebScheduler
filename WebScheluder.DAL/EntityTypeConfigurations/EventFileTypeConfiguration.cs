@@ -14,6 +14,7 @@ namespace WebScheluder.DAL.EntityTypeConfigurations
         public void Configure(EntityTypeBuilder<EventFile> builder)
         {
             builder.ToTable("EventFiles").HasKey(ef => ef.Id);
+            builder.HasIndex(e => e.Id).IsUnique();
             builder.HasOne(ef => ef.Event).WithMany(e => e.EventFiles).HasForeignKey(ef => ef.EventId);
         }
     }

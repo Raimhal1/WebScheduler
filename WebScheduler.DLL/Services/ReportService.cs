@@ -91,7 +91,7 @@ namespace WebScheduler.BLL.Services
         public async Task<ReportDto> CreateEventsMemberReport(Guid id, string extension, CancellationToken cancellationToken)
         {
             Expression<Func<Event, bool>> expression = e =>
-                e.Users.Any(u => u.Id == id) && e.UserId != id;
+                e.Users.Any(u => u.Id == id && u.Id != e.UserId);
 
             return await GetReportTemplate(_context, _mapper, expression, extension, id, cancellationToken);
         }

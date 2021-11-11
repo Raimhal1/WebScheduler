@@ -29,7 +29,7 @@ namespace WebScheduler.Controllers
             return Ok(users);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
         [Route("api/users/{id}")]
         [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<UserDto>> GetUser(Guid id)
@@ -50,7 +50,7 @@ namespace WebScheduler.Controllers
         }
 
         [Authorize]
-        [HttpPut("{id}")]
+        [HttpPut]
         [Route("api/users/{id}/update")]
         public async Task<IActionResult> UpdateUser(Guid id, RegisterUserModel model,
             CancellationToken cancellationToken)
@@ -59,8 +59,9 @@ namespace WebScheduler.Controllers
             return NoContent();
         }
 
+
         [Authorize(Roles = "Admin")]
-        [HttpDelete("{id}")]
+        [HttpDelete]
         [Route("api/users/{id}/delete")]
         public async Task<IActionResult> DeleteUser(Guid id, CancellationToken cancellationToken)
         {

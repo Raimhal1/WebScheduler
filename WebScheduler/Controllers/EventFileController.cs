@@ -18,7 +18,7 @@ namespace WebScheduler.Controllers
         public EventFileController(IEventFileService eventFileServvice, IAssesService assesService) =>
             (_eventFileService, _assesService) = (eventFileServvice, assesService);
 
-        [HttpGet("id")]
+        [HttpGet]
         [Route("api/events/{eventId}/files/{id}")]
         public async Task<IActionResult> GetEventFile(Guid id, Guid eventId)
         {
@@ -31,7 +31,7 @@ namespace WebScheduler.Controllers
         }
 
 
-        [HttpPut("{id}")]
+        [HttpPut]
         [Route("api/events/{eventId}/files/{id}/change-name")]
         public async Task<IActionResult> ChangeFileName(Guid id, Guid eventId,[FromForm] string Name, CancellationToken cancellationToken)
         {
@@ -58,7 +58,7 @@ namespace WebScheduler.Controllers
         }
 
 
-        [HttpDelete("{id}")]
+        [HttpDelete]
         [Authorize(Roles ="Admin")]
         [Route("api/events/files/{id}/delete")]
         public async Task<IActionResult> DeleteFile(Guid id, CancellationToken cancellationToken)

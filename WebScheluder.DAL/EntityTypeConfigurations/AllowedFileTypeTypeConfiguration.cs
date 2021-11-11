@@ -14,6 +14,7 @@ namespace WebScheluder.DAL.EntityTypeConfigurations
         public void Configure(EntityTypeBuilder<AllowedFileType> builder)
         {
             builder.ToTable("AllowedFileTypes").HasKey(ef => ef.Id);
+            builder.HasIndex(e => e.Id).IsUnique();
         }
     }
 }

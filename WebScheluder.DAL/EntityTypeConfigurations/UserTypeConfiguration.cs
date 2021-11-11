@@ -14,8 +14,9 @@ namespace WebScheluder.DAL.EntityTypeConfigurations
         public void Configure(EntityTypeBuilder<User> builder)
         {
             builder.ToTable("Users").HasKey(p => p.Id);
+            builder.HasIndex(p => new { p.Id, p.Email }).IsUnique();
             builder.Property(p => p.Email).IsRequired();
-            builder.Property(p => p.Password).IsRequired().HasMaxLength(20);
+            builder.Property(p => p.Password).IsRequired();
         }
     }
 }

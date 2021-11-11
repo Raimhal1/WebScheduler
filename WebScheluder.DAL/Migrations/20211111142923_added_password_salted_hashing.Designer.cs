@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebScheluder.DAL;
 
 namespace WebScheluder.DAL.Migrations
 {
     [DbContext(typeof(WebSchedulerContext))]
-    partial class WebSchedulerContextModelSnapshot : ModelSnapshot
+    [Migration("20211111142923_added_password_salted_hashing")]
+    partial class added_password_salted_hashing
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -238,7 +240,8 @@ namespace WebScheluder.DAL.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("Salt")
                         .HasColumnType("nvarchar(max)");
