@@ -41,7 +41,7 @@ namespace WebScheduler.Controllers
 
         }
 
-        [HttpPut("{id}")]
+        [HttpPut]
         [Route("api/file-settings/{id}/update")]
         public async Task<IActionResult> ChangeFileType(int id, AllowedFileTypeDto fileTypeDto,
             CancellationToken cancellationToken)

@@ -28,9 +28,7 @@ namespace WebScheduler.Controllers
             var tokens = await _accountService.Authenticate(authenticateRequest, GetIp(), cancellationToken);
 
             if(tokens == null)
-            {
                 return BadRequest(new { message = "Username or password is incorrect" });
-            }
 
             SetTokenCookie(tokens.RefreshToken);
             return Ok(tokens);

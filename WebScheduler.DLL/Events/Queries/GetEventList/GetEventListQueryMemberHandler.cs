@@ -28,8 +28,8 @@ namespace WebScheduler.BLL.Events.Queries.GetEventList
         public async Task<EventListVm> Handle(GetEventListQueryMember request, CancellationToken cancellationToken)
         {
 
-            Expression<Func<Event, bool>> expression = e =>
-                e.Users.Any(u => u.Id == request.UserId) && e.UserId != request.UserId;
+            Expression<Func<Event, bool>> expression = e => 
+                e.Users.Any(u => u.Id == request.UserId && u.Id != e.UserId);
 
             var eventQuery = await LookUp.GetLookupEventList(_context, _mapper, expression, cancellationToken);
             return new EventListVm { Events = eventQuery};

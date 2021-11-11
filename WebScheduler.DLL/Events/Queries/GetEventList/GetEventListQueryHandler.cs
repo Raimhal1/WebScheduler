@@ -28,6 +28,7 @@ namespace WebScheduler.BLL.Events.Queries.GetEventList
 
         public async Task<EventListVm> Handle(GetEventListQuery request, CancellationToken cancellationToken)
         {
+            
             var role = await _roleContext.Roles
                .Include(r => r.Users)
                .FirstOrDefaultAsync(r => r.Name == AdminRoleName

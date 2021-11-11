@@ -45,10 +45,9 @@ namespace WebScheduler.Middleware
             }
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)code;
+
             if(result == string.Empty)
-            {
                 result = JsonSerializer.Serialize(new { error = exception.Message });
-            }
             return context.Response.WriteAsync(result);
         }
     }

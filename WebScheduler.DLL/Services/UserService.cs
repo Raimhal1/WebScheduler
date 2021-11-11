@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using WebScheduler.BLL.DtoModels;
 using WebScheduler.BLL.Interfaces;
+using WebScheduler.BLL.Validation;
 using WebScheduler.BLL.Validation.Exceptions;
 using WebScheduler.Domain.Interfaces;
 using WebScheduler.Domain.Models;
@@ -21,12 +22,17 @@ namespace WebScheduler.BLL.Services
         private readonly IUserDbContext _userContext;
         private readonly IRoleDbContext _roleContext;
         private readonly IMapper _mapper;
+        private readonly int saltSize = 16;
 
         public UserService(IUserDbContext userContext, IRoleDbContext roleContext,IMapper mapper) =>
             (_userContext, _roleContext ,_mapper) = (userContext, roleContext, mapper);
 
         public async Task<Guid> CreateAsync(RegisterUserModel model, CancellationToken cancellationToken)
         {
+            if (await _userContext.Users.SingleOrDefaultAsync(u =>
+                 u.Email == model.Email) != null)
+                throw new InvalidCastException("A user with this email already exists");
+
             var user = _mapper.Map<User>(model);
             user.Id = Guid.NewGuid();
             user.Events = new List<Event>();
@@ -35,6 +41,9 @@ namespace WebScheduler.BLL.Services
             user.Roles = new List<Role> { role };
             user.RefreshTokens = new List<RefreshToken>();
             user.Reports = new List<Report>();
+
+            user.Salt = Hasher.GenerateSalt(saltSize);
+            user.Password = Hasher.GetSaltedHash(user.Password, user.Salt);
 
             await _userContext.Users.AddAsync(user, cancellationToken);
             await _userContext.SaveChangesAsync(cancellationToken);
@@ -47,14 +56,12 @@ namespace WebScheduler.BLL.Services
         {
             var user = await _userContext.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (user == null)
-            {
                 throw new NotFoundException(nameof(User), id);
-            }
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
             user.UserName = user.UserName;
             user.Email = model.Email;
-            user.Password = model.Password;
+            user.Password = Hasher.GetSaltedHash(model.Password, user.Salt);
 
             _userContext.Users.Update(user);
 

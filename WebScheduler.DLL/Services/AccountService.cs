@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -13,6 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using WebScheduler.BLL.DtoModels;
 using WebScheduler.BLL.Interfaces;
+using WebScheduler.BLL.Validation;
 using WebScheduler.Domain.Interfaces;
 using WebScheduler.Domain.Models;
 
@@ -28,13 +30,14 @@ namespace WebScheduler.BLL.Services
 
         public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest model, string ip, CancellationToken cancellationToken)
         {
+            Expression<Func<User, bool>> expression = u =>
+                u.Email == model.Username
+                && model.Password.AreEqual(u.Salt, u.Password);
+
             var user = await _userContext.Users
                 .Include(u => u.Roles)
                 .Include(u => u.RefreshTokens)
-                .FirstOrDefaultAsync(
-                    u => u.Email == model.Username && 
-                    u.Password == model.Password
-                );
+                .FirstOrDefaultAsync(expression);
 
             if(user == null) return null;
 

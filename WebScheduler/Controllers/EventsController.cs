@@ -57,7 +57,7 @@ namespace WebScheduler.Controllers
 
 
 
-        [HttpGet("{id}")]
+        [HttpGet]
         [Route("api/events/{id}")]
         public async Task<ActionResult<EventDetailsVm>> GetEvent(Guid id)
         {
@@ -106,7 +106,7 @@ namespace WebScheduler.Controllers
 
 
 
-        [HttpDelete("{id}")]
+        [HttpDelete]
         [Route("api/events/{id}/delete")]
         public async Task<IActionResult> DeleteEvent(Guid id)
         {

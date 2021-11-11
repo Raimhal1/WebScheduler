@@ -14,6 +14,7 @@ namespace WebScheluder.DAL.EntityTypeConfigurations
         public void Configure(EntityTypeBuilder<Report> builder)
         {
             builder.ToTable("Reports").HasKey(r => r.Id);
+            builder.HasIndex(e => e.Id).IsUnique();
             builder.HasOne(r => r.User).WithMany(u => u.Reports);
         }
     }

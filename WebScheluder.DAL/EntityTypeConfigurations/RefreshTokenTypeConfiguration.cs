@@ -15,6 +15,7 @@ namespace WebScheluder.DAL.EntityTypeConfigurations
         {
 
             builder.ToTable("RefreshTokens").HasKey(t => t.Id);
+            builder.HasIndex(e => e.Id).IsUnique();
             builder.HasOne(t => t.User).WithMany(p => p.RefreshTokens);
         }
     }
