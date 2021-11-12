@@ -32,7 +32,7 @@ namespace WebScheduler.BLL.Services
         {
             Expression<Func<User, bool>> expression = u =>
                 u.Email == model.Username
-                && model.Password.AreEqual(u.Salt, u.Password);
+/*                && model.Password.AreEqual(u.Salt, u.Password)*/;
 
             var user = await _userContext.Users
                 .Include(u => u.Roles)

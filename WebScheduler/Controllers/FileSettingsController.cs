@@ -21,7 +21,7 @@ namespace WebScheduler.Controllers
 
         [HttpGet]
         [Route("api/file-settings")]
-        public async Task<ActionResult<AllowedFileTypeListVm>> GetUsers()
+        public async Task<ActionResult<AllowedFileTypeListVm>> GetFileTypes()
         {
             var allowedFileTypes = await _fileSettingsService.GetAllowedFileTypes();
             return Ok(allowedFileTypes);
@@ -47,6 +47,14 @@ namespace WebScheduler.Controllers
             CancellationToken cancellationToken)
         {
             await _fileSettingsService.ChangeFileType(id, fileTypeDto, cancellationToken);
+            return NoContent();
+        }
+
+        [HttpDelete]
+        [Route("api/file-settings/{id}/delete")]
+        public async Task<IActionResult> DeleteFileType(int id, CancellationToken cancellationToken)
+        {
+            await _fileSettingsService.DeleteFileType(id, cancellationToken);
             return NoContent();
         }
     }

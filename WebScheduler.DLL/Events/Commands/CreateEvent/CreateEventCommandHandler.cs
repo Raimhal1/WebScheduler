@@ -48,7 +48,7 @@ namespace WebScheduler.BLL.Events.Commands.CreateEvent
                 Id = Guid.NewGuid(),
             };
 
-            var files = _fileService.GenerateEventFiles(request.formFiles);
+            var files = _fileService.GenerateEventFiles(request.files);
             if(files != null)
                 entity.EventFiles = _mapper.Map<List<EventFile>>(files);
             await _context.Events.AddAsync(entity, cancellationToken);
