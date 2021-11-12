@@ -73,11 +73,11 @@ namespace WebScheduler.Controllers
 
         [HttpPost]
         [Route("api/events")]
-        public async Task<ActionResult<Guid>> CreateEvent([FromBody] CreateEventDto createEventDto, IList<IFormFile> fromFiles)
+        public async Task<ActionResult<Guid>> CreateEvent([FromBody] CreateEventDto createEventDto, IList<IFormFile> files)
         {
             var command = _mapper.Map<CreateEventCommand>(createEventDto);
             command.UserId = UserId;
-            command.formFiles = fromFiles;
+            command.files = files;
             var eventId = await Mediator.Send(command);
             return Ok(eventId);
         }
@@ -85,11 +85,11 @@ namespace WebScheduler.Controllers
 
         [HttpPut]
         [Route("api/events/update")]
-        public async Task<IActionResult> UpdateEvent([FromBody] UpdateEventDto updateEventDto, IList<IFormFile> fromFiles)
+        public async Task<IActionResult> UpdateEvent([FromBody] UpdateEventDto updateEventDto, IList<IFormFile> files)
         {
             var command = _mapper.Map<UpdateEventCommand>(updateEventDto);
             command.UserId = UserId;
-            command.fromFiles = fromFiles;
+            command.files = files;
             await Mediator.Send(command);
             return NoContent();
         }

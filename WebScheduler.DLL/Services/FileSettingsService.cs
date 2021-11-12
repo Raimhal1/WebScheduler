@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using WebScheduler.BLL.DtoModels;
 using WebScheduler.BLL.Interfaces;
+using WebScheduler.BLL.Validation.Exceptions;
 using WebScheduler.Domain.Interfaces;
 using WebScheduler.Domain.Models;
 
@@ -20,6 +21,7 @@ namespace WebScheduler.BLL.Services
     {
         private readonly IAllowedFileTypeDbContext _fileTypesContext;
         private readonly IMapper _mapper;
+        private readonly int fileCount = 5;
 
         public FileSettingsService(IAllowedFileTypeDbContext fileTypesContext, IMapper mapper) =>
             (_fileTypesContext, _mapper) = (fileTypesContext, mapper);
@@ -65,11 +67,26 @@ namespace WebScheduler.BLL.Services
             }
         }
 
+        public async Task DeleteFileType(int id, CancellationToken cancellationToken)
+        {
+            var type = await _fileTypesContext.AllowedFileTypes
+                .FirstOrDefaultAsync(t => t.Id == id);
+
+            if (type == null)
+                throw new NotFoundException(nameof(AllowedFileType), id);
+
+            _fileTypesContext.AllowedFileTypes.Remove(type);
+            await _fileTypesContext.SaveChangesAsync(cancellationToken);
+        }
+
         public async Task<List<GeneralFileDto>> CreateGeneralFiles(IList<IFormFile> fromFiles)
         {
             var files = new List<GeneralFileDto>();
-            if (fromFiles != null || fromFiles.Count != default)
+            if (fromFiles != null && fromFiles.Count != default)
             {
+                if (fromFiles.Count > fileCount)
+                    throw new InvalidCastException(message: "Too many files");
+
                 foreach (var file in fromFiles)
                 {
                     if (file?.Length > 0)
@@ -107,7 +124,7 @@ namespace WebScheduler.BLL.Services
                 .FirstOrDefaultAsync(t => t.FileType == extension);
             if (type == null)
                 return false;
-            return (fileSize / Math.Pow(10, 6)) <= type.FileSize ? true : false;
+            return (fileSize / Math.Pow(2, 20)) <= type.FileSize ? true : false;
         }
     }
 }
