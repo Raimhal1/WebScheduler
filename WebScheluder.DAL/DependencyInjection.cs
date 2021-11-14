@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using WebScheduler.Domain.Interfaces;
-using System.Diagnostics;
 
 namespace WebScheluder.DAL
 {
@@ -29,7 +28,6 @@ namespace WebScheluder.DAL
                 provider.GetService<WebSchedulerContext>());
             services.AddScoped<IReportDbContext>(provider =>
                 provider.GetService<WebSchedulerContext>());
-
             return services;
         }
     }

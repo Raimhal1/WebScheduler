@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using WebScheduler.BLL.DtoModels;
-using WebScheduler.Domain.Models;
+﻿using WebScheduler.BLL.DtoModels;
 
 namespace WebScheduler.BLL.Interfaces
 {

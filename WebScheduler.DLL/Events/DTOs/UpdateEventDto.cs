@@ -1,12 +1,7 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using WebScheduler.BLL.Events.Commands.UpdateEvent;
 using WebScheduler.BLL.Mapping;
-using WebScheduler.Domain.Models;
 
 namespace WebScheduler.BLL.Events.DTOs
 {

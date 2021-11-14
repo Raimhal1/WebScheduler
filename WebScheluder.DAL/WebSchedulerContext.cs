@@ -1,9 +1,8 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using WebScheduler.Domain.Models;
 using WebScheduler.Domain.Interfaces;
 using WebScheluder.DAL.EntityTypeConfigurations;
-using System.Collections.Generic;
+using System;
 
 namespace WebScheluder.DAL
 {

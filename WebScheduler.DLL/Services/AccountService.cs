@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -9,7 +8,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using WebScheduler.BLL.DtoModels;
@@ -32,12 +30,12 @@ namespace WebScheduler.BLL.Services
         {
             Expression<Func<User, bool>> expression = u =>
                 u.Email == model.Username
-/*                && model.Password.AreEqual(u.Salt, u.Password)*/;
+                && model.Password.AreEqual(u.Salt, u.Password);
 
             var user = await _userContext.Users
                 .Include(u => u.Roles)
                 .Include(u => u.RefreshTokens)
-                .FirstOrDefaultAsync(expression);
+                .SingleOrDefaultAsync(expression);
 
             if(user == null) return null;
 

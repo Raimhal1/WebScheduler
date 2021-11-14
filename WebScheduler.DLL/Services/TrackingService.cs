@@ -1,14 +1,10 @@
 ﻿using AutoMapper;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using WebScheduler.BLL.DtoModels;
 using WebScheduler.BLL.Interfaces;
 using WebScheduler.Domain.Interfaces;
-using WebScheduler.Domain.Models;
 
 namespace WebScheduler.BLL.Services
 {
@@ -38,10 +34,9 @@ namespace WebScheduler.BLL.Services
                 enitityId = id
             };
 
-            var loggedEnitity = _mapper.Map<LogEntity>(logData);
-            if (loggedEnitity == null)
+            var loggedEntity = _mapper.Map<LogEntity>(logData);
+            if (loggedEntity == null)
                 throw new InvalidCastException("Invalid tracking entity");
-            
         }
     }
 }
