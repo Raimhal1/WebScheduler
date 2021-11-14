@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using WebScheduler.Domain.Interfaces;
 using WebScheduler.Domain.Models;
-using WebScheduler.BLL.Validation;
-using Microsoft.AspNetCore.Http;
 using WebScheduler.BLL.Interfaces;
 using AutoMapper;
 

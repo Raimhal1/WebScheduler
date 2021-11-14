@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using MediatR;
 using FluentValidation;
@@ -30,9 +28,7 @@ namespace WebScheduler.BLL.Validation.Behaviors
                 .ToList();
 
             if(failures.Count != 0)
-            {
                 throw new ValidationException(failures);
-            }
 
             return next();
 
