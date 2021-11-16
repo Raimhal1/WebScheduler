@@ -20,7 +20,7 @@ namespace WebScheduler.BLL.Events.Queries.GetEventDetails
         private readonly IUserDbContext _userContext;
         private readonly IRoleDbContext _roleContext;
         private readonly IMapper _mapper;
-        private string AdminRoleName = "Admin";
+        private readonly string AdminRoleName = "Admin";
 
         public GetEventDetailsQueryHandler(IEventDbContext context,
             IUserDbContext userContext, IRoleDbContext roleContext, IMapper mapper) => 
@@ -34,7 +34,8 @@ namespace WebScheduler.BLL.Events.Queries.GetEventDetails
             var role = await _roleContext.Roles
                 .Include(r => r.Users)
                 .FirstOrDefaultAsync(r => r.Name == AdminRoleName
-                && r.Users.Any(u => u.Id == request.UserId));
+                && r.Users.Any(u => u.Id == request.UserId),
+                cancellationToken);
 
             Expression<Func<Event, bool>> expression;
 

@@ -25,7 +25,6 @@ namespace WebScheduler.BLL.Services
         private readonly IMapper _mapper;
         private readonly ILogger<FileSettingsService> _logger;
         private readonly IConfiguration _configuration;
-        private readonly int fileCount = 5;
 
         public FileSettingsService(IAllowedFileTypeDbContext fileTypesContext,
             IMapper mapper, ILogger<FileSettingsService> logger, IConfiguration configuration) =>
@@ -45,7 +44,8 @@ namespace WebScheduler.BLL.Services
         public async Task<int> AddFileType(AllowedFileTypeDto fileTypeDto, CancellationToken cancellationToken)
         {
             var fileType = await _fileTypesContext.AllowedFileTypes
-                .FirstOrDefaultAsync(t => t.FileType == fileTypeDto.FileType);
+                .FirstOrDefaultAsync(t =>
+                t.FileType == fileTypeDto.FileType, cancellationToken);
 
             if (fileType != null) return default;
 
@@ -61,7 +61,8 @@ namespace WebScheduler.BLL.Services
 
             var fileType = await _fileTypesContext.AllowedFileTypes
                 .AsNoTracking()
-                .FirstOrDefaultAsync(t => t.Id == id);
+                .FirstOrDefaultAsync(t => t.Id == id,
+                cancellationToken);
 
             if (fileType != null)
             {
@@ -76,7 +77,7 @@ namespace WebScheduler.BLL.Services
         public async Task DeleteFileType(int id, CancellationToken cancellationToken)
         {
             var type = await _fileTypesContext.AllowedFileTypes
-                .FirstOrDefaultAsync(t => t.Id == id);
+                .FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
 
             if (type == null)
                 throw new NotFoundException(nameof(AllowedFileType), id);
@@ -90,14 +91,11 @@ namespace WebScheduler.BLL.Services
             var files = new List<GeneralFileDto>();
             if (fromFiles != null && fromFiles.Count != default)
             {
-                if (fromFiles.Count > fileCount)
-                    throw new InvalidCastException(message: "Too many files");
-
                 foreach (var file in fromFiles)
                 {
                     if (file?.Length > 0)
                     {
-                        var extension = Path.GetExtension(file.FileName);
+                        var extension = Path.GetExtension(file.FileName).Replace(".", "");
 
                         if (await IsValidFile(extension, file.Length))
                         {
@@ -111,6 +109,7 @@ namespace WebScheduler.BLL.Services
                             using(var stream = new MemoryStream())
                             {
                                 file.OpenReadStream().CopyTo(stream);
+                                stream.Flush();
                                 generalFile.Content = await CheckFile(file, stream.ToArray());
                                 files.Add(generalFile);
                             }
@@ -161,8 +160,8 @@ namespace WebScheduler.BLL.Services
             var type = await _fileTypesContext.AllowedFileTypes
                 .FirstOrDefaultAsync(t => t.FileType == extension);
             if (type == null)
-                return false;
-            return (fileSize / Math.Pow(10, 6)) <= type.FileSize ? true : false;
+                throw new NotFoundException(nameof(AllowedFileType), extension);
+            return (fileSize / Math.Pow(10, 6)) <= type.FileSize;
         }
     }
 }

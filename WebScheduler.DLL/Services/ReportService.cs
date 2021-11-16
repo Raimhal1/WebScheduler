@@ -28,14 +28,14 @@ namespace WebScheduler.BLL.Services
         private readonly IReportDbContext _reportContext;
         private readonly IUserDbContext _userContext;
         private readonly IMapper _mapper;
-        private string AdminRoleName = "Admin";
+        private readonly string AdminRoleName = "Admin";
         public ReportService( IEventDbContext context, IRoleDbContext roleContext,
             IReportDbContext reportContext, IUserDbContext userContext, IMapper mapper) =>
             (_context, _roleContext, _userContext, _reportContext, _mapper)
             = (context, roleContext, userContext, reportContext, mapper);
 
         
-        private Dictionary<string, Func<List<EventLookupDto>, byte[]>> ReportDictionary 
+        private readonly Dictionary<string, Func<List<EventLookupDto>, byte[]>> ReportDictionary 
             = new Dictionary<string, Func<List<EventLookupDto>, byte[]>>()
         {
             { "csv",  CreateCsvReport },
@@ -73,8 +73,10 @@ namespace WebScheduler.BLL.Services
         {
             var role = await _roleContext.Roles
                 .Include(r => r.Users)
-                .FirstOrDefaultAsync(r => r.Name == AdminRoleName 
-                && r.Users.Any(u => u.Id == id));
+                .FirstOrDefaultAsync(r =>
+                r.Name == AdminRoleName 
+                && r.Users.Any(u => u.Id == id),
+                cancellationToken);
 
             Expression<Func<Event, bool>> expression;
 
@@ -112,27 +114,39 @@ namespace WebScheduler.BLL.Services
 
             var content = ReportDictionary[extension].Invoke(eventQuery);
             var now = DateTime.UtcNow;
-            var fileName = $"user_{userId}_events_{now}" + $".{extension}";
+            var fileName = $"{userId}_events_{now}.{extension}";
             var contentType = $"files/{extension}";
 
-            var report = new Report
+            Expression<Func<Report, bool>> reportExpression = r =>
+                r.Content.SequenceEqual(content);
+
+            var report = await _reportContext.Reports
+                .FirstOrDefaultAsync(reportExpression,
+                cancellationToken);
+
+            if (report == null)
             {
-                Id = Guid.NewGuid(),
-                FileName = fileName,
-                ContentType = contentType,
-                Content = content
-            };
 
+                var user = await _userContext.Users
+                    .Include(u => u.Reports)
+                    .FirstOrDefaultAsync(u => u.Id == userId,
+                    cancellationToken);
 
-            var user = await _userContext.Users
-                .Include(u => u.Reports)
-                .FirstOrDefaultAsync(u => u.Id == userId);
-            if (user == null)
-                throw new NotFoundException(nameof(User), userId);
-            report.UserId = user.Id;
+                if (user == null)
+                    throw new NotFoundException(nameof(User), userId);
 
-            await _reportContext.Reports.AddAsync(report);
-            await _reportContext.SaveChangesAsync(cancellationToken);
+                report = new Report
+                {
+                    Id = Guid.NewGuid(),
+                    FileName = fileName,
+                    ContentType = contentType,
+                    Content = content,
+                    UserId = user.Id
+                };
+                await _reportContext.Reports.AddAsync(report, cancellationToken);
+                await _reportContext.SaveChangesAsync(cancellationToken);
+            }
+
             return _mapper.Map<ReportDto>(report);
         }
 

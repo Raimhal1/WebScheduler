@@ -18,7 +18,7 @@ namespace WebScheduler.BLL.Events.Queries.GetEventList
         private readonly IEventDbContext _context;
         private readonly IRoleDbContext _roleContext;
         private readonly IMapper _mapper;
-        private string AdminRoleName = "Admin";
+        private readonly string AdminRoleName = "Admin";
 
         public GetEventListQueryHandler(IEventDbContext context, IRoleDbContext roleContext, IMapper mapper)
             => (_context, _roleContext, _mapper) = (context, roleContext, mapper);
@@ -29,7 +29,7 @@ namespace WebScheduler.BLL.Events.Queries.GetEventList
             var role = await _roleContext.Roles
                .Include(r => r.Users)
                .FirstOrDefaultAsync(r => r.Name == AdminRoleName
-               && r.Users.Any(u => u.Id == request.UserId));
+               && r.Users.Any(u => u.Id == request.UserId), cancellationToken);
 
             Expression<Func<Event, bool>> expression;
 
@@ -41,9 +41,8 @@ namespace WebScheduler.BLL.Events.Queries.GetEventList
             var eventQuery = await LookUp.GetLookupEventList(_context, _mapper, expression, cancellationToken);
 
             for(int i = 0; i < eventQuery.Count; i++)
-            {
                 eventQuery[i].Users = _mapper.Map<List<UserVm>>(eventQuery[i].Users);
-            }
+
             return new EventListVm {Events = eventQuery };
         }
     }

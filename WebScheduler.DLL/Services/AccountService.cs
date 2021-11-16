@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using WebScheduler.BLL.DtoModels;
 using WebScheduler.BLL.Interfaces;
 using WebScheduler.BLL.Validation;
+using WebScheduler.BLL.Validation.Exceptions;
 using WebScheduler.Domain.Interfaces;
 using WebScheduler.Domain.Models;
 
@@ -29,15 +30,17 @@ namespace WebScheduler.BLL.Services
         public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest model, string ip, CancellationToken cancellationToken)
         {
             Expression<Func<User, bool>> expression = u =>
-                u.Email == model.Username
-                && model.Password.AreEqual(u.Salt, u.Password);
+                u.Email == model.Username;
 
             var user = await _userContext.Users
                 .Include(u => u.Roles)
                 .Include(u => u.RefreshTokens)
-                .SingleOrDefaultAsync(expression);
+                .SingleOrDefaultAsync(expression, cancellationToken);
+            if (user == null)
+                throw new NotFoundException(nameof(User), model.Username);
 
-            if(user == null) return null;
+            if (!model.Password.AreEqual(user.Salt, user.Password))
+                throw new Exception(message: "Email or password incorrect");
 
             var jwtToken = GenerateJwtToken(user);
             var refreshTokenDto = GenerateRefreshToken(ip);
@@ -55,7 +58,8 @@ namespace WebScheduler.BLL.Services
                 .Include(u => u.Roles)
                 .Include(u => u.RefreshTokens)
                 .FirstOrDefaultAsync(u => u.RefreshTokens
-                .Any(t => t.Token == token));
+                .Any(t => t.Token == token),
+                cancellationToken);
 
 
             if (user == null) 
@@ -83,8 +87,9 @@ namespace WebScheduler.BLL.Services
         {
             var user = await _userContext.Users
                 .Include(u => u.RefreshTokens)
-                .FirstOrDefaultAsync(u => u.RefreshTokens
-                .Any(t => t.Token == token));
+                .FirstOrDefaultAsync(u =>
+                u.RefreshTokens.Any(t => t.Token == token),
+                cancellationToken);
 
             if(user == null) 
                 return false;
@@ -101,7 +106,7 @@ namespace WebScheduler.BLL.Services
             return true;
         }
 
-        private ClaimsIdentity GetIdentity(User user)
+        private static ClaimsIdentity GetIdentity(User user)
         {
             var claims = new List<Claim> {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, user.Email),
@@ -117,7 +122,7 @@ namespace WebScheduler.BLL.Services
                 ClaimsIdentity.DefaultRoleClaimType, ClaimsIdentity.DefaultRoleClaimType);
             return claimsIdentity;
         }
-        private string GenerateJwtToken(User user)
+        private static string GenerateJwtToken(User user)
         {
             var identity = GetIdentity(user);
             var now = DateTime.UtcNow;
@@ -135,7 +140,7 @@ namespace WebScheduler.BLL.Services
             return new JwtSecurityTokenHandler().WriteToken(jwtToken);
         }
 
-        private RefreshTokenDto GenerateRefreshToken(string ip)
+        private static RefreshTokenDto GenerateRefreshToken(string ip)
         {
             using(var rngCryptoServiceProvider = new RNGCryptoServiceProvider())
             {

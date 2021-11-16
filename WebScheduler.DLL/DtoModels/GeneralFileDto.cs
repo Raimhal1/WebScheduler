@@ -4,7 +4,7 @@ using WebScheduler.Domain.Models;
 
 namespace WebScheduler.BLL.DtoModels
 {
-    public class GeneralFileDto : IMapWith<EventFile>
+    public class GeneralFileDto : IMapWith<EventFileDto>
     {
         public string FileName { get; set; }
         public string FileType { get; set; }
@@ -13,7 +13,7 @@ namespace WebScheduler.BLL.DtoModels
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<EventFile, GeneralFileDto>();
+            profile.CreateMap<EventFileDto, GeneralFileDto>();
         }
     }
 }

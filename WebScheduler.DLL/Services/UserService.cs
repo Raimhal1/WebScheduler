@@ -27,14 +27,17 @@ namespace WebScheduler.BLL.Services
         public async Task<Guid> CreateAsync(RegisterUserModel model, CancellationToken cancellationToken)
         {
             if (await _userContext.Users.SingleOrDefaultAsync(u =>
-                 u.Email == model.Email) != null)
+                 u.Email == model.Email, cancellationToken) != null)
                 throw new InvalidCastException("A user with this email already exists");
 
             var user = _mapper.Map<User>(model);
             user.Id = Guid.NewGuid();
             user.Events = new List<Event>();
 
-            var role = await _roleContext.Roles.FirstOrDefaultAsync(r => r.Name == "User");
+            var role = await _roleContext.Roles
+                .FirstOrDefaultAsync(r =>
+                r.Name == "User", cancellationToken);
+
             user.Roles = new List<Role> { role };
             user.RefreshTokens = new List<RefreshToken>();
             user.Reports = new List<Report>();
@@ -51,7 +54,8 @@ namespace WebScheduler.BLL.Services
 
         public async Task  UpdateAsync(Guid id, RegisterUserModel model, CancellationToken cancellationToken)
         {
-            var user = await _userContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+            var user = await _userContext.Users
+                .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
             if (user == null)
                 throw new NotFoundException(nameof(User), id);
             user.FirstName = model.FirstName;
@@ -91,9 +95,7 @@ namespace WebScheduler.BLL.Services
             var userListVm = new UserListVm { Users = users };
 
             for (int i = 0; i < userListVm.Users.Count; i++)
-            {
                 userListVm.Users[i].Events = _mapper.Map<List<EventDto>>(users[i].Events);
-            }
 
             return userListVm;
         }
@@ -105,10 +107,7 @@ namespace WebScheduler.BLL.Services
                 .FirstOrDefaultAsync(u => u.Id == id);
 
             if (user == null)
-            {
                 throw new NotFoundException(nameof(User), id);
-            }
-
             var userDto = _mapper.Map<UserDto>(user);
             userDto.Events = _mapper.Map<List<EventDto>>(user.Events);
             return userDto;

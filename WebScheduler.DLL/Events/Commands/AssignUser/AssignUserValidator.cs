@@ -10,7 +10,7 @@ namespace WebScheduler.BLL.Events.Commands.AssignUser
             RuleFor(assignUserCommand =>
                 assignUserCommand.UserId).NotEqual(Guid.Empty);
             RuleFor(assignUserCommand =>
-                assignUserCommand.Id).NotEqual(Guid.Empty);
+                assignUserCommand.EventId).NotEqual(Guid.Empty);
 
         }
     }

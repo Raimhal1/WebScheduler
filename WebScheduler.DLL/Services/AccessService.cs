@@ -7,24 +7,30 @@ using WebScheduler.Domain.Interfaces;
 
 namespace WebScheduler.BLL.Services
 {
-    public class AssesService : IAssesService
+    public class AccessService : IAccessService
     {
         private readonly IUserDbContext _userContext;
         private readonly IEventDbContext _context;
+        private readonly string AdminRoleName = "Admin";
 
-        public AssesService(IUserDbContext userContext, IEventDbContext context) =>
+        public AccessService(IUserDbContext userContext, IEventDbContext context) =>
             (_userContext, _context) = (userContext, context);
 
-        public async Task<bool> HasAssesToEvent(Guid userId, Guid eventId)
+        public async Task<bool> HasAccessToEvent(Guid userId, Guid eventId)
         {
             var user = await _userContext.Users
                 .Include(u => u.Events)
-                .FirstOrDefaultAsync(u => u.Id == userId 
-                && u.Events.Any(e => e.Id == eventId));
-            return user == null ? false : true;
+                .Include(u => u.Roles)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user.Roles.Any(r => r.Name == AdminRoleName))
+                return true;
+
+            var access = user.Events.Any(e => e.Id == eventId);
+            return access;
         }
 
-        public async Task<bool> HasAssesToEventFile(Guid userId, Guid fileId)
+        public async Task<bool> HasAccessToEventFile(Guid userId, Guid fileId)
         {
             var Event = await _context.Events
                 .Include(e => e.Users)
@@ -32,7 +38,7 @@ namespace WebScheduler.BLL.Services
                 .FirstOrDefaultAsync(e =>
                 e.Users.Any(u => u.Id == userId)
                 && e.EventFiles.Any(f => f.Id == fileId));
-            return Event == null ? false : true;
+            return Event != null;
         }
     }
 }

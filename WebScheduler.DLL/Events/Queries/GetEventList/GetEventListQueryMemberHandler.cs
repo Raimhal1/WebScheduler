@@ -13,11 +13,10 @@ namespace WebScheduler.BLL.Events.Queries.GetEventList
     class GetEventListQueryMemberHandler : IRequestHandler<GetEventListQueryMember, EventListVm>
     {
         private readonly IEventDbContext _context;
-        private readonly IUserDbContext _userContext;
         private readonly IMapper _mapper;
 
-        public GetEventListQueryMemberHandler(IEventDbContext context, IUserDbContext userContext, IMapper mapper)
-            => (_context, _userContext, _mapper) = (context, userContext, mapper);
+        public GetEventListQueryMemberHandler(IEventDbContext context, IMapper mapper)
+            => (_context, _mapper) = (context, mapper);
 
         public async Task<EventListVm> Handle(GetEventListQueryMember request, CancellationToken cancellationToken)
         {
