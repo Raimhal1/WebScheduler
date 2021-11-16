@@ -18,17 +18,14 @@ namespace WebScheduler.Middleware
         }
         public async Task Invoke(HttpContext context)
         {
-            try
-            {
-                await _next(context);
-            }
-            catch(Exception exception)
+            try { await _next(context); }
+            catch (Exception exception)
             {
                 await HandleExceptionAsync(context, exception);
             }
         }
 
-        private Task HandleExceptionAsync(HttpContext context, Exception exception)
+        private static Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             var code = HttpStatusCode.InternalServerError;
             var result = string.Empty;

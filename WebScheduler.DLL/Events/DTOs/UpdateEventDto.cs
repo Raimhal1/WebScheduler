@@ -7,7 +7,6 @@ namespace WebScheduler.BLL.Events.DTOs
 {
     public class UpdateEventDto : IMapWith<UpdateEventCommand>
     {
-        public Guid Id { get; set; }
         public string EventName { get; set; }
         public DateTime StartEventDate { get; set; }
         public DateTime EndEventDate { get; set; }

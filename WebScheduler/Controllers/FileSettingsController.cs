@@ -7,7 +7,7 @@ using WebScheduler.BLL.Interfaces;
 
 namespace WebScheduler.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class FileSettingsController : BaseController
     {
         private readonly IFileSettingsService _fileSettingsService;
@@ -17,7 +17,7 @@ namespace WebScheduler.Controllers
 
 
         [HttpGet]
-        [Route("api/file-settings")]
+        [Route("api/file-settings/types")]
         public async Task<ActionResult<AllowedFileTypeListVm>> GetFileTypes()
         {
             var allowedFileTypes = await _fileSettingsService.GetAllowedFileTypes();
@@ -26,7 +26,7 @@ namespace WebScheduler.Controllers
 
 
         [HttpPost]
-        [Route("api/file-settings/add")]
+        [Route("api/file-settings/types/add")]
         public async Task<ActionResult<int>> AddFileType([FromBody] AllowedFileTypeDto fileTypeDto,
             CancellationToken cancellationToken)
         {
@@ -39,7 +39,7 @@ namespace WebScheduler.Controllers
         }
 
         [HttpPut]
-        [Route("api/file-settings/{id}/update")]
+        [Route("api/file-settings/types/{id}/update")]
         public async Task<IActionResult> ChangeFileType(int id, AllowedFileTypeDto fileTypeDto,
             CancellationToken cancellationToken)
         {
@@ -48,7 +48,7 @@ namespace WebScheduler.Controllers
         }
 
         [HttpDelete]
-        [Route("api/file-settings/{id}/delete")]
+        [Route("api/file-settings/types/{id}/delete")]
         public async Task<IActionResult> DeleteFileType(int id, CancellationToken cancellationToken)
         {
             await _fileSettingsService.DeleteFileType(id, cancellationToken);

@@ -58,13 +58,13 @@ namespace WebScheduler.Controllers
 
 
         [HttpGet]
-        [Route("api/events/{id}")]
-        public async Task<ActionResult<EventDetailsVm>> GetEvent(Guid id)
+        [Route("api/events/{eventId}")]
+        public async Task<ActionResult<EventDetailsVm>> GetEvent(Guid eventId)
         {
             var query = new GetEventDetailsQuery
             {
                 UserId = UserId,
-                Id = id
+                Id = eventId
             };
             var vm = await Mediator.Send(query);
             return Ok(vm);
@@ -73,33 +73,49 @@ namespace WebScheduler.Controllers
 
         [HttpPost]
         [Route("api/events")]
-        public async Task<ActionResult<Guid>> CreateEvent([FromBody] CreateEventDto createEventDto, IList<IFormFile> files)
+        public async Task<ActionResult<Guid>> CreateEvent([FromBody] CreateEventDto createEventDto)
         {
             var command = _mapper.Map<CreateEventCommand>(createEventDto);
             command.UserId = UserId;
-            command.files = files;
             var eventId = await Mediator.Send(command);
             return Ok(eventId);
         }
 
 
         [HttpPut]
-        [Route("api/events/update")]
-        public async Task<IActionResult> UpdateEvent([FromBody] UpdateEventDto updateEventDto, IList<IFormFile> files)
+        [Route("api/events/{eventId}/update")]
+        public async Task<IActionResult> UpdateEvent(Guid eventId, [FromBody] UpdateEventDto updateEventDto)
         {
             var command = _mapper.Map<UpdateEventCommand>(updateEventDto);
             command.UserId = UserId;
-            command.files = files;
+            command.Id = eventId;
             await Mediator.Send(command);
             return NoContent();
         }
 
         [HttpPut]
-        [Route("api/events/assign")]
-        public async Task<IActionResult> UpdateEvent([FromBody] AssignUserToEventDto assignUser)
+        [Route("api/events/{eventid}/assign")]
+        public async Task<IActionResult> UpdateEvent(Guid eventId)
         {
-            var command = _mapper.Map<AssignUserCommand>(assignUser);
-            command.UserId = UserId;
+            var command = new AssignUserCommand
+            {
+                UserId = UserId,
+                EventId = eventId
+            };
+            await Mediator.Send(command);
+            return NoContent();
+        }
+
+        [HttpPut]
+        [Route("api/events/{eventid}/assign/{userId}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateEvent(Guid eventId, Guid userId)
+        {
+            var command = new AssignUserCommand
+            {
+                UserId = userId,
+                EventId = eventId
+            };
             await Mediator.Send(command);
             return NoContent();
         }
@@ -107,14 +123,13 @@ namespace WebScheduler.Controllers
 
 
         [HttpDelete]
-        [Route("api/events/{id}/delete")]
-        public async Task<IActionResult> DeleteEvent(Guid id)
+        [Route("api/events/{eventId}/delete")]
+        public async Task<IActionResult> DeleteEvent(Guid eventId)
         {
             var command = new DeleteEventCommand
             {
-                Id = id,
+                Id = eventId,
                 UserId = UserId
-
             };
             await Mediator.Send(command);
             return NoContent();

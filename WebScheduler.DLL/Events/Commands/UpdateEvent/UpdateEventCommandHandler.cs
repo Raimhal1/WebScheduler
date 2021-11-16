@@ -35,10 +35,6 @@ namespace WebScheduler.BLL.Events.Commands.UpdateEvent
             entity.ShortDescription = request.ShortDescription;
             entity.Description = request.Description;
 
-            var files = _fileService.GenerateEventFiles(request.files);
-            if (files != null)
-                entity.EventFiles = _mapper.Map<List<EventFile>>(files);
-
             await _context.SaveChangesAsync(cancellationToken);
             return Unit.Value;
         }    

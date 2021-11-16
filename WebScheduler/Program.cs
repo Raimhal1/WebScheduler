@@ -23,6 +23,8 @@ namespace WebScheduler
                 {
                     var context = serviceProvider.GetRequiredService<WebSchedulerContext>();
                     DbInitializer.Initialize(context);
+                    DbInitializer.DataSeed(context);
+                    
                 }
                 catch (Exception exception) { }
             }

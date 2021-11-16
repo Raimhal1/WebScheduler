@@ -22,7 +22,7 @@ namespace WebScheduler.BLL
             services.AddScoped<IFileSettingsService, FileSettingsService>();
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<IEventFileService, EventFileService>();
-            services.AddScoped<IAssesService, AssesService>();
+            services.AddScoped<IAccessService, AccessService>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>

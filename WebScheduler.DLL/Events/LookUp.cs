@@ -29,9 +29,8 @@ namespace WebScheduler.BLL.Events
                 throw new Exception(message: "Event list is empty");
 
             for (int i = 0; i < eventQuery.Count; i++)
-            {
                 eventQuery[i].Users = _mapper.Map<List<UserVm>>(eventQuery[i].Users);
-            }
+
             return eventQuery;
         }
     }

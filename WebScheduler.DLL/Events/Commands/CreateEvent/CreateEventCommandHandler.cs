@@ -15,13 +15,10 @@ namespace WebScheduler.BLL.Events.Commands.CreateEvent
     {
         private readonly IEventDbContext _context;
         private readonly IUserDbContext _users;
-        private readonly IEventFileService _fileService;
-        private readonly IMapper _mapper;
 
         public CreateEventCommandHandler(IEventDbContext context, IUserDbContext users,
             IEventFileService fileService, IMapper mapper) =>
-            (_context, _users, _fileService, _mapper) 
-            = (context, users, fileService, mapper);
+            (_context, _users) = (context, users);
             
 
         public async Task<Guid> Handle(CreateEventCommand request,
@@ -44,9 +41,7 @@ namespace WebScheduler.BLL.Events.Commands.CreateEvent
                 Id = Guid.NewGuid(),
             };
 
-            var files = _fileService.GenerateEventFiles(request.files);
-            if(files != null)
-                entity.EventFiles = _mapper.Map<List<EventFile>>(files);
+            
             await _context.Events.AddAsync(entity, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
             return entity.Id;
