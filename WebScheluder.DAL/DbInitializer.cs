@@ -29,7 +29,7 @@ namespace WebScheluder.DAL
                     var adminRole = context.Roles
                         .FirstOrDefault(r => r.Name == adminRoleName);
 
-                    if (!context.Roles.Any()) {
+                    if (adminRole == null) {
 
                         adminRole = new Role
                         {
@@ -44,17 +44,6 @@ namespace WebScheluder.DAL
                         };
                         context.Roles.AddRangeAsync(adminRole, userRole);
                     }
-                    else if(adminRole == null)
-                    {
-                        adminRole = new Role
-                        {
-                            Id = 1,
-                            Name = adminRoleName
-                        };
-                        context.Roles.Add(adminRole);
-                    }
-
-
 
                     var salt = Hasher.GenerateSalt(size: 16);
 
