@@ -19,6 +19,7 @@ namespace WebScheduler.BLL.Validation
             rng.GetBytes(buffer);
             return Convert.ToBase64String(buffer);
         }
+
         public static bool AreEqual(this string password, string salt, string saltedHash)
         {
             var newSalthedHash = GetSaltedHash(password, salt);

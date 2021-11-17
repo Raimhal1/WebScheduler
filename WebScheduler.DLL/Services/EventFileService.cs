@@ -42,6 +42,7 @@ namespace WebScheduler.BLL.Services
         public async Task AddFilesToEvent(Guid eventId, IList<IFormFile> files, CancellationToken cancellationToken)
         {
             var entity = await _context.Events
+                .Include(e => e.EventFiles)
                 .FirstOrDefaultAsync(e => e.Id == eventId,
                 cancellationToken);
 
