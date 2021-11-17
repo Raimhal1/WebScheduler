@@ -35,7 +35,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"Username\" : \"admin@gmail.com\",\r\n    \"Password\" : \"admin\"\r\n}",
+					"raw": "{\r\n    \"Username\" : \"undertaker@gmail.com\",\r\n    \"Password\" : \"underpass\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -128,7 +128,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://localhost:5001/api/Events",
+					"raw": "https://localhost:5001/api/my/Events",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -136,6 +136,7 @@
 					"port": "5001",
 					"path": [
 						"api",
+						"my",
 						"Events"
 					]
 				}
@@ -159,7 +160,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"Id\" : \"3369469e-ab96-4fda-8983-bcdb55650577\"\r\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -167,7 +168,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://localhost:5001/api/Events/assign",
+					"raw": "https://localhost:5001/api/Events/dcf03cef-262b-4ab7-61e7-08d993b15f83/assign",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -176,6 +177,7 @@
 					"path": [
 						"api",
 						"Events",
+						"dcf03cef-262b-4ab7-61e7-08d993b15f83",
 						"assign"
 					]
 				}
@@ -198,7 +200,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://localhost:5001/api/Events/member",
+					"raw": "https://localhost:5001/api/Events",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -206,8 +208,7 @@
 					"port": "5001",
 					"path": [
 						"api",
-						"Events",
-						"member"
+						"Events"
 					]
 				}
 			},
@@ -230,7 +231,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"EventName\" : \"Event\",\r\n    \"StartEventDate\" : \"2021-10-17T14:20:00.0000000\",\r\n    \"EndEventDate\" : \"2022-10-17T14:20:00.0000000\",\r\n    \"ShortDescription\" : \"shortDescription\",\r\n    \"Description\" : \"Description\"\r\n}",
+					"raw": "{\r\n    \"EventName\" : \"TODOUnder1\",\r\n    \"StartEventDate\" : \"2021-10-17T14:20:00.0000000\",\r\n    \"EndEventDate\" : \"2022-10-17T14:20:00.0000000\",\r\n    \"ShortDescription\" : \"shortDescription\",\r\n    \"Description\" : \"Description\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -238,7 +239,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://localhost:5001/api/Events",
+					"raw": "https://localhost:5001/api/events",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -246,7 +247,7 @@
 					"port": "5001",
 					"path": [
 						"api",
-						"Events"
+						"events"
 					]
 				}
 			},
@@ -269,7 +270,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"FileType\" : \"doc\",\r\n    \"FileSize\" : \"4024\"\r\n}",
+					"raw": "{\r\n    \"fileType\" : \"pdf\",\r\n    \"fileSize\" : 10485760.0\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -277,7 +278,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://localhost:5001/api/file-settings/add",
+					"raw": "https://localhost:5001/api/file-settings/types/add",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -286,6 +287,7 @@
 					"path": [
 						"api",
 						"file-settings",
+						"types",
 						"add"
 					]
 				}
@@ -320,46 +322,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://localhost:5001/api/file-settings",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"api",
-						"file-settings"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "change file type in database",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{access_token}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"FileType\" : \"doc\",\r\n    \"FileSize\" : \"4024\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "https://localhost:5001/api/file-settings/8/update",
+					"raw": "https://localhost:5001/api/file-settings/types",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -368,80 +331,7 @@
 					"path": [
 						"api",
 						"file-settings",
-						"8",
-						"update"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get user events in csv format",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{access_token}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "https://localhost:5001/api/Events/report/csv",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"api",
-						"Events",
-						"report",
-						"csv"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get user events where he is a simple member ",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{access_token}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://localhost:5001/api/Events/member/report/csv",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"api",
-						"Events",
-						"member",
-						"report",
-						"csv"
+						"types"
 					]
 				}
 			},
@@ -636,6 +526,196 @@
 						"events",
 						"next-month-report",
 						"xml"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "api/Account/refresh-token",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Username\" : \"soba@gmail.com\",\r\n    \"Password\" : \"pass\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5001/api/Account/refresh-token",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"Account",
+						"refresh-token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"FirstName\" : \"Under\",\r\n    \"LastName\" : \"Taker\",\r\n    \"UserName\" : \"Undertaker\",\r\n    \"Email\" : \"undertaker@gmail.com\",\r\n    \"Password\" : \"underpass\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5001/api/Users",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"Users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete file type",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:5001/api/file-settings/types/8/delete",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"file-settings",
+						"types",
+						"8",
+						"delete"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update file type",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"FileType\" : \"png\",\r\n    \"FileSize\" : \"5242880\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5001/api/file-settings/types/9/update",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"file-settings",
+						"types",
+						"9",
+						"update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add-files",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "files",
+							"type": "file",
+							"src": [
+								"/C:/Users/kormi/Downloads/Telegram Desktop/1636705963425 (2).jpg",
+								"/C:/Users/kormi/Downloads/Telegram Desktop/blackHeart.png"
+							]
+						}
+					]
+				},
+				"url": {
+					"raw": "https://localhost:5001/api/events/fe139fdd-9007-42b7-b772-2d90a8567337/files/add-files",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"events",
+						"fe139fdd-9007-42b7-b772-2d90a8567337",
+						"files",
+						"add-files"
 					]
 				}
 			},
