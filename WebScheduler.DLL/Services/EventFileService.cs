@@ -52,7 +52,7 @@ namespace WebScheduler.BLL.Services
             if (entity.EventFiles.Count + files.Count > MaxFileCount)
                 throw new Exception(message: "Too many files for the event");
 
-            var eventFiles = GenerateEventFiles(files);
+            var eventFiles = await GenerateEventFiles(files);
             var fileList = _mapper.Map<List<EventFile>>(eventFiles);
 
             foreach (var file in fileList)    
