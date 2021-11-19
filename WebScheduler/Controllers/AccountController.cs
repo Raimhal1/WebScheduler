@@ -50,7 +50,7 @@ namespace WebScheduler.Controllers
 
         [HttpPost]
         [Route("api/account/revoke-token")]
-        public async Task<IActionResult> RevokeToken(string token, CancellationToken cancellationToken)
+        public async Task<IActionResult> RevokeToken([FromForm]string token, CancellationToken cancellationToken)
         {
             var revokedToken = token ?? Request.Cookies["refreshToken"];
 
