@@ -15,7 +15,7 @@ namespace WebScheduler.BLL.DtoModels
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<EventFile, EventFileDto>();
+            profile.CreateMap<EventFile, EventFileDto>().ReverseMap();
         }
     }
 }

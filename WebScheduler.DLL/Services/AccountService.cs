@@ -43,11 +43,19 @@ namespace WebScheduler.BLL.Services
                 throw new Exception(message: "Email or password incorrect");
 
             var jwtToken = GenerateJwtToken(user);
-            var refreshTokenDto = GenerateRefreshToken(ip);
-            var refreshToken = _mapper.Map<RefreshToken>(refreshTokenDto);
 
-            user.RefreshTokens.Add(refreshToken);
-            await _userContext.SaveChangesAsync(cancellationToken);
+            RefreshToken refreshToken;
+            if (!user.RefreshTokens.Any(t => t.IsActive == true))
+            {
+                var refreshTokenDto = GenerateRefreshToken(ip);
+                refreshToken = _mapper.Map<RefreshToken>(refreshTokenDto);
+
+                user.RefreshTokens.Add(refreshToken);
+                await _userContext.SaveChangesAsync(cancellationToken);
+            }
+            else
+                refreshToken = user.RefreshTokens
+                    .FirstOrDefault(t => t.IsActive == true);
 
             return new AuthenticateResponse(user, jwtToken, refreshToken.Token);
         }

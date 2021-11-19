@@ -22,6 +22,7 @@ namespace WebScheduler.BLL.Services
         private readonly IMapper _mapper;
         private readonly IFileSettingsService _fileSettingsService;
         private readonly int MaxFileCount = 5;
+        private readonly int MinNameLenght = 5;
 
         public EventFileService(IEventDbContext context, IEventFileDbContext eventFileContext,
             IMapper mapper, IFileSettingsService fileSettingsService) =>
@@ -60,10 +61,10 @@ namespace WebScheduler.BLL.Services
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task ChangeFileName(Guid fileId,  Guid eventId, string Name, CancellationToken cancellationToken)
+        public async Task ChangeFileName(Guid fileId, Guid eventId, string Name, CancellationToken cancellationToken)
         {
-            if (String.IsNullOrEmpty(Name))
-                return;
+            if (String.IsNullOrEmpty(Name) && Name.Length < MinNameLenght)
+                throw new Exception(message: $"A new file name must be at least {MinNameLenght} symbols!");
 
             var file = await _eventFilesContext.EventFiles
                 .FirstOrDefaultAsync(f =>

@@ -69,19 +69,5 @@ namespace WebScheduler.Controllers
         }
 
 
-        [HttpDelete]
-        [Authorize(Roles ="Admin")]
-        [Route("api/events/files/{id}/delete")]
-        public async Task<IActionResult> DeleteFile(Guid id, CancellationToken cancellationToken)
-        {
-            if (await _assesService.HasAccessToEventFile(UserId, id))
-            {
-                await _eventFileService.DeleteFile(id, cancellationToken);
-                return NoContent();
-            }
-            return StatusCode(403);
-        }
-
-
     }
 }
