@@ -36,6 +36,7 @@ namespace WebScheduler.Controllers
         {
             var query = new GetEventListQuery
             {
+                //UserId = Guid.Parse("35b9f462-9f75-4663-b42f-466316d2c990")
                 UserId = UserId
             };
             var vm = await Mediator.Send(query);
