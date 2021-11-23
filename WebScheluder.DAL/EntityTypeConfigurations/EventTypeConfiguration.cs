@@ -10,7 +10,7 @@ namespace WebScheluder.DAL.EntityTypeConfigurations
         {
             builder.HasKey(e => e.Id);
             builder.HasIndex(e => e.Id).IsUnique();
-            builder.Property(e => e.EventName).HasMaxLength(250).IsRequired();
+            builder.Property(e => e.EventName).HasMaxLength(50).IsRequired();
             builder.Property(e => e.StartEventDate).IsRequired();
             builder.Property(e => e.EndEventDate).IsRequired();
             builder.Property(e => e.ShortDescription).HasMaxLength(50);
