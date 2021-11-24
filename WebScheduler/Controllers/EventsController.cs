@@ -19,7 +19,7 @@ using Microsoft.AspNetCore.Http;
 namespace WebScheduler.Controllers
 {
 
-    [Authorize]
+    //[Authorize]
     public class EventsController : BaseController
     {
         private readonly IMapper _mapper;
@@ -36,11 +36,11 @@ namespace WebScheduler.Controllers
         {
             var query = new GetEventListQuery
             {
-                //UserId = Guid.Parse("35b9f462-9f75-4663-b42f-466316d2c990")
-                UserId = UserId
+                UserId = Guid.Parse("35b9f462-9f75-4663-b42f-466316d2c990")
+                //UserId = UserId
             };
             var vm = await Mediator.Send(query);
-            return Ok(vm);
+            return Ok(vm.Events);
         }
 
         [HttpGet]
@@ -49,10 +49,11 @@ namespace WebScheduler.Controllers
         {
             var query = new GetEventListQueryMember
             {
-                UserId = UserId
+                UserId = Guid.Parse("35b9f462-9f75-4663-b42f-466316d2c990")
+                //UserId = UserId
             };
             var vm = await Mediator.Send(query);
-            return Ok(vm);
+            return Ok(vm.Events);
         }
 
 
@@ -64,7 +65,8 @@ namespace WebScheduler.Controllers
         {
             var query = new GetEventDetailsQuery
             {
-                UserId = UserId,
+                //UserId = UserId,
+                UserId = Guid.Parse("35b9f462-9f75-4663-b42f-466316d2c990"),
                 Id = eventId
             };
             var vm = await Mediator.Send(query);
@@ -78,6 +80,7 @@ namespace WebScheduler.Controllers
         {
             var command = _mapper.Map<CreateEventCommand>(createEventDto);
             command.UserId = UserId;
+            //command.UserId = Guid.Parse("35b9f462-9f75-4663-b42f-466316d2c990");
             var eventId = await Mediator.Send(command);
             return Ok(eventId);
         }
@@ -130,7 +133,9 @@ namespace WebScheduler.Controllers
             var command = new DeleteEventCommand
             {
                 Id = eventId,
-                UserId = UserId
+                UserId = Guid.Parse("35b9f462-9f75-4663-b42f-466316d2c990")
+                //UserId = UserId
+            
             };
             await Mediator.Send(command);
             return NoContent();

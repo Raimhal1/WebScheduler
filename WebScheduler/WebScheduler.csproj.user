@@ -11,7 +11,7 @@
     <WebStackScaffolding_DbContextTypeFullName>WebScheduler.DAL.Data.MySchedulerWebContext</WebStackScaffolding_DbContextTypeFullName>
     <WebStackScaffolding_IsAsyncSelected>False</WebStackScaffolding_IsAsyncSelected>
     <WebStackScaffolding_IsViewGenerationSelected>True</WebStackScaffolding_IsViewGenerationSelected>
-    <ActiveDebugProfile>IIS Express</ActiveDebugProfile>
+    <ActiveDebugProfile>WebScheduler</ActiveDebugProfile>
     <WebStackScaffolding_DbContextDialogWidth>650</WebStackScaffolding_DbContextDialogWidth>
     <ShowAllFiles>false</ShowAllFiles>
   </PropertyGroup>
