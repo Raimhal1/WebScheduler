@@ -7,19 +7,19 @@
     <div>
       End : {{ new Date(event.endEventDate).toLocaleString() }}<br/>
     </div>
-    <div v-if="event.shortDescription">
+    <div>
       Short info : {{ event.shortDescription }}<br/>
     </div>
-    <div v-if="event.description">
+    <div v-if="showFullInfo">
       Info : {{ event.description }}<br/>
     </div>
-    <div>
+    <div v-if="showUsers">
       Users:
       <div v-for="user in event.users" :key="user.email">
         {{user.userName}} ({{user.email}})
       </div>
     </div>
-    <div class="event__btns">
+    <div class="event__btns" v-if="creator">
       <my-button
         @click="$emit('remove', event.id)"
       >
@@ -41,6 +41,18 @@ export default {
       type: Object,
       required: true,
     },
+    showFullInfo: {
+      type: Boolean,
+      default: false
+    },
+    showUsers:{
+      type: Boolean,
+      default: false
+    },
+    creator:{
+      type: Boolean,
+      default: false
+    }
   },
 }
 </script>

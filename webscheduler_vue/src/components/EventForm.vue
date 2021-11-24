@@ -33,9 +33,8 @@
 </template>
 
 <script>
-import {instance} from "../instance";
+import {instance} from "@/instance";
 import MyInput from "./UI/MyInput";
-
 export default {
   name: "EventForm",
   components: {MyInput},
@@ -53,8 +52,14 @@ export default {
 
   methods: {
     async createEvent() {
-      console.log(this.event)
-        await instance.post('events', this.event).then(res => this.$emit('create', res))
+      await instance.post('events', this.event).then(res => this.$emit('create', res))
+      this.event = {
+        eventName: "",
+        startEventDate: null,
+        endEventDate: null,
+        shortDescription: "",
+        description: ""
+      }
     },
   }
 }

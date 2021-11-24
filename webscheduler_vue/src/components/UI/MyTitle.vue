@@ -10,7 +10,7 @@ export default {
 
 <style scoped>
 .my__title{
-  background: #0c20a1;
+  background: #00124e;
   color: azure;
   padding: 10px;
 }

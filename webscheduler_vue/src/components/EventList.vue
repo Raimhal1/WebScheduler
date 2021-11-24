@@ -1,27 +1,38 @@
 <template>
-  <div>
-    <my-title>Events :</my-title>
+  <div v-if="events.length > 0">
     <div class="events">
-      <event-item
-          v-for="event in events"
-          :event="event"
-          :key="event.id"
-          @remove="$emit('remove', event.id)"
-      />
+      <transition-group name="event-list">
+        <event-item
+            v-for="event in events"
+            :event="event"
+            :creator="creator"
+            :key="event.id"
+            @remove="$emit('remove', event.id)"
+        />
+      </transition-group>
     </div>
+  </div>
+  <div  v-else class="empty__list">
+    <h3 style="color: #ec2020">
+      List is empty
+    </h3>
   </div>
 </template>
 
 <script>
 import EventItem from "./EventItem";
-import MyTitle from "./UI/MyTitle";
+
 export default {
   name: "EventList",
-  components: {MyTitle, EventItem},
+  components: {EventItem},
   props: {
     events: {
       type: Array,
       required: true
+    },
+    creator:{
+      type: Boolean,
+      default: false
     }
   }
 }
@@ -36,4 +47,28 @@ export default {
   align-items: stretch;
 }
 
+.empty__list{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.event-list-item{
+  display: inline-block;
+  margin-right: 10px;
+}
+.event-list-enter-active,
+.event-list-leave-active{
+  transition: all 0.7s ease;
+}
+
+.event-list-enter-from,
+.event-list-leave-to{
+  opacity: 0;
+  transform: translateX(130px);
+}
+
+.event-list-move{
+  transition: transform 0.4s ease;
+}
 </style>
