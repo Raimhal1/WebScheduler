@@ -29,6 +29,11 @@ body::-webkit-scrollbar {
   padding: 20px;
 }
 
+.user__form{
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+}
 
 .observer{
   height: 30px;

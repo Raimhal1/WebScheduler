@@ -51,6 +51,7 @@ export default {
   },
   mounted() {
     this.getEventList(window.location.pathname)
+    console.log(this.accessToken)
   },
   data() {
     return {
@@ -81,10 +82,11 @@ export default {
         selectedSort: state => state.event.selectedSort,
         searchQuery: state => state.event.searchQuery,
         limit: state => state.event.limit,
-        sortOptions: state => state.event.sortOptions
+        sortOptions: state => state.event.sortOptions,
+        accessToken: state => state.user.accessToken
       }),
       ...mapGetters({
-        sortedAndSearchedEvents: 'event/sortedAndSearchedEvents'
+        sortedAndSearchedEvents: 'event/sortedAndSearchedEvents',
       })
   },
 

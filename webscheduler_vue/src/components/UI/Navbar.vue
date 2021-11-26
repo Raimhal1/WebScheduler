@@ -5,7 +5,8 @@
       <router-link to="/events"><my-button>Events</my-button></router-link>
       <router-link to="/my/events"><my-button>MyEvents</my-button></router-link>
       <router-link to="/about"><my-button>About</my-button></router-link>
-
+      <router-link to="/login"><my-button>Login</my-button></router-link>
+      <router-link to="/register"><my-button>Register</my-button></router-link>
     </div>
   </div>
 </template>

@@ -20,7 +20,8 @@ export const eventModule = {
         sortOptions: [
             {value: 'eventName', name: 'By name'},
             {value: 'startEventDate', name: 'By date'}
-        ]
+        ],
+        accessToken: null,
     }),
     getters: {
         sortedEvents(state){
@@ -62,6 +63,9 @@ export const eventModule = {
         },
         setSortedEvents(state, sortedEvents){
             state.sortedEvents = sortedEvents
+        },
+        setAccessToken(state, accessToken){
+            state.accessToken = accessToken
         }
     },
     actions: {

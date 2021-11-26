@@ -4,6 +4,8 @@ import MyEventsPage from "@/pages/MyEventsPage";
 import EventsPage from "@/pages/EventsPage";
 import About from "@/pages/About";
 import EventPage from "@/pages/EventPage";
+import LoginPage from "@/pages/LoginPage";
+import RegisterPage from "@/pages/RegisterPage";
 
 
 const routes = [
@@ -14,6 +16,17 @@ const routes = [
     {
         path: "/about",
         component: About
+    },
+    {
+        path: "/login",
+        component: LoginPage
+    },
+    {
+        path: "/register",
+        component: RegisterPage
+    },
+    {
+        path: "/logout",
     },
     {
         path: "/my/events",
@@ -33,6 +46,5 @@ const router = createRouter({
         routes,
         history: createWebHistory(process.env.BASE_URL)
     })
-
 
 export default router

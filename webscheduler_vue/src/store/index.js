@@ -1,5 +1,6 @@
 import {createStore} from 'vuex'
 import {eventModule} from "./eventModule";
+import {userModule} from "./userModule"
 
 
 export default createStore({
@@ -8,6 +9,7 @@ export default createStore({
     },
     modules: {
         event: eventModule,
-        my_event: eventModule
+        my_event: eventModule,
+        user: userModule,
     }
 })
