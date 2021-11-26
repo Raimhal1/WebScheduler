@@ -4,6 +4,7 @@
         v-model="event.eventName"
         type="text"
         placeholder="Event name"
+        v-focus
       />
       Start : <my-input
         v-model="event.startEventDate"
@@ -24,8 +25,16 @@
         placeholder="Long event description"
       />
       <my-button
+          @click="updateEvent"
+          class="btn"
+          v-if="modified"
+      >
+        Update
+      </my-button>
+      <my-button
           @click="createEvent"
           class="btn"
+          v-else
       >
         Create
       </my-button>
@@ -33,35 +42,28 @@
 </template>
 
 <script>
-import {instance} from "@/instance";
-import MyInput from "./UI/MyInput";
+import {mapActions, mapState} from "vuex";
+import MyButton from "./UI/MyButton";
+
 export default {
   name: "EventForm",
-  components: {MyInput},
-  data(){
-    return{
-      event: {
-        eventName: "",
-        startEventDate: null,
-        endEventDate: null,
-        shortDescription: "",
-        description: ""
-      }
+  components: {MyButton},
+  props: {
+    modified:{
+      type: Boolean,
+      default: false
     }
   },
-
   methods: {
-    async createEvent() {
-      await instance.post('events', this.event).then(res => this.$emit('create', res))
-      this.event = {
-        eventName: "",
-        startEventDate: null,
-        endEventDate: null,
-        shortDescription: "",
-        description: ""
-      }
-    },
-  }
+    ...mapActions({
+      createEvent: 'event/createEvent'
+    }),
+  },
+  computed: {
+    ...mapState({
+      event: state => state.event.event,
+    }),
+  },
 }
 </script>
 

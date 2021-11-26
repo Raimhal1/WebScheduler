@@ -29,16 +29,5 @@ namespace WebScheduler.BLL.Services
             var access = user.Events.Any(e => e.Id == eventId);
             return access;
         }
-
-        public async Task<bool> HasAccessToEventFile(Guid userId, Guid fileId)
-        {
-            var Event = await _context.Events
-                .Include(e => e.Users)
-                .Include(e => e.EventFiles)
-                .FirstOrDefaultAsync(e =>
-                e.Users.Any(u => u.Id == userId)
-                && e.EventFiles.Any(f => f.Id == fileId));
-            return Event != null;
-        }
     }
 }

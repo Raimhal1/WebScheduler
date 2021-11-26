@@ -1,12 +1,14 @@
 <template>
-  <div class="app">
-    <router-view></router-view>
-  </div>
+    <navbar></navbar>
+    <div class="app">
+      <router-view></router-view>
+    </div>
 </template>
 
 <script>
+import Navbar from "./components/UI/Navbar";
 export default {
-
+  components: {Navbar}
 }
 </script>
 
@@ -15,11 +17,18 @@ export default {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'M PLUS 1', sans-serif;
+  font-weight: 600;
+}
+
+body::-webkit-scrollbar {
+  /*width: 0;*/
 }
 
 .app{
   padding: 20px;
 }
+
 
 .observer{
   height: 30px;

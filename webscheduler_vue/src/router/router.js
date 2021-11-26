@@ -1,6 +1,8 @@
 import Home from "@/pages/Home";
 import {createRouter, createWebHistory} from 'vue-router'
-import MyEventPage from "@/pages/MyEventPage";
+import MyEventsPage from "@/pages/MyEventsPage";
+import EventsPage from "@/pages/EventsPage";
+import About from "@/pages/About";
 import EventPage from "@/pages/EventPage";
 
 
@@ -10,11 +12,19 @@ const routes = [
         component: Home
     },
     {
+        path: "/about",
+        component: About
+    },
+    {
         path: "/my/events",
-        component: MyEventPage
+        component: MyEventsPage
     },
     {
         path: "/events",
+        component: EventsPage,
+    },
+    {
+        path: "/events/:id",
         component: EventPage
     }
 ]

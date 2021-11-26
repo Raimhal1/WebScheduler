@@ -79,8 +79,8 @@ namespace WebScheduler.Controllers
         public async Task<ActionResult<Guid>> CreateEvent([FromBody] CreateEventDto createEventDto)
         {
             var command = _mapper.Map<CreateEventCommand>(createEventDto);
-            command.UserId = UserId;
-            //command.UserId = Guid.Parse("35b9f462-9f75-4663-b42f-466316d2c990");
+            //command.UserId = UserId;
+            command.UserId = Guid.Parse("35b9f462-9f75-4663-b42f-466316d2c990");
             var eventId = await Mediator.Send(command);
             return Ok(eventId);
         }

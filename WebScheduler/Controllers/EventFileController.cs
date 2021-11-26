@@ -22,7 +22,7 @@ namespace WebScheduler.Controllers
         [Route("api/events/{eventId}/files/{id}")]
         public async Task<IActionResult> GetEventFile(Guid eventId, Guid id)
         {
-            if(await _assesService.HasAccessToEventFile(UserId, id)){
+            if(await _assesService.HasAccessToEvent(UserId, eventId)){
 
                 var file = await _eventFileService.GetFile(id, eventId);
                 return File(file.Content, file.ContentType);

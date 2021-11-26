@@ -5,7 +5,8 @@
         <event-item
             v-for="event in events"
             :event="event"
-            :creator="creator"
+            :is-creator="isCreator"
+            :is-list-component="true"
             :key="event.id"
             @remove="$emit('remove', event.id)"
         />
@@ -30,7 +31,7 @@ export default {
       type: Array,
       required: true
     },
-    creator:{
+    isCreator:{
       type: Boolean,
       default: false
     }

@@ -19,21 +19,30 @@
         {{user.userName}} ({{user.email}})
       </div>
     </div>
-    <div class="event__btns" v-if="creator">
+    <div class="event__btns">
       <my-button
         @click="$emit('remove', event.id)"
+        v-if="isCreator"
       >
         Delete
       </my-button>
-      <my-button>
+      <my-button
+          v-if="isCreator"
+          @click="showUpdateDialog"
+      >
         Edit
+      </my-button>
+      <my-button
+          v-if="isListComponent"
+        @click="$router.push(`/events/${event.id}`)"
+      >
+        Details
       </my-button>
     </div>
   </div>
 </template>
 
 <script>
-
 export default {
   name: "EventItem",
   props:{
@@ -49,11 +58,26 @@ export default {
       type: Boolean,
       default: false
     },
-    creator:{
+    isCreator:{
+      type: Boolean,
+      default: false
+    },
+    isListComponent:{
       type: Boolean,
       default: false
     }
   },
+  data() {
+    return {
+      updateDialogVisible: false
+    }
+  },
+  methods: {
+    async showUpdateDialog() {
+      this.updateDialogVisible = true;
+    }
+  }
+
 }
 </script>
 
