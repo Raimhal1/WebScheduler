@@ -9,7 +9,7 @@ namespace WebScheduler.BLL.Events.Commands.CreateEvent
         public CreateEventCommandValidator()
         {
             RuleFor(createEventCommand =>
-                createEventCommand.EventName).NotEmpty().MaximumLength(250);
+                createEventCommand.EventName).NotEmpty().MaximumLength(50);
             RuleFor(createEventCommand =>
                createEventCommand.UserId).NotEqual(Guid.Empty);
             RuleFor(createEventCommand =>
@@ -18,9 +18,9 @@ namespace WebScheduler.BLL.Events.Commands.CreateEvent
                 createEventCommand.EndEventDate).Must(DateValidator.BeAValidDate)
                 .GreaterThan(createEventCommand => createEventCommand.StartEventDate);
             RuleFor(createEventCommand => 
-                createEventCommand.ShortDescription).NotEmpty().MaximumLength(250);
+                createEventCommand.ShortDescription).MaximumLength(50);
             RuleFor(createEventCommand =>
-                createEventCommand.Description).NotEmpty().MaximumLength(5000);
+                createEventCommand.Description).MaximumLength(2000);
         }
 
 

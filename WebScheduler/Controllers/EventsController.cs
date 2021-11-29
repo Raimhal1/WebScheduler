@@ -19,7 +19,7 @@ using Microsoft.AspNetCore.Http;
 namespace WebScheduler.Controllers
 {
 
-    //[Authorize]
+    [Authorize]
     public class EventsController : BaseController
     {
         private readonly IMapper _mapper;
@@ -36,8 +36,7 @@ namespace WebScheduler.Controllers
         {
             var query = new GetEventListQuery
             {
-                UserId = Guid.Parse("35b9f462-9f75-4663-b42f-466316d2c990")
-                //UserId = UserId
+                UserId = UserId
             };
             var vm = await Mediator.Send(query);
             return Ok(vm.Events);
@@ -49,8 +48,7 @@ namespace WebScheduler.Controllers
         {
             var query = new GetEventListQueryMember
             {
-                UserId = Guid.Parse("35b9f462-9f75-4663-b42f-466316d2c990")
-                //UserId = UserId
+                UserId = UserId
             };
             var vm = await Mediator.Send(query);
             return Ok(vm.Events);
@@ -65,8 +63,7 @@ namespace WebScheduler.Controllers
         {
             var query = new GetEventDetailsQuery
             {
-                //UserId = UserId,
-                UserId = Guid.Parse("35b9f462-9f75-4663-b42f-466316d2c990"),
+                UserId = UserId,
                 Id = eventId
             };
             var vm = await Mediator.Send(query);
@@ -79,8 +76,7 @@ namespace WebScheduler.Controllers
         public async Task<ActionResult<Guid>> CreateEvent([FromBody] CreateEventDto createEventDto)
         {
             var command = _mapper.Map<CreateEventCommand>(createEventDto);
-            //command.UserId = UserId;
-            command.UserId = Guid.Parse("35b9f462-9f75-4663-b42f-466316d2c990");
+            command.UserId = UserId;
             var eventId = await Mediator.Send(command);
             return Ok(eventId);
         }
@@ -99,7 +95,7 @@ namespace WebScheduler.Controllers
 
         [HttpPut]
         [Route("api/events/{eventid}/assign")]
-        public async Task<IActionResult> UpdateEvent(Guid eventId)
+        public async Task<IActionResult> AssignUserToEvent(Guid eventId)
         {
             var command = new AssignUserCommand
             {
@@ -133,9 +129,8 @@ namespace WebScheduler.Controllers
             var command = new DeleteEventCommand
             {
                 Id = eventId,
-                UserId = Guid.Parse("35b9f462-9f75-4663-b42f-466316d2c990")
-                //UserId = UserId
-            
+                UserId = UserId
+
             };
             await Mediator.Send(command);
             return NoContent();

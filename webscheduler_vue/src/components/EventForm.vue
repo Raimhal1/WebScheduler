@@ -25,7 +25,7 @@
         placeholder="Long event description"
       />
       <my-button
-          @click="updateEvent"
+          @click="updateEvent(id)"
           class="btn"
           v-if="modified"
       >
@@ -52,11 +52,16 @@ export default {
     modified:{
       type: Boolean,
       default: false
+    },
+    id:{
+      type: String,
+      default: null
     }
   },
   methods: {
     ...mapActions({
-      createEvent: 'event/createEvent'
+      createEvent: 'event/createEvent',
+      updateEvent: 'event/updateEvent'
     }),
   },
   computed: {

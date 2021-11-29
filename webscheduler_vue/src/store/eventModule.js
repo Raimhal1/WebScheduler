@@ -4,7 +4,6 @@ export const eventModule = {
     state: () => ({
         events: [],
         allEvents: [],
-        sortedEvents: [],
         event: {
             eventName: "",
             startEventDate: "",
@@ -12,6 +11,7 @@ export const eventModule = {
             shortDescription: "",
             description: "",
         },
+        event_id: "",
         isEventListLoading: false,
         selectedSort: '',
         searchQuery: '',
@@ -21,7 +21,6 @@ export const eventModule = {
             {value: 'eventName', name: 'By name'},
             {value: 'startEventDate', name: 'By date'}
         ],
-        accessToken: null,
     }),
     getters: {
         sortedEvents(state){
@@ -64,60 +63,104 @@ export const eventModule = {
         setSortedEvents(state, sortedEvents){
             state.sortedEvents = sortedEvents
         },
-        setAccessToken(state, accessToken){
-            state.accessToken = accessToken
-        }
-    },
-    actions: {
-        async createEvent({state, commit, dispatch}) {
-            const response = await instance.post('events', state.event)
-            const event_id = response.data
-            const event = await dispatch('getEvent', event_id)
-            commit('pushEvent', event)
-            commit('setEvent',  {
+        clearEventStore(state){
+            state.events = []
+            state.allEvents = []
+        },
+        clearEvent(state){
+            state.event = {
                 eventName: "",
                 startEventDate: null,
                 endEventDate: null,
                 shortDescription: "",
                 description: ""
-            })
+            }
+        }
+    },
+    actions: {
+        async createEvent({state, commit, dispatch, rootState, rootGetters}) {
+            let event_id
+            await instance
+                .post('events', state.event, rootGetters.getHeaders)
+                .then(res => {
+                    event_id = res.data
+                    rootState.errors = []
+                })
+                .catch(error => {
+                    console.log(error.message)
+                    rootState.errors = [...rootState.errors, error]
+                })
+            const event = await dispatch('getEvent', event_id)
+            commit('pushEvent', event)
+            commit('clearEvent')
         },
-        async getEventList({commit, dispatch}, path) {
-            try {
-                commit('setLoading', true)
-                const result = await instance.get(path)
-                commit('setAllEvents', result.data)
-                commit('setEvents', [])
-                await dispatch('loadMoreEvents')
-
-            }
-            catch (ex){
-                console.log(ex.message)
-            }
-            finally {
-                commit('setLoading', false)
-            }
+        async getEventList({commit, rootState, dispatch, rootGetters}, path) {
+            await commit('setLoading', true)
+            await instance
+                .get(path, rootGetters.getHeaders)
+                .then(res => {
+                    commit('setLoading', true)
+                    commit('setAllEvents', res.data)
+                    dispatch('loadMoreEvents')
+                    rootState.errors = []
+                })
+                .catch(error => {
+                    console.log(error.message)
+                    rootState.errors = [...rootState.errors, error]
+                })
+            commit('setLoading', false)
         },
         async loadMoreEvents({state, commit, dispatch}){
             const events = await dispatch('getMoreEvents')
             commit('setEvents' , [...state.events, ...events])
         },
         async getMoreEvents({state}, len=state.limit){
-            console.log(state.allEvents.length)
             if(state.allEvents.length >= len)
                 return state.allEvents.splice(0, len)
             else {
                 return state.allEvents.splice(0, state.allEvents.length)
             }
         },
-        async getEvent({state}, event_id){
+        async getEvent({state, commit, rootState, rootGetters}, event_id){
             const path = `${state.defaultRoot}/${event_id}`
-            const result = await instance.get(path)
-            return result.data
+            await instance
+                .get(path, rootGetters.getHeaders)
+                .then(res => {
+                    commit('setEvent', res.data)
+                    rootState.errors = []
+                })
+                .catch(error => {
+                    console.log(error.message)
+                    rootState.errors = [...rootState.errors, error]
+                })
+            return state.event
         },
-        async removeEvent({state, commit}, event_id){
+        async updateEvent({state, rootState, rootGetters}) {
+            console.log(state.event.id)
+            const path = `${state.defaultRoot}/${state.event.id}/update`
+            await instance
+                .put(path, state.event, rootGetters.getHeaders)
+                .then(res => {
+                    res.data
+                    rootState.errors = []
+                })
+                .catch(error => {
+                    console.log(error)
+                    rootState.errors = [...rootState.errors, error]
+                })
+        },
+        async removeEvent({state, commit, rootState, rootGetters}, event_id){
             const path = `${state.defaultRoot}/${event_id}/delete`
-            await instance.delete(path)
+            await instance.delete(path, rootGetters.getHeaders)
+                .then( res => {
+                    console.log(res)
+                    rootState.errors = []
+
+                })
+                .catch(error => {
+                    console.log(error.message)
+                    rootState.errors = [...rootState.errors, error]
+                })
             commit('setEvents', state.events.filter(x => x.id !== event_id ))
         },
     },

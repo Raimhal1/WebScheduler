@@ -1,46 +1,41 @@
 <template>
+  <div v-if="this.invalid"> ERROR!</div>
   <div class="register__page">
-    <form @submit="this.$router.push('/login')" method="post" class="user__form">
+    <form @submit.prevent="register" method="post" class="user__form">
       <h2>Register</h2>
       <my-input
           v-model="user.FirstName"
           type="text"
           placeholder="Firstname"
           v-focus
-          required
       >
       </my-input>
       <my-input
           v-model="user.LastName"
           type="text"
           placeholder="Lastname"
-          required
       >
       </my-input>
       <my-input
           v-model="user.UserName"
           type="text"
           placeholder="Username"
-          required
       >
       </my-input>
       <my-input
           v-model="user.Email"
           type="email"
           placeholder="Email"
-          required
       >
       </my-input>
       <my-input
           v-model="user.Password"
           type="password"
           placeholder="Password"
-          required
       >
       </my-input>
       <my-button
           type="submit"
-          @click="register"
       >
         Register
       </my-button>
@@ -53,7 +48,9 @@ import {mapActions, mapState} from "vuex";
 
 export default {
   name: "RegisterPage",
-
+  beforeUnmount() {
+    this.$store.commit('user/check', false)
+  },
   methods: {
     ...mapActions({
       register: 'user/register'
@@ -61,7 +58,8 @@ export default {
   },
   computed: {
     ...mapState({
-      user: state => state.user.user
+      user: state => state.user.user,
+      invalid: state => state.user.invalid
     }),
   },
 }

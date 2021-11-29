@@ -4,46 +4,73 @@
       :showUsers="true"
       :showFullInfo="true"
       class="custom"
+      :is-not-hidden-delete="false"
   ></event-item>
+  <my-event-dialog v-model:show="dialogVisible">
+    <event-form
+        :modified="true"
+        :id="this.id"
+    />
+  </my-event-dialog>
+  <div class="event__btns">
+    <my-button @click="this.$router.back()"> Back </my-button>
+    <my-button @click="showDialog" v-if="this.isCreator"> Update </my-button>
+  </div>
 </template>
 
 <script>
 import EventItem from "@/components/EventItem";
-import {instance} from "@/instance";
+import EventForm from "@/components/EventForm";
+import {mapActions, mapMutations, mapState} from "vuex";
 export default {
   name: "EventPage",
-  components: {EventItem},
+  components: {EventItem, EventForm},
   props: {
-
+  },
+  beforeUnmount() {
+    this.clearEvent()
   },
   async mounted() {
-    console.log(this.$route.params)
-    this.event = await this.getEvent(this.$route.params.id)
+    await this.getEvent(this.id)
   },
-  data() {
-    return {
-      event: {
-        eventName: "",
-        startEventDate: "",
-        endEventDate: "",
-        shortDescription: "",
-        description: "",
-      }
+  data(){
+    return{
+      dialogVisible: false,
+      isCreator: (window.history.state.back === '/my/events') || (this.isAdmin === true),
+      id: this.$route.params.id
     }
   },
+  computed: {
+    ...mapState({
+      event: state => state.event.event,
+      event_id: state => state.event.event_id,
+      isAdmin: state => state.isAdmin
+    }),
+
+  },
   methods: {
-    async getEvent(event_id){
-      const path = `events/${event_id}`
-      const result = await instance.get(path)
-      return result.data
+    ...mapActions({
+      getEvent: 'event/getEvent',
+      removeEvent: 'event/removeEvent'
+    }),
+    ...mapMutations({
+      clearEvent: 'event/clearEvent'
+    }),
+    async showDialog() {
+      this.dialogVisible = true;
     },
-  }
+  },
 }
 
 </script>
 
 <style scoped>
 .custom{
-  font-size: 28px;
+  font-size: 26px;
+}
+.event__btns{
+  margin: 15px 10px;
+  display: flex;
+  justify-content: space-between;
 }
 </style>

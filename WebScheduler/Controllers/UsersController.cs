@@ -19,7 +19,7 @@ namespace WebScheduler.Controllers
 
         [HttpGet]
         [Route("api/users")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<UserListVm>> GetUsers()
         {
             var users = await _userService.GetAll();
@@ -28,7 +28,7 @@ namespace WebScheduler.Controllers
 
         [HttpGet]
         [Route("api/users/{id}")]
-        //[Authorize(Roles = "Admin, User")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<UserDto>> GetUser(Guid id)
         {
 
@@ -36,7 +36,7 @@ namespace WebScheduler.Controllers
             return Ok(user);
         }
 
-        //[AllowAnonymous]
+        [AllowAnonymous]
         [HttpPost]
         [Route("api/users")]
         public async Task<ActionResult<Guid>> CreateUser([FromBody] RegisterUserModel model,
@@ -46,7 +46,7 @@ namespace WebScheduler.Controllers
             return Ok(user);
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpPut]
         [Route("api/users/{id}/update")]
         public async Task<IActionResult> UpdateUser(Guid id, [FromBody] RegisterUserModel model,
@@ -57,7 +57,7 @@ namespace WebScheduler.Controllers
         }
 
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         [Route("api/users/{id}/delete")]
         public async Task<IActionResult> DeleteUser(Guid id, CancellationToken cancellationToken)

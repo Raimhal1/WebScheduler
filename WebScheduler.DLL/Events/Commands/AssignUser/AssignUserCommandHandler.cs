@@ -25,8 +25,7 @@ namespace WebScheduler.BLL.Events.Commands.AssignUser
 
             if (entity == null)
                 throw new NotFoundException(nameof(Event), request.EventId);
-
-            else if (entity.UserId != request.UserId 
+            else if (entity.UserId != request.UserId
                 && !entity.Users.Any(u => u.Id == request.UserId))
             {
                 var user = await _users.Users

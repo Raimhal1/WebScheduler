@@ -10,8 +10,8 @@ namespace WebScheluder.DAL.EntityTypeConfigurations
         {
             builder.ToTable("Users").HasKey(p => p.Id);
             builder.HasIndex(p => new { p.Id, p.Email }).IsUnique();
-            builder.Property(p => p.Email).IsRequired();
-            builder.Property(p => p.Password).IsRequired();
+            builder.Property(p => p.Email).HasMaxLength(50).IsRequired();
+            builder.Property(p => p.Password).HasMaxLength(50).IsRequired();
         }
     }
 }

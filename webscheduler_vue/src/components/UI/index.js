@@ -4,6 +4,7 @@ import MyButton from "./MyButton";
 import MySelect from "./MySelect";
 import MySearch from "./MySearch";
 import MyEventDialog from "./MyEventDialog";
+import Navbar from "./Navbar";
 
 export default [
     MyButton,
@@ -11,5 +12,6 @@ export default [
     MyTitle,
     MyEventDialog,
     MySelect,
-    MySearch
+    MySearch,
+    Navbar
 ]

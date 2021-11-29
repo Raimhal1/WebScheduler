@@ -1,12 +1,15 @@
 <template>
   <div class="navbar">
     <div class="logo" @click="$router.push('/')">Web Scheduler</div>
-    <div class="navbar__btns">
+    <div class="navbar__btns" v-if="!this.$store.state.isAuth">
+      <router-link to="/login"><my-button>Login</my-button></router-link>
+      <router-link to="/register"><my-button>Register</my-button></router-link>
+    </div>
+    <div class="navbar__btns" v-else>
       <router-link to="/events"><my-button>Events</my-button></router-link>
       <router-link to="/my/events"><my-button>MyEvents</my-button></router-link>
       <router-link to="/about"><my-button>About</my-button></router-link>
-      <router-link to="/login"><my-button>Login</my-button></router-link>
-      <router-link to="/register"><my-button>Register</my-button></router-link>
+      <router-link to="/"><my-button @click="this.$store.dispatch('user/logout'); this.$router.push('/login')">Logout</my-button></router-link>
     </div>
   </div>
 </template>

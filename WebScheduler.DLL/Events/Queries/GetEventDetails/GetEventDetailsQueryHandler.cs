@@ -42,7 +42,7 @@ namespace WebScheduler.BLL.Events.Queries.GetEventDetails
             if (role == null)
             {
                 expression = e => e.UserId == request.UserId
-                || e.Users.Any(u => e.UserId == request.UserId);
+                || e.Users.Any(u => u.Id == request.UserId);
             }
             else
                 expression = e => true;

@@ -1,4 +1,5 @@
 import {instance} from '@/instance'
+import jwt_decode from 'jwt-decode'
 
 export const userModule = {
     state: () => ({
@@ -9,21 +10,11 @@ export const userModule = {
             Email: null,
             Password: null
         },
-        accessToken: null,
-        refreshToken: null,
+        invalid: false,
         defaultRoot: 'account',
         defaultUserRoot: 'users',
-
     }),
-    getters: {
-        // getAccessHeaders({state}){
-        //     return {
-        //         headers: {
-        //             Authorization: `Bearer ${state.user.accessToken}`
-        //         }
-        //     }
-        // }
-    },
+    getters: {},
     mutations: {
         setUser(state, user){
             state.user = user
@@ -34,45 +25,78 @@ export const userModule = {
         setDefaultUserRoot(state, defaultUserRoot) {
             state.defaultUserRoot = defaultUserRoot
         },
-        updateStorage(state, {access, refresh}){
-            state.accessToken = access
-            state.refreshToken = refresh
-        }
+        check(state, bool){
+            state.invalid = bool
+        },
     },
     actions: {
-        async register({state, commit, dispatch}){
-            try {
-                const result = await instance.post(state.defaultUserRoot, state.user)
-                const user_id = result.data
-                const user = await dispatch('getUser', user_id)
-                console.log(user)
-                commit('setUser', user)
-            }
-            catch (ex){
-                console.log(ex.message)
-            }
+        async register({state, commit, rootState}){
+            await instance
+                .post(state.defaultUserRoot, state.user)
+                .then(response => {
+                    response.data
+                    rootState.errors = []
+                    commit('check', false)
+                })
+                .catch(error => {
+                    console.log(error)
+                    rootState.errors = [...rootState.errors, error]
+                    commit('check', true)
+                })
         },
-        async login({state, commit}){
+        async login({state, commit, dispatch,rootState}){
             const path = `${state.defaultRoot}/authenticate`
             console.log(path)
-            await instance.post(path, {
-                UserName: state.user.Email,
-                Password: state.user.Password
-            }).then(response =>{
-                console.log(response)
-                console.log(response.data)
-                commit('updateStorage', {
-                    access: response.data.jwtToken,
-                    refresh: response.data.refreshToken
+            await instance
+                .post(path, {
+                    UserName: state.user.Email,
+                    Password: state.user.Password
                 })
-                state.user.Email = response.data.userLogin
+                .then(response =>{
+                    rootState.accessToken = response.data.jwtToken
+                    rootState.refreshToken = response.data.refreshToken
+                    rootState.isAuth = true
+                    rootState.errors = []
+                    commit('check', false)
+                    console.log('ok')
+                })
+                .catch(error => {
+                    console.log(error.message)
+                    rootState.errors = [...rootState.errors, error]
+                    commit('check', true)
+                })
+            await dispatch('decodeRoleFromJWT')
+        },
+        async logout({rootState}){
+            rootState.accessToken = ''
+            rootState.refreshToken = ''
+            rootState.isAuth = false
+            rootState.isAdmin = false
+            localStorage.accessToken = rootState.accessToken
+            localStorage.refreshToken = rootState.refreshToken
+            localStorage.isAuth = rootState.isAuth
+            localStorage.isAdmin = rootState.isAdmin
 
-            })
         },
-        async getUser({state}, user_id){
+        async getUser({state, commit, rootState}, user_id){
             const path = `${state.defaultUserRoot}/${user_id}`
-            return await instance.get(path).then(res => res.data)
+            return await instance
+                .get(path)
+                .then(res => {
+                    res.data
+                    rootState.errors = []
+                    commit('check', false)
+                })
+                .catch(error =>{
+                    console.log(error)
+                    rootState.errors = [...rootState.errors, error]
+                    commit('check', true)
+                })
         },
+        async decodeRoleFromJWT({rootState}){
+            const payload = jwt_decode(rootState.accessToken)
+            rootState.isAdmin = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] === 'Admin';
+        }
     },
     namespaced: true
 

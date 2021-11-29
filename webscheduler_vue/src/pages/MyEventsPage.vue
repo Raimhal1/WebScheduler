@@ -5,16 +5,14 @@
         v-focus
         :model-value="searchQuery"
         @update:model-value="setSearchQuery"
-
-
     />
     <div class="app__btns">
-      <my-button @click="showDialog" style="margin: 15px 0"> Create event </my-button>
       <my-select
           :model-value="selectedSort"
           @update:model-value="setSelectedSort"
           :options="sortOptions"
       />
+      <my-button @click="showDialog"> Create event </my-button>
     </div>
     <event-list
         :events="sortedAndSearchedEvents"
@@ -26,7 +24,6 @@
     <div v-else class="center">
       Loading...
     </div>
-
     <div
         v-intersection="loadMoreEvents"
         class="observer"
@@ -50,8 +47,11 @@ export default {
     EventForm
   },
   mounted() {
-    this.getEventList(window.location.pathname)
-    console.log(this.accessToken)
+    if(this.$store.state.isAuth)
+      this.getEventList(window.location.pathname)
+  },
+  beforeUnmount() {
+    this.$store.commit('event/clearEventStore')
   },
   data() {
     return {
@@ -83,7 +83,6 @@ export default {
         searchQuery: state => state.event.searchQuery,
         limit: state => state.event.limit,
         sortOptions: state => state.event.sortOptions,
-        accessToken: state => state.user.accessToken
       }),
       ...mapGetters({
         sortedAndSearchedEvents: 'event/sortedAndSearchedEvents',

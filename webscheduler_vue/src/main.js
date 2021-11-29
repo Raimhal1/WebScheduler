@@ -3,7 +3,7 @@ import App from '@/App.vue'
 import components from '@/components/UI'
 import router from "@/router/router"
 import directives from "@/directives/directives"
-import store from "@/store"
+import store from '@/store'
 const app = createApp(App)
 
 components.forEach(component =>{
@@ -19,6 +19,6 @@ app
     .mount('#app')
 
 app.config.errorHandler = function(err, vm, info) {
-    console.log(`Error: ${err.toString()}\nInfo: ${info}`);
+    console.log(`Error: ${err.message.toString()}\nInfo: ${info}`);
 }
 

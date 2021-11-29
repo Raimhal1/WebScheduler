@@ -6,9 +6,19 @@
 </template>
 
 <script>
-import Navbar from "./components/UI/Navbar";
+
 export default {
-  components: {Navbar}
+  mounted() {
+    console.log('mounted')
+    if(localStorage.isAuth){
+      this.$store.commit('setTokens', {
+        access: localStorage.accessToken,
+        refresh: localStorage.refreshToken
+      })
+      this.$store.state.isAuth = localStorage.isAuth
+      this.$store.state.isAdmin = localStorage.isAdmin
+    }
+  },
 }
 </script>
 
@@ -43,5 +53,6 @@ body::-webkit-scrollbar {
   margin: 15px 0;
   display: flex;
   justify-content:space-between;
+
 }
 </style>

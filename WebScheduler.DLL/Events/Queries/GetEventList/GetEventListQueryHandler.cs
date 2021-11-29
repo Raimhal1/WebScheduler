@@ -25,7 +25,7 @@ namespace WebScheduler.BLL.Events.Queries.GetEventList
 
         public async Task<EventListVm> Handle(GetEventListQuery request, CancellationToken cancellationToken)
         {
-            
+
             var role = await _roleContext.Roles
                .Include(r => r.Users)
                .FirstOrDefaultAsync(r => r.Name == AdminRoleName
@@ -33,6 +33,7 @@ namespace WebScheduler.BLL.Events.Queries.GetEventList
 
             Expression<Func<Event, bool>> expression;
 
+            // creator or admin
             if (role == null)
                 expression = e => e.UserId == request.UserId;
             else

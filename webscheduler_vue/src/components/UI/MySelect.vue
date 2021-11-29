@@ -1,6 +1,6 @@
 <template>
-  <select v-model="value" @change="changeOption">
-    <option  value="" disabled>Select from the list</option>
+  <select v-model="value" @change="changeOption" class="search">
+    <option value="" disabled>Select from the list</option>
     <option
         v-for="option in options"
         :key="option.value"
@@ -37,5 +37,7 @@ export default {
 </script>
 
 <style scoped>
-
+.search{
+  height: 30px;
+}
 </style>

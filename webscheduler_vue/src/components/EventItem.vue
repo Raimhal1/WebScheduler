@@ -1,36 +1,34 @@
 <template>
   <div class="event">
-    <h4>{{ event.eventName }}</h4><br/>
     <div>
-      Start : {{ new Date(event.startEventDate).toLocaleString() }}<br/>
-    </div>
-    <div>
-      End : {{ new Date(event.endEventDate).toLocaleString() }}<br/>
-    </div>
-    <div>
-      Short info : {{ event.shortDescription }}<br/>
-    </div>
-    <div v-if="showFullInfo">
-      Info : {{ event.description }}<br/>
-    </div>
-    <div v-if="showUsers">
-      Users:
-      <div v-for="user in event.users" :key="user.email">
-        {{user.userName}} ({{user.email}})
+      <h3 class="header">{{ event.eventName }}</h3>
+      <div>
+        Start : {{ new Date(event.startEventDate).toLocaleString() }}
+      </div>
+      <div>
+        End : {{ new Date(event.endEventDate).toLocaleString() }}
+      </div>
+      <div v-if="event.shortDescription">
+        Short description : {{ event.shortDescription }}
+      </div>
+      <div v-if="showFullInfo && event.shortDescription">
+        Info : {{ event.description }}
+      </div>
+      <div v-if="showUsers">
+        <div>Users:</div>
+        <div class="users">
+          <div v-for="user in event.users" :key="user.email" class="user">
+            {{user.userName}} ({{user.email}})
+          </div>
+        </div>
       </div>
     </div>
     <div class="event__btns">
       <my-button
         @click="$emit('remove', event.id)"
-        v-if="isCreator"
+        v-if="(isCreator || this.$store.state.isAdmin === true) && isNotHiddenDelete"
       >
         Delete
-      </my-button>
-      <my-button
-          v-if="isCreator"
-          @click="showUpdateDialog"
-      >
-        Edit
       </my-button>
       <my-button
           v-if="isListComponent"
@@ -65,31 +63,50 @@ export default {
     isListComponent:{
       type: Boolean,
       default: false
+    },
+    isNotHiddenDelete:{
+      type: Boolean,
+      default: true
     }
   },
-  data() {
-    return {
-      updateDialogVisible: false
-    }
-  },
-  methods: {
-    async showUpdateDialog() {
-      this.updateDialogVisible = true;
-    }
-  }
-
 }
 </script>
 
 <style scoped>
+
+.header{
+  display: flex;
+  justify-content: center;
+}
+
 .event{
   padding: 5px;
   margin: 5px;
   border: 2px solid #0c20a1;
   border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
+
 .event__btns{
   display: flex;
   justify-content: space-evenly;
 }
+
+.users{
+  display: flex;
+  flex-flow: wrap;
+  width: fit-content;
+  font-size: 22px;
+}
+.user{
+  white-space: nowrap;
+  border-radius: 18px;
+  padding: 0 10px;
+  margin: 2px;
+  background-color: rgba(2, 106, 248, 0.21);
+  overflow: hidden;
+}
+
 </style>

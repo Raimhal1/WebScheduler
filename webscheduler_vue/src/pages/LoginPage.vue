@@ -1,7 +1,10 @@
+
 <template>
+
   <form>
+    <div v-if="this.invalid"> ERROR!</div>
     <div class="login__page">
-      <form @submit="this.$router.push('/')" method="post" class="user__form" @submit.prevent>
+      <form method="post" class="user__form" @submit.prevent="login">
         <h2>Log in</h2>
         <my-input
             v-model="user.Email"
@@ -17,7 +20,6 @@
         </my-input>
         <my-button
             type="submit"
-            @click="login"
         >
           Log in
         </my-button>
@@ -31,9 +33,24 @@ import {mapActions, mapGetters, mapState} from "vuex";
 
 export default {
   name: "LoginPage",
+
+  beforeUnmount() {
+    console.log('unmounted')
+    localStorage.accessToken = this.accessToken
+    localStorage.refreshToken = this.refreshToken
+    localStorage.isAuth = this.isAuth
+    localStorage.isAdmin = this.isAdmin
+    this.$store.commit('user/check', false)
+  },
   computed: {
     ...mapState({
-      user: state => state.user.user
+      accessToken: state => state.accessToken,
+      refreshToken: state => state.refreshToken,
+      isAuth: state => state.isAuth,
+      isAdmin: state => state.isAdmin,
+      user: state => state.user.user,
+      invalid: state => state.user.invalid,
+      errors: state => state.errors
     }),
     ...mapGetters({
 
