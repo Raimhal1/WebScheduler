@@ -1,7 +1,7 @@
 <template>
   <div class="navbar">
     <div class="logo" @click="$router.push('/')">Web Scheduler</div>
-    <div class="navbar__btns" v-if="!this.$store.state.isAuth">
+    <div class="navbar__btns" v-if="!isAuth">
       <router-link to="/login"><my-button>Login</my-button></router-link>
       <router-link to="/register"><my-button>Register</my-button></router-link>
     </div>
@@ -17,6 +17,12 @@
 <script>
 export default {
   name: "Navbar",
+  computed: {
+    isAuth(){
+      console.log(JSON.parse(this.$store.state.isAuth))
+      return JSON.parse(this.$store.state.isAuth)
+    }
+  }
 }
 </script>
 
@@ -40,5 +46,6 @@ export default {
   color: #0c20a1;
   font-size: 20px;
   font-weight: 600;
+  cursor: pointer;
 }
 </style>

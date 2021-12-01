@@ -5,7 +5,7 @@
         <event-item
             v-for="event in events"
             :event="event"
-            :is-creator="isCreator"
+            :isCreator="isCreator"
             :is-list-component="true"
             :key="event.id"
             @remove="$emit('remove', event.id)"
@@ -31,10 +31,13 @@ export default {
       type: Array,
       required: true
     },
-    isCreator:{
-      type: Boolean,
-      default: false
+  },
+  computed: {
+    isCreator(){
+      return JSON.parse(localStorage.getItem('isAdmin')) || window.location.pathname.includes('my/')
     }
+
+
   }
 }
 </script>

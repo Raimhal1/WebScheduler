@@ -1,5 +1,6 @@
 import {instance} from '@/instance'
 import jwt_decode from 'jwt-decode'
+import router from "@/router/router";
 
 export const userModule = {
     state: () => ({
@@ -13,6 +14,7 @@ export const userModule = {
         invalid: false,
         defaultRoot: 'account',
         defaultUserRoot: 'users',
+        isLoading: false
     }),
     getters: {},
     mutations: {
@@ -28,9 +30,14 @@ export const userModule = {
         check(state, bool){
             state.invalid = bool
         },
+        setLoading(state, bool) {
+            state.isLoading = bool
+        }
     },
     actions: {
         async register({state, commit, rootState}){
+            await commit('setLoading', true)
+            rootState.errors = []
             await instance
                 .post(state.defaultUserRoot, state.user)
                 .then(response => {
@@ -43,10 +50,17 @@ export const userModule = {
                     rootState.errors = [...rootState.errors, error]
                     commit('check', true)
                 })
+                .then(() =>{
+                    if(rootState.errors.length === 0)
+                        router.push('/login')
+                    else
+                        router.push('/register')
+                })
+            await commit('setLoading', false)
         },
         async login({state, commit, dispatch,rootState}){
             const path = `${state.defaultRoot}/authenticate`
-            console.log(path)
+            rootState.errors = []
             await instance
                 .post(path, {
                     UserName: state.user.Email,
@@ -65,7 +79,14 @@ export const userModule = {
                     rootState.errors = [...rootState.errors, error]
                     commit('check', true)
                 })
-            await dispatch('decodeRoleFromJWT')
+                .then(() => {
+                    if (rootState.errors.length === 0) {
+                        dispatch('decodeRoleFromJWT')
+                        router.push('/')
+                    }
+                    else
+                        router.push('/login')
+                })
         },
         async logout({rootState}){
             rootState.accessToken = ''
@@ -96,6 +117,7 @@ export const userModule = {
         async decodeRoleFromJWT({rootState}){
             const payload = jwt_decode(rootState.accessToken)
             rootState.isAdmin = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] === 'Admin';
+            console.log(rootState.isAdmin)
         }
     },
     namespaced: true

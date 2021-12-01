@@ -26,7 +26,7 @@
     <div class="event__btns">
       <my-button
         @click="$emit('remove', event.id)"
-        v-if="(isCreator || this.$store.state.isAdmin === true) && isNotHiddenDelete"
+        v-if="isCreator && isNotHiddenDelete"
       >
         Delete
       </my-button>
@@ -87,6 +87,7 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  word-wrap: break-word;
 }
 
 .event__btns{
@@ -98,7 +99,7 @@ export default {
   display: flex;
   flex-flow: wrap;
   width: fit-content;
-  font-size: 22px;
+  font-size: 16px;
 }
 .user{
   white-space: nowrap;

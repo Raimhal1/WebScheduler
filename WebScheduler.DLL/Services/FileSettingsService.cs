@@ -101,6 +101,7 @@ namespace WebScheduler.BLL.Services
                         {
                             var generalFile = new GeneralFileDto
                             {
+
                                 FileName = Guid.NewGuid().ToString(),
                                 FileType = extension,
                                 ContentType = file.ContentType

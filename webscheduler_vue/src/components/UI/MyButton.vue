@@ -17,6 +17,7 @@ export default {
   background: none;
   padding: 10px 10px;
   color: #0c20a1;
+  cursor: pointer;
 }
 
 </style>

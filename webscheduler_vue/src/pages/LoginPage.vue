@@ -33,14 +33,14 @@ import {mapActions, mapGetters, mapState} from "vuex";
 
 export default {
   name: "LoginPage",
-
   beforeUnmount() {
     console.log('unmounted')
-    localStorage.accessToken = this.accessToken
-    localStorage.refreshToken = this.refreshToken
-    localStorage.isAuth = this.isAuth
-    localStorage.isAdmin = this.isAdmin
-    this.$store.commit('user/check', false)
+    if(this.isAuth) {
+      localStorage.accessToken = this.accessToken
+      localStorage.refreshToken = this.refreshToken
+      localStorage.isAuth = this.isAuth
+      localStorage.isAdmin = this.isAdmin
+    }
   },
   computed: {
     ...mapState({

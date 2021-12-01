@@ -38,16 +38,16 @@ export default {
     EventList,
   },
   mounted() {
-    if(this.$store.state.isAuth)
-      this.getEventList(window.location.pathname)
+    this.getEventList(window.location.pathname)
   },
   beforeUnmount() {
-    this.$store.commit('event/clearEventStore')
+    this.clearEventStore()
   },
   methods: {
     ...mapMutations({
       setSearchQuery: 'event/setSearchQuery',
-      setSelectedSort: 'event/setSelectedSort'
+      setSelectedSort: 'event/setSelectedSort',
+      clearEventStore: 'event/clearEventStore'
     }),
     ...mapActions({
       loadMoreEvents: 'event/loadMoreEvents',
@@ -60,7 +60,7 @@ export default {
     ...mapState({
       events: state => state.event.events,
       allEvents: state => state.event.allEvents,
-      isEventListLoading: state => state.event.isEventListLoading,
+      isEventListLoading: state => state.event.isLoading,
       selectedSort: state => state.event.selectedSort,
       searchQuery: state => state.event.searchQuery,
       limit: state => state.event.limit,
@@ -68,7 +68,7 @@ export default {
     }),
     ...mapGetters({
       sortedAndSearchedEvents: 'event/sortedAndSearchedEvents'
-    })
+    }),
   },
 }
 </script>

@@ -10,13 +10,15 @@
 export default {
   mounted() {
     console.log('mounted')
-    if(localStorage.isAuth){
+    if(JSON.parse(localStorage.getItem('isAuth'))){
       this.$store.commit('setTokens', {
-        access: localStorage.accessToken,
-        refresh: localStorage.refreshToken
+        access: localStorage.getItem('accessToken'),
+        refresh: localStorage.getItem('refreshToken')
       })
-      this.$store.state.isAuth = localStorage.isAuth
-      this.$store.state.isAdmin = localStorage.isAdmin
+      this.$store.commit('setAuth', JSON.parse(localStorage.getItem('isAuth')))
+      this.$store.commit('setAdmin', JSON.parse(localStorage.getItem('isAdmin')))
+      console.log(this.$store.state.isAuth)
+      console.log(this.$store.state.isAdmin)
     }
   },
 }

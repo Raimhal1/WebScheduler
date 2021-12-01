@@ -3,6 +3,7 @@ import {eventModule} from "./eventModule";
 import {userModule} from "./userModule"
 
 
+
 export default createStore({
     state: {
         isAuth: false,
@@ -15,6 +16,12 @@ export default createStore({
         setTokens(state, {access, refresh}){
             state.accessToken = access
             state.refreshToken = refresh
+        },
+        setAuth(state, bool) {
+            state.isAuth = bool
+        },
+        setAdmin(state, bool){
+            state.isAdmin = bool
         }
     },
     getters: {

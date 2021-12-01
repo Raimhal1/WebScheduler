@@ -16,7 +16,6 @@
     </div>
     <event-list
         :events="sortedAndSearchedEvents"
-        :is-creator="true"
         @remove="removeEvent"
         v-if="!isEventListLoading"
         class="list"
@@ -47,11 +46,10 @@ export default {
     EventForm
   },
   mounted() {
-    if(this.$store.state.isAuth)
       this.getEventList(window.location.pathname)
   },
   beforeUnmount() {
-    this.$store.commit('event/clearEventStore')
+    this.clearEventStore()
   },
   data() {
     return {
@@ -61,7 +59,8 @@ export default {
   methods: {
     ...mapMutations({
         setSearchQuery: 'event/setSearchQuery',
-        setSelectedSort: 'event/setSelectedSort'
+        setSelectedSort: 'event/setSelectedSort',
+        clearEventStore: 'event/clearEventStore'
     }),
     ...mapActions({
       loadMoreEvents: 'event/loadMoreEvents',
@@ -78,7 +77,7 @@ export default {
         events: state => state.event.events,
         allEvents: state => state.event.allEvents,
         event: state => state.event.event,
-        isEventListLoading: state => state.event.isEventListLoading,
+        isEventListLoading: state => state.event.isLoading,
         selectedSort: state => state.event.selectedSort,
         searchQuery: state => state.event.searchQuery,
         limit: state => state.event.limit,

@@ -29,15 +29,32 @@ namespace WebScheduler.BLL.Services
             (_context, _eventFilesContext, _mapper, _fileSettingsService) 
             = (context, eventFileContext, mapper, fileSettingsService);
 
-        public async Task<EventFileDto> GetFile(Guid fileId, Guid eventId)
+        public async Task<EventFileDto> GetFile(Guid fileId, Guid eventId, CancellationToken cancellationToken)
         {
             var file = await _eventFilesContext.EventFiles
-                .FirstOrDefaultAsync(f => f.Id == fileId && f.EventId == eventId);
+                .FirstOrDefaultAsync(f => f.Id == fileId 
+                && f.EventId == eventId, 
+                cancellationToken);
 
             if(file == null)
                 throw new NotFoundException(nameof(EventFile), fileId); 
 
             return  _mapper.Map<EventFileDto>(file);
+        }
+
+        public async Task<List<Guid>> GetFilesIds(Guid eventId, CancellationToken cancellationToken)
+        {
+            var files = await _eventFilesContext.EventFiles
+                .Where(f => f.EventId == eventId)
+                .ToListAsync(cancellationToken);
+            List<Guid> IdsList = new List<Guid>();
+            foreach (var file in files) {
+                if (files == null)
+                    throw new NotFoundException(nameof(EventFile), file.Id);
+                IdsList.Add(file.Id);
+            }
+
+            return _mapper.Map<List<Guid>>(IdsList);
         }
 
         public async Task AddFilesToEvent(Guid eventId, IList<IFormFile> files, CancellationToken cancellationToken)
@@ -56,8 +73,9 @@ namespace WebScheduler.BLL.Services
             var eventFiles = await GenerateEventFiles(files);
             var fileList = _mapper.Map<List<EventFile>>(eventFiles);
 
-            foreach (var file in fileList)    
+            foreach (var file in fileList)
                 entity.EventFiles.Add(file);
+
             await _context.SaveChangesAsync(cancellationToken);
         }
 

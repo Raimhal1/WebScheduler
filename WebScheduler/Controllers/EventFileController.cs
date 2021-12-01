@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using WebScheduler.BLL.DtoModels;
 using WebScheduler.BLL.Interfaces;
 
 namespace WebScheduler.Controllers
@@ -20,19 +21,28 @@ namespace WebScheduler.Controllers
 
         [HttpGet]
         [Route("api/events/{eventId}/files/{id}")]
-        public async Task<IActionResult> GetEventFile(Guid eventId, Guid id)
+        public async Task<ActionResult<EventFileDto>> GetEventFile(Guid eventId, Guid id, CancellationToken cancellationToken)
         {
             if(await _assesService.HasAccessToEvent(UserId, eventId)){
 
-                var file = await _eventFileService.GetFile(id, eventId);
-                return File(file.Content, file.ContentType);
+                return Ok(await _eventFileService.GetFile(id, eventId, cancellationToken));
             }
+            return StatusCode(401);
+        }
+
+        [HttpGet]
+        [Route("api/events/{eventId}/files")]
+        public async Task<IActionResult> GetEventFilesIds(Guid eventId, CancellationToken cancellationToken)
+        {
+            if (await _assesService.HasAccessToEvent(UserId, eventId))
+                 return Ok(await _eventFileService.GetFilesIds(eventId, cancellationToken)); 
+
             return StatusCode(401);
         }
 
         [HttpPost]
         [Route("api/events/{eventId}/files/add-files")]
-        public async Task<IActionResult> AddFileToEvent(Guid eventId, List<IFormFile> files, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddFileToEvent(Guid eventId, [FromForm] List<IFormFile> files, CancellationToken cancellationToken)
         {
             if(await _assesService.HasAccessToEvent(UserId, eventId))
             {
