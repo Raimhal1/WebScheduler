@@ -40,9 +40,7 @@ namespace WebScheduler.Controllers
             var responce = await _accountService.RefreshToken(refreshToken, GetIp(), cancellationToken);
 
             if(responce == null)
-            {
                 return Unauthorized(new { message = "Invalid token" });
-            }
 
             SetTokenCookie(responce.RefreshToken);
             return Ok(responce);

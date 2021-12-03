@@ -4,12 +4,12 @@
       <router-view></router-view>
     </div>
 </template>
-
+<!-- move file services to a separate storage module -->
 <script>
 
 export default {
   mounted() {
-    console.log('mounted')
+    console.log('updated')
     if(JSON.parse(localStorage.getItem('isAuth'))){
       this.$store.commit('setTokens', {
         access: localStorage.getItem('accessToken'),
@@ -17,8 +17,6 @@ export default {
       })
       this.$store.commit('setAuth', JSON.parse(localStorage.getItem('isAuth')))
       this.$store.commit('setAdmin', JSON.parse(localStorage.getItem('isAdmin')))
-      console.log(this.$store.state.isAuth)
-      console.log(this.$store.state.isAdmin)
     }
   },
 }

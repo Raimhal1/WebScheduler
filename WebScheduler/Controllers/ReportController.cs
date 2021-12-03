@@ -38,7 +38,6 @@ namespace WebScheduler.Controllers
             var report = await _fileService.CreateEventsReportForNextMonth(UserId, extension, cancellationToken);
             return File(report.Content, report.ContentType, report.FileName);
         }
-
        
     }
 }

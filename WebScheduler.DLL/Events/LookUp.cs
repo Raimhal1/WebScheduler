@@ -25,9 +25,6 @@ namespace WebScheduler.BLL.Events
                 .ProjectTo<EventLookupDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 
-            if (eventQuery.Count == 0)
-                throw new Exception(message: "Event list is empty");
-
             for (int i = 0; i < eventQuery.Count; i++)
                 eventQuery[i].Users = _mapper.Map<List<UserVm>>(eventQuery[i].Users);
 

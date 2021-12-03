@@ -1,5 +1,5 @@
-import {instance} from '@/instance'
-import router from "../router/router";
+import {instance} from "@/router/instance";
+import router from "@/router/router";
 
 export const eventModule = {
     state: () => ({
@@ -12,8 +12,9 @@ export const eventModule = {
             shortDescription: "",
             description: "",
         },
-        files: [],
-        urls: [],
+        file_ids: [],
+        imageBlobs: [],
+        textBlobs: [],
         isLoading: false,
         selectedSort: '',
         searchQuery: '',
@@ -65,12 +66,6 @@ export const eventModule = {
         setSortedEvents(state, sortedEvents){
             state.sortedEvents = sortedEvents
         },
-        addEventFile(state, file){
-            state.files = [...state.files, file]
-        },
-        setEventFiles(state, files){
-            state.files = files
-        },
         clearEventStore(state){
             state.events = []
             state.allEvents = []
@@ -84,29 +79,32 @@ export const eventModule = {
                 description: ""
             }
         },
-        clearFiles(state){
-            state.files = []
-            state.urls = []
+        clearBlobs(state){
+            state.imageBlobs = []
+            state.textBlobs = []
         },
-        clearUrls(state){
-            state.urls = []
+        addBlob(state, blob){
+            if(blob.type.includes('image/'))
+                state.imageBlobs.push(blob)
+            else
+                state.textBlobs.push(blob)
         },
-        addFileUrl(state, url){
-            state.urls.push(url)
+        setFileIds(state, ids){
+            state.file_ids = ids
         }
     },
     actions: {
         async createEvent({state, commit, dispatch, rootState, rootGetters}) {
             let event_id
             await instance
-                .post('events', state.event, rootGetters.getHeaders)
+                .post('events', state.event, {headers: rootGetters.getHeaders})
                 .then(res => {
                     event_id = res.data
                     rootState.errors = []
                 })
                 .catch(error => {
                     console.log(error.message)
-                    rootState.errors = [...rootState.errors, error]
+                    rootState.errors.push(error)
                 })
                 .then(() => {
                     if(rootState.errors.length !== 0)
@@ -117,17 +115,18 @@ export const eventModule = {
             commit('clearEvent')
         },
         async getEventList({commit, rootState, dispatch, rootGetters}, path) {
+            await commit('clearEventStore')
             await commit('setLoading', true)
             await instance
-                .get(path, rootGetters.getHeaders)
+                .get(path, {headers: rootGetters.getHeaders})
                 .then(res => {
                     commit('setAllEvents', res.data)
                     dispatch('loadMoreEvents')
                     rootState.errors = []
                 })
                 .catch(error => {
-                    console.log(error.message)
-                    rootState.errors = [...rootState.errors, error]
+                    console.log(error)
+                    rootState.errors.push(error)
                 })
                 .then(() => {
                     commit('setLoading', false)
@@ -149,14 +148,14 @@ export const eventModule = {
         async getEvent({state, commit, rootState, rootGetters}, event_id){
             const path = `${state.defaultRoot}/${event_id}`
             await instance
-                .get(path, rootGetters.getHeaders)
+                .get(path, {headers: rootGetters.getHeaders})
                 .then(res => {
                     commit('setEvent', res.data)
                     rootState.errors = []
                 })
                 .catch(error => {
                     console.log(error.message)
-                    rootState.errors = [...rootState.errors, error]
+                    rootState.errors.push(error)
                 })
                 .then(() => {
                     if(rootState.errors.length !== 0)
@@ -168,19 +167,20 @@ export const eventModule = {
             console.log(state.event.id)
             const path = `${state.defaultRoot}/${state.event.id}/update`
             await instance
-                .put(path, state.event, rootGetters.getHeaders)
-                .then(res => {
-                    res.data
+                .put(path, state.event, {headers: rootGetters.getHeaders})
+                .then(() => {
+
                     rootState.errors = []
                 })
                 .catch(error => {
                     console.log(error)
-                    rootState.errors = [...rootState.errors, error]
+                    rootState.errors.push(error)
                 })
+            console.log('ok')
         },
         async removeEvent({state, commit, rootState, rootGetters}, event_id){
             const path = `${state.defaultRoot}/${event_id}/delete`
-            await instance.delete(path, rootGetters.getHeaders)
+            await instance.delete(path, {headers: rootGetters.getHeaders})
                 .then( res => {
                     console.log(res)
                     rootState.errors = []
@@ -188,23 +188,29 @@ export const eventModule = {
                 })
                 .catch(error => {
                     console.log(error.message)
-                    rootState.errors = [...rootState.errors, error]
+                    rootState.errors.push(error)
                 })
             commit('setEvents', state.events.filter(x => x.id !== event_id ))
         },
         async getEventFiles({state, commit, dispatch, rootState, rootGetters}){
             await commit('setLoading', true)
-            const ids = await dispatch('getEventsFilesIds')
-            await ids.forEach(id => {
+            await dispatch('getEventsFilesIds')
+            await state.file_ids.forEach(id => {
                 const path = `${state.defaultRoot}/${state.event.id}/files/${id}`
                 instance
-                    .get(path, rootGetters.getHeaders)
+                    .get(path, {
+                        responseType: 'blob',
+                        headers: rootGetters.getHeaders
+                    })
                     .then(response => {
-                        let file = response.data
-                        file.id = id
-                        console.log(file)
-                        commit('addEventFile', response.data)
-                        dispatch('getFilesUrls')
+                        const blob = new Blob(
+                            [response.data],
+                            {
+                                type: response.headers['content-type']
+                            })
+                        blob.id = id
+                        console.log(blob)
+                        commit('addBlob', blob)
                     })
                     .catch(error => {
                         console.log(error.message)
@@ -217,34 +223,24 @@ export const eventModule = {
             })
             await commit('setLoading', false)
         },
-        async getEventsFilesIds({state, rootState, rootGetters}){
+        async getEventsFilesIds({state, commit, rootState, rootGetters}){
             const path = `${state.defaultRoot}/${state.event.id}/files`
-            let filesIds;
             await instance
-                .get(path, rootGetters.getHeaders)
+                .get(path, {headers: rootGetters.getHeaders})
                 .then(response => {
-                    console.log(response.data)
-                    filesIds = response.data
+                    commit('setFileIds', response.data)
                     rootState.errors = []
                 })
                 .catch(error => {
                     console.log(error.message)
                     rootState.errors.push(error)
                 })
-            return filesIds;
+
         },
-        async getFilesUrls({state, commit}){
-            commit('clearUrls')
-            await state.files.forEach(file => {
-                const url = `data:${file.contentType};base64,${file.content}`
-                commit('addFileUrl', url)
-            })
-        },
-        async removeFile({state, commit,dispatch, rootState, rootGetters}, data){
-            const file = await dispatch('findFileByData', data)
-            const path = `${state.defaultRoot}/${state.event.id}/files/${file.id}/delete`
+        async removeFile({state, dispatch, rootState, rootGetters}, file_id){
+            const path = `${state.defaultRoot}/${state.event.id}/files/${file_id}/delete`
             await instance
-                .delete(path, rootGetters.getHeaders)
+                .delete(path, {headers: rootGetters.getHeaders})
                 .then(response => {
                     console.log(response)
                     rootState.errors = []
@@ -254,13 +250,15 @@ export const eventModule = {
                     rootState.errors.push(error)
                 })
                 .then(() => {
-                    commit('setEventFiles', state.files.filter(f => f.id !== file.id ))
-                    dispatch('getFilesUrls')
-                    console.log(state.urls)
+                    dispatch('setBlobs',
+                        [...state.imageBlobs, ...state.textBlobs]
+                            .filter(blob => blob.id !== file_id )
+                    )
                 })
         },
-        async findFileByData({state}, data){
-            return state.files.filter(file => file.content.slice(-32) === data)[0]
+        async setBlobs({commit}, blobs){
+            commit('clearBlobs')
+            blobs.forEach(blob => commit('addBlob', blob))
         }
     },
     namespaced: true

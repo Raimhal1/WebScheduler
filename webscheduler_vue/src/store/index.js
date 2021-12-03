@@ -27,9 +27,7 @@ export default createStore({
     getters: {
         getHeaders(state){
            return {
-               headers: {
-                   Authorization: `Bearer ${state.accessToken}`,
-               }
+               Authorization: `Bearer ${state.accessToken}`,
            }
         }
     },

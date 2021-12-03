@@ -1,96 +1,46 @@
 <template>
   <div>
-    <my-title>Events :</my-title>
-    <my-search
-        v-focus
-        :model-value="searchQuery"
-        @update:model-value="setSearchQuery"
-    />
-    <div class="app__btns">
-      <my-select
-          :model-value="selectedSort"
-          @update:model-value="setSelectedSort"
-          :options="sortOptions"
-      />
-      <my-button @click="showDialog"> Create event </my-button>
-    </div>
-    <event-list
-        :events="sortedAndSearchedEvents"
-        @remove="removeEvent"
-        v-if="!isEventListLoading"
-        class="list"
-    />
-    <div v-else class="center">
-      Loading...
-    </div>
-    <div
-        v-intersection="loadMoreEvents"
-        class="observer"
-    ></div>
-    <my-event-dialog v-model:show="dialogVisible">
-      <event-form
-          :modified="false"
-      />
-    </my-event-dialog>
+    <custom-events-page
+        :root="root"
+    >
+      <template v-slot:title>
+        Your events :
+      </template>
+      <template v-slot:create>
+        <my-button @click="showDialog"> Create event </my-button>
+        <my-event-dialog v-model:show="dialogVisible">
+          <event-form
+              :modified="false"
+          />
+        </my-event-dialog>
+      </template>
+    </custom-events-page>
   </div>
 </template>
 
 <script>
 import EventForm from "@/components/EventForm";
-import EventList from "@/components/EventList";
-import {mapState, mapActions, mapGetters, mapMutations} from 'vuex'
+import CustomEventsPage from "@/components/CustomEventsPage";
+
 export default {
   name: "MyEventsPage",
   components: {
-    EventList,
-    EventForm
+    EventForm,
+    CustomEventsPage
   },
-  mounted() {
-      this.getEventList(window.location.pathname)
-  },
-  beforeUnmount() {
-    this.clearEventStore()
-  },
-  data() {
-    return {
-      dialogVisible: false,
+  data(){
+    return{
+      root: 'my/events',
+      dialogVisible: false
     }
   },
   methods: {
-    ...mapMutations({
-        setSearchQuery: 'event/setSearchQuery',
-        setSelectedSort: 'event/setSelectedSort',
-        clearEventStore: 'event/clearEventStore'
-    }),
-    ...mapActions({
-      loadMoreEvents: 'event/loadMoreEvents',
-      getEventList: 'event/getEventList',
-      removeEvent: 'event/removeEvent',
-    }),
     async showDialog() {
-      this.dialogVisible = true;
+      this.dialogVisible = true
     },
-
   },
-  computed: {
-      ...mapState({
-        events: state => state.event.events,
-        allEvents: state => state.event.allEvents,
-        event: state => state.event.event,
-        isEventListLoading: state => state.event.isLoading,
-        selectedSort: state => state.event.selectedSort,
-        searchQuery: state => state.event.searchQuery,
-        limit: state => state.event.limit,
-        sortOptions: state => state.event.sortOptions,
-      }),
-      ...mapGetters({
-        sortedAndSearchedEvents: 'event/sortedAndSearchedEvents',
-      })
-  },
-
 }
 </script>
 
 <style scoped>
-
 </style>

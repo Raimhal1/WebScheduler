@@ -21,11 +21,12 @@ namespace WebScheduler.Controllers
 
         [HttpGet]
         [Route("api/events/{eventId}/files/{id}")]
-        public async Task<ActionResult<EventFileDto>> GetEventFile(Guid eventId, Guid id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetEventFile(Guid eventId, Guid id, CancellationToken cancellationToken)
         {
             if(await _assesService.HasAccessToEvent(UserId, eventId)){
 
-                return Ok(await _eventFileService.GetFile(id, eventId, cancellationToken));
+                 var file = await _eventFileService.GetFile(id, eventId, cancellationToken);
+                return File(file.Content, file.ContentType);
             }
             return StatusCode(401);
         }

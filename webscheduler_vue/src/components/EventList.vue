@@ -36,8 +36,6 @@ export default {
     isCreator(){
       return JSON.parse(localStorage.getItem('isAdmin')) || window.location.pathname.includes('my/')
     }
-
-
   }
 }
 </script>

@@ -11,7 +11,7 @@
       <div v-if="event.shortDescription">
         Short description : {{ event.shortDescription }}
       </div>
-      <div v-if="showFullInfo && event.shortDescription">
+      <div v-if="showFullInfo && event.description">
         Info : {{ event.description }}
       </div>
       <div v-if="showUsers">
@@ -92,7 +92,8 @@ export default {
 
 .event__btns{
   display: flex;
-  justify-content: space-evenly;
+  justify-content: center;
+  gap: 30px;
 }
 
 .users{

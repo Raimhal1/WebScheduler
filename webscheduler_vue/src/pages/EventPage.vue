@@ -7,26 +7,27 @@
       :is-not-hidden-delete="false"
       :is-creator="isCreator"
   ></event-item>
-  <div v-if="!isLoading" class="images">
-    <div v-for="url in ImageURls" :key="url" class="container">
-      <img
-          :src="url"
-          alt="image"
-          class="image"
-          @click="ScaleImage"
-      >
-      <my-button class="btn" @click="deleteFile">X</my-button>
+  <div v-if="!isLoading">
+    <div class="images">
+      <div v-for="blob in imageBlobs" :key="blob.id" class="container">
+        <img
+            :src="getUrl(blob)"
+            alt="image"
+            class="image"
+            @click="ScaleImage"
+        >
+        <my-button class="btn" @click="removeFile(blob.id)" v-if="isCreator">X</my-button>
+      </div>
     </div>
-  </div>
-  <div v-if="!isLoading" class="text__files">
-    <div v-for="url in TextFileURls" :key="url" class="text__files">
-      <a
-          :href="url"
-          class="text__file"
-          download
-      >
-        Download
-      </a>
+    <div class="text__files">
+      <div v-for="blob in textBlobs" :key="blob.id">
+        <my-button>
+          <a :href="getUrl(blob)" download class="text__file">
+              {{ getTextFileName(blob.type) }}
+          </a>
+        </my-button>
+        <my-button @click="removeFile(blob.id)" v-if="isCreator" class="file__btn">X</my-button>
+      </div>
     </div>
   </div>
   <div v-else class="center">
@@ -35,7 +36,7 @@
   <div class="event__btns">
     <my-button @click="$router.back()"> Back </my-button>
     <div class="creator__btns" v-if="isCreator">
-      <my-button @click="showFileDialog" v-if="files.length < 5" > Add Files </my-button>
+      <my-button @click="showFileDialog" v-if="[...imageBlobs, ...textBlobs].length < 5" > Add Files </my-button>
       <my-button @click="showDialog"> Update </my-button>
     </div>
   </div>
@@ -59,16 +60,16 @@
 import EventItem from "@/components/EventItem";
 import EventForm from "@/components/EventForm";
 import {mapActions, mapMutations, mapState} from "vuex";
-import {instance} from "../instance";
-import MyButton from "../components/UI/MyButton";
+import {instance} from "@/router/instance";
+
 export default {
   name: "EventPage",
-  components: {MyButton, EventItem, EventForm},
+  components: {EventItem, EventForm},
   props: {
   },
   beforeUnmount() {
     this.clearEvent()
-    this.clearFiles()
+    this.clearBlobs()
   },
   async mounted() {
     if(this.isAuth) {
@@ -81,45 +82,33 @@ export default {
       dialogVisible: false,
       fileDialogVisible: false,
       id: this.$route.params.id,
+      urlCreator: window.URL || window.webkitURL,
+      types: ['word', 'pdf', 'text']
     }
   },
   computed: {
     ...mapState({
-      event: state => state.event.event,
-      isAdmin: state => state.isAdmin,
-      files: state => state.event.files,
-      urls: state => state.event.urls,
-      isLoading: state => state.event.isLoading,
       isAuth: state => state.isAuth,
+      isAdmin: state => state.isAdmin,
+      event: state => state.event.event,
+      isLoading: state => state.event.isLoading,
+      imageBlobs: state => state.event.imageBlobs,
+      textBlobs: state => state.event.textBlobs
     }),
-    ImageURls(){
-      return this.urls.filter(url =>
-          url.includes('image/'))
-    },
-    TextFileURls(){
-      return this.urls.filter(url =>
-          url.includes('application/vnd.openxml')
-          || url.includes('text/plain')
-          || url.includes('application/msword')
-      )
-    },
     isCreator(){
-      console.log((window.history.state.back === '/my/events'))
-      console.log((Boolean(this.isAdmin)))
       return (window.history.state.back === '/my/events') || (Boolean(this.isAdmin))
-    }
+    },
 
   },
   methods: {
     ...mapActions({
       getEvent: 'event/getEvent',
       getEventFiles: 'event/getEventFiles',
-      removeEvent: 'event/removeEvent',
       removeFile: 'event/removeFile'
     }),
     ...mapMutations({
       clearEvent: 'event/clearEvent',
-      clearFiles: 'event/clearFiles'
+      clearBlobs: 'event/clearBlobs'
     }),
     async showDialog() {
       this.dialogVisible = true
@@ -134,12 +123,16 @@ export default {
       el.parentNode.classList.toggle('absolute')
       el.nextElementSibling.classList.toggle('close')
     },
-    async deleteFile(e){
-      console.log(e.target)
-      let el = e.target.previousElementSibling
-      console.log(el)
-      this.removeFile(el.src.slice(-32))
-
+    getUrl(blob){
+      return this.urlCreator.createObjectURL(blob)
+    },
+    getTextFileName(type){
+      if(type.includes('word'))
+        return 'doc'
+      else if(type.includes('pdf'))
+        return 'pdf'
+      else if(type.includes('text'))
+        return  'txt'
     },
     async uploadFiles(){
       this.$store.commit('event/setLoading', true)
@@ -172,38 +165,37 @@ export default {
 </script>
 
 <style scoped>
+
 .custom{
-  font-size: 26px;
+  font-size: 18px;
 }
+
 .event__btns{
   margin: 15px 10px;
   display: flex;
   justify-content: space-between;
 }
+
 .image{
   height: 30vh;
   width: auto;
   cursor: pointer;
   margin: 5px 5px;
 }
-.images, .text__files{
-  display: flex;
-  flex-flow: row wrap;
 
-}
-.images{
-  align-items: center;
-  justify-content: center;
-}
-.text__file{
-  margin: 2px;
-}
 .image__max{
   right: 0;
   top: 0;
   margin: auto;
   width: auto;
   height: 85vh;
+}
+
+.images{
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: center;
 }
 
 .dialog{
@@ -214,13 +206,16 @@ export default {
   bottom: 0;
   display: flex;
 }
+
 .container{
   position: relative;
 }
+
 .absolute{
   position: absolute;
   z-index: 2;
 }
+
 .container .btn {
   position: absolute;
   right: 1px;
@@ -243,6 +238,38 @@ export default {
   display: none;
 }
 
+.text__files{
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.text__files>div{
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.text__file{
+  text-decoration: none;
+  font-size: 14px;
+}
+.text__file:hover{
+  color: #ff8010;
+}
+
+.file__btn{
+  background-color: #555;
+  border: none;
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.file__btn:hover{
+  background-color: #282626;
+}
+
 .file__form{
   display: flex;
   flex-direction: column;
@@ -253,8 +280,9 @@ export default {
 
 .creator__btns{
   display: flex;
-  justify-content: space-around;
-  justify-self: right;
-  width: 250px;
+  justify-content: flex-end;
+  gap: 20px;
 }
+
+
 </style>

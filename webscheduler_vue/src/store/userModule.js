@@ -1,6 +1,6 @@
-import {instance} from '@/instance'
 import jwt_decode from 'jwt-decode'
 import router from "@/router/router";
+import {instance} from "@/router/instance";
 
 export const userModule = {
     state: () => ({
@@ -99,10 +99,10 @@ export const userModule = {
             localStorage.isAdmin = rootState.isAdmin
 
         },
-        async getUser({state, commit, rootState}, user_id){
+        async getUser({state, commit, rootState, rootGetters}, user_id){
             const path = `${state.defaultUserRoot}/${user_id}`
             return await instance
-                .get(path)
+                .get(path, {headers: rootGetters.getHeaders})
                 .then(res => {
                     res.data
                     rootState.errors = []

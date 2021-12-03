@@ -13,5 +13,5 @@ export default [
     MyEventDialog,
     MySelect,
     MySearch,
-    Navbar
+    Navbar,
 ]
