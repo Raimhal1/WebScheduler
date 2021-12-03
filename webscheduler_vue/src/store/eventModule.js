@@ -96,10 +96,12 @@ export const eventModule = {
     actions: {
         async createEvent({state, commit, dispatch, rootState, rootGetters}) {
             let event_id
+            console.log(state.event)
             await instance
                 .post('events', state.event, {headers: rootGetters.getHeaders})
-                .then(res => {
-                    event_id = res.data
+                .then(response => {
+                    console.log(response.data)
+                    event_id = response.data
                     rootState.errors = []
                 })
                 .catch(error => {
@@ -110,6 +112,7 @@ export const eventModule = {
                     if(rootState.errors.length !== 0)
                         router.push('/login')
                 })
+            console.log(event_id)
             const event = await dispatch('getEvent', event_id)
             commit('pushEvent', event)
             commit('clearEvent')
@@ -224,7 +227,7 @@ export const eventModule = {
             await commit('setLoading', false)
         },
         async getEventsFilesIds({state, commit, rootState, rootGetters}){
-            const path = `${state.defaultRoot}/${state.event.id}/files`
+            const path = `${state.defaultRoot}/${state.event.id}/files/ids`
             await instance
                 .get(path, {headers: rootGetters.getHeaders})
                 .then(response => {

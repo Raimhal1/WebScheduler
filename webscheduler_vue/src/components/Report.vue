@@ -26,14 +26,19 @@ export default {
     root: {
       type: String,
       required: true
+    },
+    reportType: {
+      type: String,
+      default: 'report'
     }
+
   },
   methods: {
     async showDialog() {
       this.dialogVisible = true
     },
     async generateReport(extension){
-      const path = `${this.root}/report/${extension}`
+      const path = `${this.root}/${this.reportType}/${extension}`
       await instance
           .get(path, {
             responseType: 'blob',

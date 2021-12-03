@@ -41,9 +41,6 @@ namespace WebScheduler.BLL.Events.Queries.GetEventList
 
             var eventQuery = await LookUp.GetLookupEventList(_context, _mapper, expression, cancellationToken);
 
-            for(int i = 0; i < eventQuery.Count; i++)
-                eventQuery[i].Users = _mapper.Map<List<UserVm>>(eventQuery[i].Users);
-
             return new EventListVm {Events = eventQuery };
         }
     }

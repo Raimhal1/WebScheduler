@@ -6,6 +6,7 @@ import About from "@/pages/About";
 import EventPage from "@/pages/EventPage";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
+import AdminPage from "../pages/AdminPage";
 // import store from '@/store'
 
 const routes = [
@@ -41,6 +42,10 @@ const routes = [
     {
         path: "/events/:id",
         component: EventPage
+    },
+    {
+        path: "/admin",
+        component: AdminPage
     }
 ]
 

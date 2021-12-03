@@ -9,7 +9,7 @@
   ></event-item>
   <div v-if="!isLoading">
     <div class="images">
-      <div v-for="blob in imageBlobs" :key="blob.id" class="container">
+      <div v-for="blob in imageBlobs" :key="blob.id" class="container" >
         <img
             :src="getUrl(blob)"
             alt="image"
@@ -224,7 +224,7 @@ export default {
   -ms-transform: translate(-50%, -50%);
   background-color: #555;
   color: white;
-  font-size: 16px;
+  font-size: 14px;
   border: none;
   cursor: pointer;
   text-align: center;

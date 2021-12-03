@@ -4,6 +4,7 @@ import {instance} from "@/router/instance";
 
 export const userModule = {
     state: () => ({
+        users: [],
         user: {
             FirstName: null,
             LastName: null,
@@ -11,13 +12,24 @@ export const userModule = {
             Email: null,
             Password: null
         },
-        invalid: false,
         defaultRoot: 'account',
         defaultUserRoot: 'users',
         isLoading: false
     }),
     getters: {},
     mutations: {
+        setUsers(state, users){
+            state.users = users
+        },
+        clearUser(state){
+            state.user = {
+                FirstName: null,
+                LastName: null,
+                UserName: null,
+                Email: null,
+                Password: null
+            }
+        },
         setUser(state, user){
             state.user = user
         },
@@ -26,9 +38,6 @@ export const userModule = {
         },
         setDefaultUserRoot(state, defaultUserRoot) {
             state.defaultUserRoot = defaultUserRoot
-        },
-        check(state, bool){
-            state.invalid = bool
         },
         setLoading(state, bool) {
             state.isLoading = bool
@@ -43,12 +52,10 @@ export const userModule = {
                 .then(response => {
                     response.data
                     rootState.errors = []
-                    commit('check', false)
                 })
                 .catch(error => {
                     console.log(error)
-                    rootState.errors = [...rootState.errors, error]
-                    commit('check', true)
+                    rootState.errors.push(error)
                 })
                 .then(() =>{
                     if(rootState.errors.length === 0)
@@ -58,7 +65,7 @@ export const userModule = {
                 })
             await commit('setLoading', false)
         },
-        async login({state, commit, dispatch,rootState}){
+        async login({state, dispatch,rootState}){
             const path = `${state.defaultRoot}/authenticate`
             rootState.errors = []
             await instance
@@ -71,13 +78,11 @@ export const userModule = {
                     rootState.refreshToken = response.data.refreshToken
                     rootState.isAuth = true
                     rootState.errors = []
-                    commit('check', false)
                     console.log('ok')
                 })
                 .catch(error => {
                     console.log(error.message)
-                    rootState.errors = [...rootState.errors, error]
-                    commit('check', true)
+                    rootState.errors.push(error)
                 })
                 .then(() => {
                     if (rootState.errors.length === 0) {
@@ -88,7 +93,8 @@ export const userModule = {
                         router.push('/login')
                 })
         },
-        async logout({rootState}){
+        async logout({commit, rootState}){
+            commit('clearUser')
             rootState.accessToken = ''
             rootState.refreshToken = ''
             rootState.isAuth = false
@@ -99,19 +105,69 @@ export const userModule = {
             localStorage.isAdmin = rootState.isAdmin
 
         },
-        async getUser({state, commit, rootState, rootGetters}, user_id){
+        async getUserById({state, commit, rootState, rootGetters}, user_id){
             const path = `${state.defaultUserRoot}/${user_id}`
-            return await instance
+            await instance
                 .get(path, {headers: rootGetters.getHeaders})
-                .then(res => {
-                    res.data
+                .then(response => {
+                    commit('setUser', response.data)
                     rootState.errors = []
-                    commit('check', false)
                 })
                 .catch(error =>{
                     console.log(error)
-                    rootState.errors = [...rootState.errors, error]
-                    commit('check', true)
+                    rootState.errors.push(error)
+                })
+        },
+        async getUserByEmail({state, commit, rootState, rootGetters}, email){
+            var data = new FormData();
+            data.append('email', email)
+            const path = `${state.defaultUserRoot}/email`
+
+            await instance
+                .get(path,
+                    email,
+                    {
+                        "Content-Type": "multipart/form-data",
+                        headers: rootGetters.getHeaders
+                    })
+                .then(response => {
+                    commit('setUser', response.data)
+                    rootState.errors = []
+                })
+                .catch(error =>{
+                    console.log(error)
+                    rootState.errors.push(error)
+                })
+        },
+        async getUsers({state, commit, rootState, rootGetters}){
+            await instance
+                .get(state.defaultUserRoot, {headers: rootGetters.getHeaders})
+                .then(response => {
+                    console.log(response)
+                    commit('setUsers', response.data)
+                    rootState.errors = []
+                })
+                .catch(error =>{
+                    console.log(error)
+                    rootState.errors.push(error)
+                })
+        },
+        async removeUser({state, commit, rootState, rootGetters}, user_id){
+            const path = `${state.defaultUserRoot}/${user_id}/delete`
+            await instance
+                .delete(path, {headers: rootGetters.getHeaders})
+                .then(() =>
+                    rootState.errors = []
+                )
+                .catch(error =>{
+                    console.log(error)
+                    rootState.errors.push(error)
+                })
+                .then(() => {
+                    commit('setUsers',
+                        [...state.users]
+                            .filter(user => user.id !== user_id )
+                    )
                 })
         },
         async decodeRoleFromJWT({rootState}){

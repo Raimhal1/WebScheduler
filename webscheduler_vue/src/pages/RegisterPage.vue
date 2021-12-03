@@ -1,5 +1,4 @@
 <template>
-  <div v-if="this.invalid"> ERROR!</div>
   <div class="register__page">
     <form @submit.prevent="register" method="post" class="user__form">
       <h2>Register</h2>
@@ -49,7 +48,6 @@ import {mapActions, mapState} from "vuex";
 export default {
   name: "RegisterPage",
   beforeUnmount() {
-    this.$store.commit('user/check', false)
   },
   methods: {
     ...mapActions({

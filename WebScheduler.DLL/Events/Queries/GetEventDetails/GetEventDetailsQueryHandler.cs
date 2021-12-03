@@ -56,7 +56,7 @@ namespace WebScheduler.BLL.Events.Queries.GetEventDetails
                 throw new NotFoundException(nameof(Event), request.Id);
 
             var eventVm = _mapper.Map<EventDetailsVm>(entity);
-            eventVm.Users = _mapper.Map<List<UserVm>>(entity.Users);
+            eventVm.Users = _mapper.Map<List<UserDto>>(entity.Users);
 
             return eventVm;
         }

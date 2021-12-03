@@ -26,13 +26,13 @@ namespace WebScheduler.Controllers
             if(await _assesService.HasAccessToEvent(UserId, eventId)){
 
                  var file = await _eventFileService.GetFile(id, eventId, cancellationToken);
-                return File(file.Content, file.ContentType);
+                return File(file.Content, file.ContentType, file.FileName);
             }
             return StatusCode(401);
         }
 
         [HttpGet]
-        [Route("api/events/{eventId}/files")]
+        [Route("api/events/{eventId}/files/ids")]
         public async Task<IActionResult> GetEventFilesIds(Guid eventId, CancellationToken cancellationToken)
         {
             if (await _assesService.HasAccessToEvent(UserId, eventId))

@@ -29,13 +29,11 @@ namespace WebScheduler.BLL.Services
 
         public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest model, string ip, CancellationToken cancellationToken)
         {
-            Expression<Func<User, bool>> expression = u =>
-                u.Email == model.Username;
-
             var user = await _userContext.Users
                 .Include(u => u.Roles)
                 .Include(u => u.RefreshTokens)
-                .SingleOrDefaultAsync(expression, cancellationToken);
+                .SingleOrDefaultAsync(u => u.Email == model.Username, cancellationToken);
+
             if (user == null)
                 throw new NotFoundException(nameof(User), model.Username);
 

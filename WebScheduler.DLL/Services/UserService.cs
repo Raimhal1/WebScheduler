@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using WebScheduler.BLL.DtoModels;
@@ -83,34 +84,43 @@ namespace WebScheduler.BLL.Services
                 
             }
         }
-
-        public async Task<UserListVm> GetAll()
+        public async Task<List<UserDto>> GetAll()
         {
-            var users = await _userContext.Users
+            return await _userContext.Users
                 .Include(u=> u.Events)
                 .Include(u=> u.RefreshTokens)
                 .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
-
-            var userListVm = new UserListVm { Users = users };
-
-            for (int i = 0; i < userListVm.Users.Count; i++)
-                userListVm.Users[i].Events = _mapper.Map<List<EventDto>>(users[i].Events);
-
-            return userListVm;
         }
 
-        public async Task<UserDto> GetByIdAsync(Guid id)
+        public async Task<UserDto> GetByIdAsync(Guid id) 
+        { 
+            Expression<Func<User, bool>> expression = u => u.Id == id;
+
+            var user = await getUser(expression, id);
+
+            return _mapper.Map<UserDto>(user);
+        }
+
+        public async Task<User> getUser(Expression<Func<User, bool>> expression, object key)
         {
             var user = await _userContext.Users
-                .Include(u=>u.Events)
-                .FirstOrDefaultAsync(u => u.Id == id);
+                .Include(u => u.Roles)
+                .Include(u => u.Events)
+                .FirstOrDefaultAsync(expression);
 
             if (user == null)
-                throw new NotFoundException(nameof(User), id);
-            var userDto = _mapper.Map<UserDto>(user);
-            userDto.Events = _mapper.Map<List<EventDto>>(user.Events);
-            return userDto;
+                throw new NotFoundException(nameof(User), key);
+
+            return user;
+
+        }
+
+        public async Task<Guid> getIdFromEmail(string email)
+        {
+            Expression<Func<User, bool>> expression = u => u.Email == email;
+            var user = await getUser(expression, email);
+            return user.Id;
         }
     }
 }

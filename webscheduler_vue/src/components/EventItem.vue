@@ -100,7 +100,7 @@ export default {
   display: flex;
   flex-flow: wrap;
   width: fit-content;
-  font-size: 16px;
+  font-size: 14px;
 }
 .user{
   white-space: nowrap;

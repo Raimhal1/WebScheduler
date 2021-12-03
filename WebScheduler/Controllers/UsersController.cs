@@ -12,9 +12,10 @@ namespace WebScheduler.Controllers
     public class UsersController : BaseController
     {
         private readonly IUserService _userService;
+        private readonly IAccessService _accessService;
 
-        public UsersController(IUserService userService) =>
-            _userService = userService;
+        public UsersController(IUserService userService, IAccessService accessService) =>
+            (_userService, _accessService) = (userService, accessService);
 
 
         [HttpGet]
@@ -28,12 +29,29 @@ namespace WebScheduler.Controllers
 
         [HttpGet]
         [Route("api/users/{id}")]
-        [Authorize(Roles = "Admin, User")]
+        [Authorize]
         public async Task<ActionResult<UserDto>> GetUser(Guid id)
         {
+            if (await _accessService.HasAccessToUser(UserId, id))
+            {
+                var user = await _userService.GetByIdAsync(id);
+                return Ok(user);
+            }
+            return StatusCode(401);
+        }
 
-            var user = await _userService.GetByIdAsync(id);
-            return Ok(user);
+        [HttpGet]
+        [Route("api/users/email")]
+        [Authorize]
+        public async Task<ActionResult<UserDto>> GetUser([FromForm] string email)
+        {
+            var id = await _userService.getIdFromEmail(email);
+            if (await _accessService.HasAccessToUser(UserId, id))
+            {
+                var user = await _userService.GetByIdAsync(id);
+                return Ok(user);
+            }
+            return StatusCode(401);
         }
 
         [AllowAnonymous]
@@ -52,8 +70,12 @@ namespace WebScheduler.Controllers
         public async Task<IActionResult> UpdateUser(Guid id, [FromBody] RegisterUserModel model,
             CancellationToken cancellationToken)
         {
-            await _userService.UpdateAsync(id, model, cancellationToken);
-            return NoContent();
+            if (await _accessService.HasAccessToUser(UserId, id))
+            {
+                await _userService.UpdateAsync(id, model, cancellationToken);
+                return NoContent();
+            }
+            return StatusCode(401);
         }
 
 

@@ -2,7 +2,6 @@
 <template>
 
   <form>
-    <div v-if="this.invalid"> ERROR!</div>
     <div class="login__page">
       <form method="post" class="user__form" @submit.prevent="login">
         <h2>Log in</h2>

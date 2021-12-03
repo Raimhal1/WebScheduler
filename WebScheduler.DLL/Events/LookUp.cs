@@ -19,16 +19,11 @@ namespace WebScheduler.BLL.Events
         public static async Task<List<EventLookupDto>> GetLookupEventList(IEventDbContext _context,
             IMapper _mapper, Expression<Func<Event, bool>> expression, CancellationToken cancellationToken)
         {
-            var eventQuery = await _context.Events
+            return await _context.Events
                 .Include(e => e.Users)
                 .Where(expression)
                 .ProjectTo<EventLookupDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
-
-            for (int i = 0; i < eventQuery.Count; i++)
-                eventQuery[i].Users = _mapper.Map<List<UserVm>>(eventQuery[i].Users);
-
-            return eventQuery;
         }
     }
 }
