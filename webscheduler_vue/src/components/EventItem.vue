@@ -2,12 +2,16 @@
   <div class="event">
     <div>
       <h3 class="header">{{ event.eventName }}</h3>
-      <div>
-        Start : {{ new Date(event.startEventDate).toLocaleString() }}
+      <div class="status">
+        {{ this.getStatus(event.status)}}
       </div>
       <div>
-        End : {{ new Date(event.endEventDate).toLocaleString() }}
+        Start : {{ new Date(event.startEventDate).toLocaleString().slice(0, -3) }}
       </div>
+      <div>
+        End : {{ new Date(event.endEventDate).toLocaleString().slice(0, -3) }}
+      </div>
+
       <div v-if="event.shortDescription">
         Short description : {{ event.shortDescription }}
       </div>
@@ -69,6 +73,15 @@ export default {
       default: true
     }
   },
+  methods: {
+    getStatus(s){
+      switch (s){
+        case 0: return "Expected"
+        case 1: return "In process"
+        case 2: return "Ended"
+      }
+    }
+  }
 }
 </script>
 
@@ -110,5 +123,6 @@ export default {
   background-color: rgba(2, 106, 248, 0.21);
   overflow: hidden;
 }
+
 
 </style>

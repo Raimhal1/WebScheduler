@@ -41,9 +41,9 @@ namespace WebScheduler.Controllers
         }
 
         [HttpGet]
-        [Route("api/users/email")]
+        [Route("api/users/{email}/email")]
         [Authorize]
-        public async Task<ActionResult<UserDto>> GetUser([FromForm] string email)
+        public async Task<ActionResult<UserDto>> GetUserByEmail(string email)
         {
             var id = await _userService.getIdFromEmail(email);
             if (await _accessService.HasAccessToUser(UserId, id))

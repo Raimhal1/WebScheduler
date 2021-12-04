@@ -76,9 +76,7 @@ namespace WebScheduler.BLL.Services
             {
                 var user = await _userContext.Users.FindAsync(new object[] { id }, cancellationToken);
                 if (user == null)
-                {
                     throw new NotFoundException(nameof(User), id);
-                }
                 _userContext.Users.Remove(user);
                 await _userContext.SaveChangesAsync(cancellationToken);   
                 

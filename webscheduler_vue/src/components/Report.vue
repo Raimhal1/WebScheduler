@@ -1,11 +1,11 @@
 <template>
   <my-button @click="showDialog" v-if="length !== 0"> <slot></slot> </my-button>
-  <my-event-dialog v-model:show="dialogVisible">
+  <my-dialog v-model:show="dialogVisible">
       <div class="report">
         <my-button @click="generateReport('xml')"> XML </my-button>
         <my-button @click="generateReport('csv')"> CSV </my-button>
       </div>
-  </my-event-dialog>
+  </my-dialog>
 </template>
 
 <script>

@@ -18,7 +18,6 @@ using Microsoft.AspNetCore.Http;
 
 namespace WebScheduler.Controllers
 {
-
     [Authorize]
     public class EventsController : BaseController
     {
@@ -108,8 +107,7 @@ namespace WebScheduler.Controllers
 
         [HttpPut]
         [Route("api/events/{eventid}/assign/{userId}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateEvent(Guid eventId, Guid userId)
+        public async Task<IActionResult> AssignUserToEventById(Guid eventId, Guid userId)
         {
             var command = new AssignUserCommand
             {

@@ -118,22 +118,11 @@ export const userModule = {
                     rootState.errors.push(error)
                 })
         },
-        async getUserByEmail({state, commit, rootState, rootGetters}, email){
-            var data = new FormData();
-            data.append('email', email)
-            const path = `${state.defaultUserRoot}/email`
-
-            await instance
-                .get(path,
-                    email,
-                    {
-                        "Content-Type": "multipart/form-data",
-                        headers: rootGetters.getHeaders
-                    })
-                .then(response => {
-                    commit('setUser', response.data)
-                    rootState.errors = []
-                })
+        async getUserByEmail({state, rootState, rootGetters}, email){
+            const path = `${state.defaultUserRoot}/${email}/email`
+            return await instance
+                .get(path, {headers: rootGetters.getHeaders})
+                .then(response => response.data)
                 .catch(error =>{
                     console.log(error)
                     rootState.errors.push(error)
@@ -157,17 +146,15 @@ export const userModule = {
             await instance
                 .delete(path, {headers: rootGetters.getHeaders})
                 .then(() =>
+                    commit('setUsers',
+                        [...state.users]
+                            .filter(user => user.id !== user_id )
+                    ),
                     rootState.errors = []
                 )
                 .catch(error =>{
                     console.log(error)
                     rootState.errors.push(error)
-                })
-                .then(() => {
-                    commit('setUsers',
-                        [...state.users]
-                            .filter(user => user.id !== user_id )
-                    )
                 })
         },
         async decodeRoleFromJWT({rootState}){

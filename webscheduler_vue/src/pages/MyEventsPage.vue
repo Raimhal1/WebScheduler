@@ -8,11 +8,11 @@
       </template>
       <template v-slot:create>
         <my-button @click="showDialog"> Create event </my-button>
-        <my-event-dialog v-model:show="dialogVisible">
+        <my-dialog v-model:show="dialogVisible">
           <event-form
               :modified="false"
           />
-        </my-event-dialog>
+        </my-dialog>
       </template>
     </custom-events-page>
   </div>

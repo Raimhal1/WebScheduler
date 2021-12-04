@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import {mapActions, mapGetters, mapState} from "vuex";
+import {mapActions, mapState} from "vuex";
 
 export default {
   name: "LoginPage",
@@ -51,9 +51,6 @@ export default {
       invalid: state => state.user.invalid,
       errors: state => state.errors
     }),
-    ...mapGetters({
-
-    })
   },
   methods: {
     ...mapActions({

@@ -35,7 +35,6 @@ namespace WebScheduler.BLL.Services
         public async Task<AllowedFileTypeListVm> GetAllowedFileTypes()
         {
             var allowedFileTypes = await _fileTypesContext.AllowedFileTypes
-               .ProjectTo<AllowedFileTypeDto>(_mapper.ConfigurationProvider)
                .ToListAsync();
 
             return new AllowedFileTypeListVm { AllowedFileTypes = allowedFileTypes };

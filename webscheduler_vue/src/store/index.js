@@ -1,7 +1,7 @@
 import {createStore} from 'vuex'
-import {eventModule} from "./eventModule";
+import {eventModule} from "./eventModule"
 import {userModule} from "./userModule"
-
+import {fileModule} from "./fileModule"
 
 
 export default createStore({
@@ -29,11 +29,16 @@ export default createStore({
            return {
                Authorization: `Bearer ${state.accessToken}`,
            }
+        },
+        getUserId(state){
+            console.log(state.user.user.id)
+            return state.user.user.id
         }
     },
 
     modules: {
         event: eventModule,
         user: userModule,
+        file: fileModule
     }
 })

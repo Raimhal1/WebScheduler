@@ -16,7 +16,7 @@
             class="image"
             @click="ScaleImage"
         >
-        <my-button class="btn" @click="removeFile(blob.id)" v-if="isCreator">X</my-button>
+        <my-button class="btn" @click="removeFile([event.id, blob.id])" v-if="isCreator">X</my-button>
       </div>
     </div>
     <div class="text__files">
@@ -26,7 +26,7 @@
               {{ getTextFileName(blob.type) }}
           </a>
         </my-button>
-        <my-button @click="removeFile(blob.id)" v-if="isCreator" class="file__btn">X</my-button>
+        <my-button @click="removeFile([event.id, blob.id])" v-if="isCreator" class="file__btn">X</my-button>
       </div>
     </div>
   </div>
@@ -38,29 +38,29 @@
     <div class="creator__btns" v-if="isCreator">
       <my-button @click="showFileDialog" v-if="[...imageBlobs, ...textBlobs].length < 5" > Add Files </my-button>
       <my-button @click="showDialog"> Update </my-button>
+<!--      <my-button @click="assign"> Invite </my-button>-->
     </div>
   </div>
 
-  <my-event-dialog v-model:show="dialogVisible">
+  <my-dialog v-model:show="dialogVisible">
     <event-form
         :modified="true"
         :id="id"
     />
-  </my-event-dialog>
-  <my-event-dialog v-model:show="fileDialogVisible">
+  </my-dialog>
+  <my-dialog v-model:show="fileDialogVisible">
     <form enctype="multipart/form-data" method="post" id="uploadForm"  @submit.prevent class="file__form">
       <my-input type="file" id="files" multiple/>
-      <my-button @click="uploadFiles">Submit</my-button>
+      <my-button @click="uploadFiles(event.id)">Submit</my-button>
       <div v-if="isLoading">Loading...</div>
     </form>
-  </my-event-dialog>
+  </my-dialog>
 </template>
 
 <script>
 import EventItem from "@/components/EventItem";
 import EventForm from "@/components/EventForm";
 import {mapActions, mapMutations, mapState} from "vuex";
-import {instance} from "@/router/instance";
 
 export default {
   name: "EventPage",
@@ -74,16 +74,19 @@ export default {
   async mounted() {
     if(this.isAuth) {
       await this.getEvent(this.id)
-      await this.getEventFiles()
+      await this.getEventFiles(this.event.id)
     }
+    console.log(this.event)
+
   },
   data(){
     return{
       dialogVisible: false,
       fileDialogVisible: false,
+      userDialogVisible: false,
       id: this.$route.params.id,
       urlCreator: window.URL || window.webkitURL,
-      types: ['word', 'pdf', 'text']
+      users: '',
     }
   },
   computed: {
@@ -91,9 +94,9 @@ export default {
       isAuth: state => state.isAuth,
       isAdmin: state => state.isAdmin,
       event: state => state.event.event,
-      isLoading: state => state.event.isLoading,
-      imageBlobs: state => state.event.imageBlobs,
-      textBlobs: state => state.event.textBlobs
+      isLoading: state => state.file.isLoading,
+      imageBlobs: state => state.file.imageBlobs,
+      textBlobs: state => state.file.textBlobs
     }),
     isCreator(){
       return (window.history.state.back === '/my/events') || (Boolean(this.isAdmin))
@@ -103,12 +106,13 @@ export default {
   methods: {
     ...mapActions({
       getEvent: 'event/getEvent',
-      getEventFiles: 'event/getEventFiles',
-      removeFile: 'event/removeFile'
+      getEventFiles: 'file/getEventFiles',
+      removeFile: 'file/removeFile',
+      uploadFiles: 'file/uploadFiles'
     }),
     ...mapMutations({
       clearEvent: 'event/clearEvent',
-      clearBlobs: 'event/clearBlobs'
+      clearBlobs: 'file/clearBlobs'
     }),
     async showDialog() {
       this.dialogVisible = true
@@ -133,32 +137,9 @@ export default {
         return 'pdf'
       else if(type.includes('text'))
         return  'txt'
+      else
+        return 'file'
     },
-    async uploadFiles(){
-      this.$store.commit('event/setLoading', true)
-      const form = new FormData(document.querySelector('#uploadForm'))
-      var data = document.querySelector('#files')
-      console.log(data)
-      console.log(data.files)
-      console.log(data.files[0])
-      for(let i = 0; i < data.files.length; i++)
-        form.append('files', data.files[i])
-      console.log(form)
-      const path = `events/${this.event.id}/files/add-files`
-      await instance
-          .post(path, form, {
-            headers: {
-              Authorization: `Bearer ${this.$store.state.accessToken}`,
-              'Content-Type': 'multipart/form-data',
-          }})
-          .then(response => {
-            console.log(response)
-            console.log('ok')
-          })
-          .catch(error => console.log(error))
-          .then(() => this.$store.dispatch('event/getEventFiles'))
-      this.$store.commit('event/setLoading', false)
-    }
   },
 }
 
@@ -282,6 +263,14 @@ export default {
   display: flex;
   justify-content: flex-end;
   gap: 20px;
+}
+
+.user__form{
+  display: flex;
+  flex-direction: column;
+  border: 2px solid #0c20a1;
+  border-radius: 5px;
+  padding: 10px;
 }
 
 

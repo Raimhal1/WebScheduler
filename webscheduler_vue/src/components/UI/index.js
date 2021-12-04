@@ -3,14 +3,14 @@ import MyTitle from "./MyTitle";
 import MyButton from "./MyButton";
 import MySelect from "./MySelect";
 import MySearch from "./MySearch";
-import MyEventDialog from "./MyEventDialog";
+import MyDialog from "./MyDialog";
 import Navbar from "./Navbar";
 
 export default [
     MyButton,
     MyInput,
     MyTitle,
-    MyEventDialog,
+    MyDialog,
     MySelect,
     MySearch,
     Navbar,

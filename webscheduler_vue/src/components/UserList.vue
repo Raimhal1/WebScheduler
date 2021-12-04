@@ -11,7 +11,7 @@
           <th></th>
         </tr>
       </thead>
-      <tbody>
+      <tbody class="body">
         <tr v-for="user in users" :key="user.id" class="user">
           <td>{{user.userName}}</td>
           <td>{{user.email}}</td>
@@ -19,7 +19,6 @@
           <td>{{user.lastName}}</td>
           <td class="btns">
             <my-button @click="removeUser(user.id)"> Delete </my-button>
-            <my-button> Edit </my-button>
           </td>
         </tr>
       </tbody>
@@ -39,9 +38,6 @@ export default {
       type: Array,
       required: true
     }
-  },
-  mounted() {
-    console.log(this.users)
   },
   methods: {
     ...mapActions({
