@@ -3,22 +3,22 @@
 
   <form>
     <div class="login__page">
-      <form method="post" class="user__form" @submit.prevent="login">
-        <h2>Log in</h2>
+      <form method="post" class="user__form" @submit.prevent>
+        <h2 class="title">Log in</h2>
         <my-input
-            v-model="user.Email"
+            v-model="user.email"
             type="email"
             placeholder="Email"
         >
         </my-input>
         <my-input
-            v-model="user.Password"
+            v-model="user.password"
             type="password"
             placeholder="Password"
         >
         </my-input>
         <my-button
-            type="submit"
+            @click="login"
         >
           Log in
         </my-button>
@@ -48,7 +48,6 @@ export default {
       isAuth: state => state.isAuth,
       isAdmin: state => state.isAdmin,
       user: state => state.user.user,
-      invalid: state => state.user.invalid,
       errors: state => state.errors
     }),
   },
@@ -65,5 +64,8 @@ export default {
 .login__page{
   display: flex;
   justify-content: center;
+}
+.title{
+  margin-bottom: 20px;
 }
 </style>

@@ -118,6 +118,14 @@ namespace WebScheduler.Controllers
             return NoContent();
         }
 
+        [HttpPut]
+        [Route("api/events/assign")]
+        public async Task<IActionResult> AssignUserToEventByEmail(AssignUserByEmailCommand command)
+        {
+            await Mediator.Send(command);
+            return NoContent();
+        }
+
 
 
         [HttpDelete]

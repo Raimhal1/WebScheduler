@@ -4,12 +4,10 @@
       <router-view></router-view>
     </div>
 </template>
-<!-- move file services to a separate storage module -->
 <script>
 
 export default {
   mounted() {
-    console.log('updated')
     if(JSON.parse(localStorage.getItem('isAuth'))){
       this.$store.commit('setTokens', {
         access: localStorage.getItem('accessToken'),
@@ -39,6 +37,11 @@ body::-webkit-scrollbar {
   padding: 20px;
 }
 
+.user__page{
+  display: flex;
+  justify-content: center;
+}
+
 .user__form{
   width: 400px;
   display: flex;
@@ -54,5 +57,10 @@ body::-webkit-scrollbar {
   display: flex;
   justify-content:space-between;
 
+}
+
+.page{
+  margin: auto;
+  width: 70vw;
 }
 </style>

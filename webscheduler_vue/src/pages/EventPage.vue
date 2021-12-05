@@ -1,60 +1,69 @@
 <template>
-  <event-item
-      :event="event"
-      :showUsers="true"
-      :showFullInfo="true"
-      class="custom"
-      :is-not-hidden-delete="false"
-      :is-creator="isCreator"
-  ></event-item>
-  <div v-if="!isLoading">
-    <div class="images">
-      <div v-for="blob in imageBlobs" :key="blob.id" class="container" >
-        <img
-            :src="getUrl(blob)"
-            alt="image"
-            class="image"
-            @click="ScaleImage"
-        >
-        <my-button class="btn" @click="removeFile([event.id, blob.id])" v-if="isCreator">X</my-button>
+  <div class="page">
+    <event-item
+        :event="event"
+        :showUsers="true"
+        :showFullInfo="true"
+        class="custom"
+        :is-not-hidden-delete="false"
+        :is-creator="isCreator"
+    ></event-item>
+    <div v-if="!isLoading">
+      <div class="images">
+        <div v-for="blob in imageBlobs" :key="blob.id" class="container" >
+          <img
+              :src="getUrl(blob)"
+              alt="image"
+              class="image"
+              @click="ScaleImage"
+          >
+          <my-button class="btn" @click="removeFile([event.id, blob.id])" v-if="isCreator">X</my-button>
+        </div>
+      </div>
+      <div class="text__files">
+        <div v-for="blob in textBlobs" :key="blob.id">
+          <my-button>
+            <a :href="getUrl(blob)" download class="text__file">
+                {{ getTextFileName(blob.type) }}
+            </a>
+          </my-button>
+          <my-button @click="removeFile([event.id, blob.id])" v-if="isCreator" class="file__btn">X</my-button>
+        </div>
       </div>
     </div>
-    <div class="text__files">
-      <div v-for="blob in textBlobs" :key="blob.id">
-        <my-button>
-          <a :href="getUrl(blob)" download class="text__file">
-              {{ getTextFileName(blob.type) }}
-          </a>
-        </my-button>
-        <my-button @click="removeFile([event.id, blob.id])" v-if="isCreator" class="file__btn">X</my-button>
+    <div v-else class="center">
+      Loading...
+    </div>
+    <div class="event__btns">
+      <my-button @click="$router.back()"> Back </my-button>
+      <div class="creator__btns" v-if="isCreator">
+        <my-button @click="showAssignDialog"> Invite </my-button>
+        <my-button @click="showFileDialog" v-if="[...imageBlobs, ...textBlobs].length < 5" > Add Files </my-button>
+        <my-button @click="showDialog"> Update </my-button>
       </div>
     </div>
-  </div>
-  <div v-else class="center">
-    Loading...
-  </div>
-  <div class="event__btns">
-    <my-button @click="$router.back()"> Back </my-button>
-    <div class="creator__btns" v-if="isCreator">
-      <my-button @click="showFileDialog" v-if="[...imageBlobs, ...textBlobs].length < 5" > Add Files </my-button>
-      <my-button @click="showDialog"> Update </my-button>
-<!--      <my-button @click="assign"> Invite </my-button>-->
-    </div>
-  </div>
 
-  <my-dialog v-model:show="dialogVisible">
-    <event-form
-        :modified="true"
-        :id="id"
-    />
-  </my-dialog>
-  <my-dialog v-model:show="fileDialogVisible">
-    <form enctype="multipart/form-data" method="post" id="uploadForm"  @submit.prevent class="file__form">
-      <my-input type="file" id="files" multiple/>
-      <my-button @click="uploadFiles(event.id)">Submit</my-button>
-      <div v-if="isLoading">Loading...</div>
-    </form>
-  </my-dialog>
+    <my-dialog v-model:show="dialogVisible">
+      <event-form
+          :modified="true"
+          :id="id"
+      />
+    </my-dialog>
+    <my-dialog v-model:show="fileDialogVisible">
+      <form enctype="multipart/form-data" method="post" id="uploadForm"  @submit.prevent class="file__form">
+        <my-input type="file" id="files" multiple/>
+        <my-button @click="uploadFiles(event.id)">Submit</my-button>
+        <div v-if="isLoading">Loading...</div>
+      </form>
+    </my-dialog>
+    <my-dialog v-model:show="assignDialogVisible">
+      <form method="post" @submit.prevent class="assign__form">
+        <my-input v-model="userEmails" type="text" placeholder="email@email.com"/>
+        <my-button @click="AssignUsers">Submit</my-button>
+        <div v-if="isLoading">Loading...</div>
+      </form>
+    </my-dialog>
+  </div>
 </template>
 
 <script>
@@ -83,10 +92,11 @@ export default {
     return{
       dialogVisible: false,
       fileDialogVisible: false,
-      userDialogVisible: false,
+      assignDialogVisible: false,
       id: this.$route.params.id,
       urlCreator: window.URL || window.webkitURL,
-      users: '',
+      userEmails: "",
+
     }
   },
   computed: {
@@ -106,9 +116,10 @@ export default {
   methods: {
     ...mapActions({
       getEvent: 'event/getEvent',
+      assignUser: 'event/assignToEvent',
       getEventFiles: 'file/getEventFiles',
       removeFile: 'file/removeFile',
-      uploadFiles: 'file/uploadFiles'
+      uploadFiles: 'file/uploadFiles',
     }),
     ...mapMutations({
       clearEvent: 'event/clearEvent',
@@ -120,12 +131,24 @@ export default {
     async showFileDialog(){
       this.fileDialogVisible = true
     },
+    async showAssignDialog(){
+      this.assignDialogVisible = true
+    },
     async ScaleImage(e){
       let el = e.target
       el.classList.toggle('image__max')
       el.parentNode.classList.toggle('dialog')
       el.parentNode.classList.toggle('absolute')
       el.nextElementSibling.classList.toggle('close')
+    },
+    async AssignUsers(){
+      console.log(this.userEmails)
+      var emails = this.userEmails.split(', ')
+      // email validation
+      await emails.forEach(async email => {
+        await this.assignUser([email, this.event.id])
+      })
+      this.userEmails = ''
     },
     getUrl(blob){
       return this.urlCreator.createObjectURL(blob)
@@ -251,7 +274,7 @@ export default {
   background-color: #282626;
 }
 
-.file__form{
+.file__form, .assign__form{
   display: flex;
   flex-direction: column;
   border: 2px solid #0c20a1;
@@ -265,13 +288,6 @@ export default {
   gap: 20px;
 }
 
-.user__form{
-  display: flex;
-  flex-direction: column;
-  border: 2px solid #0c20a1;
-  border-radius: 5px;
-  padding: 10px;
-}
 
 
 </style>

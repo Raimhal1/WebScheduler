@@ -54,6 +54,15 @@ namespace WebScheduler.Controllers
             return StatusCode(401);
         }
 
+        [Authorize]
+        [HttpGet]
+        [Route("api/users/current")]
+        public async Task<ActionResult<Guid>> GetCurrentUserId()
+        {
+            return Ok(await _userService.GetByIdAsync(UserId));
+        }
+
+
         [AllowAnonymous]
         [HttpPost]
         [Route("api/users")]

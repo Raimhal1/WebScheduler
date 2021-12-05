@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="page">
     <div class="users">
       <user-list :users="users">
       </user-list>
@@ -82,15 +82,10 @@ export default {
 </script>
 
 <style scoped>
-.users{
+.users, types{
   height: fit-content;
   max-height: 80vh;
   overflow-y: auto;
-}
-.types{
-  display: flex;
-  justify-content: center;
-  margin: 5px;
 }
 
 .btns{
@@ -103,6 +98,9 @@ export default {
   white-space: nowrap;
   gap: 20px;
 }
-
-
+.page{
+  display: flex;
+  flex-direction: column;
+  gap: 30px
+}
 </style>

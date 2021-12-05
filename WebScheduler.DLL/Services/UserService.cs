@@ -62,8 +62,16 @@ namespace WebScheduler.BLL.Services
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
             user.UserName = user.UserName;
-            user.Email = model.Email;
-            user.Password = Hasher.GetSaltedHash(model.Password, user.Salt);
+
+            if (!string.IsNullOrEmpty(model.Email) && model.Email != user.Email)
+            {
+                if (await _userContext.Users.AnyAsync(u => u.Email == model.Email))
+                    throw new Exception(message: "A user with the same email address already exists");
+                user.Email = model.Email;
+            }
+
+            if (!string.IsNullOrEmpty(model.Password)) 
+                user.Password = Hasher.GetSaltedHash(model.Password, user.Salt);
 
             _userContext.Users.Update(user);
 

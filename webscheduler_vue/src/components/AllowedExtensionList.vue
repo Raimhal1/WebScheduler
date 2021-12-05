@@ -1,5 +1,4 @@
 <template>
-  <div>
     <table class="types__table">
       <caption>File types : </caption>
       <thead>
@@ -24,7 +23,6 @@
       <file-type-form :modified="true">
       </file-type-form>
     </my-dialog>
-  </div>
 </template>
 
 <script>
@@ -75,7 +73,8 @@ export default {
 <style scoped>
 .types__table {
   border-collapse: collapse;
-  width: fit-content;
+  width: 100%;
+  border-bottom: 3px solid rgba(193, 218, 250, 0.9);
 }
 caption {
   background: rgba(109, 165, 252, 0.9);

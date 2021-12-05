@@ -1,22 +1,17 @@
-import Home from "@/pages/Home";
 import {createRouter, createWebHistory} from 'vue-router'
+import Home from "@/pages/Home";
 import MyEventsPage from "@/pages/MyEventsPage";
 import EventsPage from "@/pages/EventsPage";
-import About from "@/pages/About";
 import EventPage from "@/pages/EventPage";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
-import AdminPage from "../pages/AdminPage";
-// import store from '@/store'
+import AdminPage from "@/pages/AdminPage";
+import AccountPage from "@/pages/AccountPage";
 
 const routes = [
     {
         path: "/",
         component: Home
-    },
-    {
-        path: "/about",
-        component: About
     },
     {
         path: "/login",
@@ -46,6 +41,10 @@ const routes = [
     {
         path: "/admin",
         component: AdminPage
+    },
+    {
+        path: "/account",
+        component: AccountPage
     }
 ]
 

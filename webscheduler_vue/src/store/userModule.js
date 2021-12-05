@@ -6,11 +6,11 @@ export const userModule = {
     state: () => ({
         users: [],
         user: {
-            FirstName: null,
-            LastName: null,
-            UserName: null,
-            Email: null,
-            Password: null
+            firstName: null,
+            lastName: null,
+            userName: null,
+            email: null,
+            password: null
         },
         defaultRoot: 'account',
         defaultUserRoot: 'users',
@@ -23,11 +23,11 @@ export const userModule = {
         },
         clearUser(state){
             state.user = {
-                FirstName: null,
-                LastName: null,
-                UserName: null,
-                Email: null,
-                Password: null
+                firstName: null,
+                lastName: null,
+                userName: null,
+                email: null,
+                password: null
             }
         },
         setUser(state, user){
@@ -70,8 +70,8 @@ export const userModule = {
             rootState.errors = []
             await instance
                 .post(path, {
-                    UserName: state.user.Email,
-                    Password: state.user.Password
+                    UserName: state.user.email,
+                    Password: state.user.password
                 })
                 .then(response =>{
                     rootState.accessToken = response.data.jwtToken
@@ -140,6 +140,10 @@ export const userModule = {
                     console.log(error)
                     rootState.errors.push(error)
                 })
+                // .then(() => {
+                //     if(rootState.errors.lenght !== 0)
+                //         router.push('/login')
+                // })
         },
         async removeUser({state, commit, rootState, rootGetters}, user_id){
             const path = `${state.defaultUserRoot}/${user_id}/delete`
@@ -161,6 +165,27 @@ export const userModule = {
             const payload = jwt_decode(rootState.accessToken)
             rootState.isAdmin = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] === 'Admin';
             console.log(rootState.isAdmin)
+        },
+        async GetCurrentUser({state, commit, rootState, rootGetters}){
+            const path = `${state.defaultUserRoot}/current`
+            await instance
+                .get(path, {headers: rootGetters.getHeaders})
+                .then(response => commit('setUser', response.data))
+                .catch(error => {
+                    console.log(error)
+                    rootState.errors.push(error)
+                })
+        },
+        async updateUser({state, rootState, rootGetters}){
+            const path = `${state.defaultUserRoot}/${state.user.id}/update`
+            await instance
+                .put(path, state.user, {headers: rootGetters.getHeaders})
+                .then(() => console.log('ok'))
+                .catch(error => {
+                    console.log(error)
+                    rootState.errors.push(error)
+                })
+            console.log('ok')
         }
     },
     namespaced: true

@@ -190,11 +190,12 @@ export const fileModule = {
                     fileType: state.file.fileType,
                     fileSize: state.file.fileSize
                 }, {headers: rootGetters.getHeaders})
-                .then(response => console.log(response))
+                .then(() => console.log('ok'))
                 .catch(error => {
                     console.log(error)
                     rootState.errors.push(error)
                 })
+
         },
         async getFileType({state}, id){
             return state.fileTypes.filter(t => t.id === id)[0]

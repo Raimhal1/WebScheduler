@@ -78,6 +78,9 @@ export const eventModule = {
                 description: ""
             }
         },
+        assignUser(state, email){
+            state.event.users.push({Email : email})
+        }
 
     },
     actions: {
@@ -155,7 +158,7 @@ export const eventModule = {
             await instance
                 .put(path, state.event, {headers: rootGetters.getHeaders})
                 .then(() => {
-
+                    console.log('ok')
                     rootState.errors = []
                 })
                 .catch(error => {
@@ -176,8 +179,23 @@ export const eventModule = {
                     console.log(error.message)
                     rootState.errors.push(error)
                 })
-
         },
+        async assignToEvent({state, commit, rootState, rootGetters}, params){
+            const path = `${state.defaultRoot}/assign`
+            console.log(path)
+            console.log(params)
+            await instance
+                .put(path, {
+                    Email: params[0],
+                    EventId: params[1]
+                    },
+                    {headers: rootGetters.getHeaders})
+                .then(() => commit('assignUser', params[0]))
+                .catch(error => {
+                    console.log(error.message)
+                    rootState.errors.push(error)
+                })
+        }
     },
     namespaced: true
 

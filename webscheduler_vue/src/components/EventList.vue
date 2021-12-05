@@ -14,7 +14,7 @@
     </div>
   </div>
   <div  v-else class="empty__list">
-    <h3 style="color: #ec2020">
+    <h3 style="color: rgba(109, 165, 252, 0.9)">
       List is empty
     </h3>
   </div>
