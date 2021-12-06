@@ -16,7 +16,7 @@ namespace WebScheduler.BLL.Events.Commands.CreateEvent
                 createEventCommand.StartEventDate).Must(DateValidator.BeAValidDate);
             RuleFor(createEventCommand =>
                 createEventCommand.EndEventDate).Must(DateValidator.BeAValidDate)
-                .GreaterThan(createEventCommand => createEventCommand.StartEventDate);
+                .GreaterThanOrEqualTo(createEventCommand => createEventCommand.StartEventDate);
             RuleFor(createEventCommand => 
                 createEventCommand.ShortDescription).MaximumLength(50);
             RuleFor(createEventCommand =>

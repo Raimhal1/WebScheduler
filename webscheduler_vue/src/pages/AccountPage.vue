@@ -7,12 +7,15 @@
       <template v-slot:password>
         New password
       </template>
+      <template v-slot:submit__name>
+        Save
+      </template>
     </user-form>
   </div>
 </template>
 
 <script>
-import {mapActions, mapState} from "vuex";
+import {mapActions, mapMutations, mapState} from "vuex";
 import UserForm from "@/components/UserForm";
 
 export default {
@@ -20,6 +23,9 @@ export default {
   components: {UserForm},
   mounted() {
     this.getCurrentUser()
+  },
+  beforeUnmount() {
+    this.clearErrors()
   },
   data(){
     return{
@@ -35,6 +41,9 @@ export default {
     ...mapActions({
       getCurrentUser: 'user/GetCurrentUser',
       updateUser: 'user/updateUser',
+    }),
+    ...mapMutations({
+      clearErrors: 'clearErrors'
     })
   }
 }

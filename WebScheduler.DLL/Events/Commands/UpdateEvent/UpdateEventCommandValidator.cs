@@ -20,9 +20,9 @@ namespace WebScheduler.BLL.Events.Commands.UpdateEvent
                 updateEventCommand.EndEventDate).Must(DateValidator.BeAValidDate)
                 .GreaterThan(updateEventCommand => updateEventCommand.StartEventDate);
             RuleFor(updateEventCommand =>
-                updateEventCommand.ShortDescription).NotEmpty().MaximumLength(50);
+                updateEventCommand.ShortDescription).MaximumLength(50);
             RuleFor(updateEventCommand =>
-                updateEventCommand.Description).NotEmpty().MaximumLength(2000);
+                updateEventCommand.Description).MaximumLength(2000);
         }
     }
 }

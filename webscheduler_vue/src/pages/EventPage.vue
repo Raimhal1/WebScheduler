@@ -44,20 +44,21 @@
     </div>
 
     <my-dialog v-model:show="dialogVisible">
-      <event-form
-          :modified="true"
-          :id="id"
-      />
+      <event-form :modified="true">
+        <template v-slot:submit__name>
+          Save
+        </template>
+      </event-form>
     </my-dialog>
     <my-dialog v-model:show="fileDialogVisible">
-      <form enctype="multipart/form-data" method="post" id="uploadForm"  @submit.prevent class="file__form">
+      <form enctype="multipart/form-data" method="post" id="uploadForm"  @submit.prevent class="file__form form">
         <my-input type="file" id="files" multiple/>
         <my-button @click="uploadFiles(event.id)">Submit</my-button>
         <div v-if="isLoading">Loading...</div>
       </form>
     </my-dialog>
     <my-dialog v-model:show="assignDialogVisible">
-      <form method="post" @submit.prevent class="assign__form">
+      <form method="post" @submit.prevent class="assign__form form">
         <my-input v-model="userEmails" type="text" placeholder="email@email.com"/>
         <my-button @click="AssignUsers">Submit</my-button>
         <div v-if="isLoading">Loading...</div>
@@ -79,14 +80,13 @@ export default {
   beforeUnmount() {
     this.clearEvent()
     this.clearBlobs()
+    this.clearErrors()
   },
   async mounted() {
     if(this.isAuth) {
       await this.getEvent(this.id)
       await this.getEventFiles(this.event.id)
     }
-    console.log(this.event)
-
   },
   data(){
     return{
@@ -123,7 +123,8 @@ export default {
     }),
     ...mapMutations({
       clearEvent: 'event/clearEvent',
-      clearBlobs: 'file/clearBlobs'
+      clearBlobs: 'file/clearBlobs',
+      clearErrors: 'clearErrors'
     }),
     async showDialog() {
       this.dialogVisible = true
@@ -275,8 +276,6 @@ export default {
 }
 
 .file__form, .assign__form{
-  display: flex;
-  flex-direction: column;
   border: 2px solid #0c20a1;
   border-radius: 5px;
   padding: 15px;

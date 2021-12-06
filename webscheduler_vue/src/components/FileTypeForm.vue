@@ -1,5 +1,5 @@
 <template>
-    <form method="post" @submit.prevent class="type__form" >
+    <form method="post" @submit.prevent class="type__form form" >
       File type : <my-input type="text" v-model="file.fileType"/>
       File max size : <my-input type="number" min="1" max="50" placeholder="1" v-model="file.fileSize"/>
       <my-button
@@ -45,8 +45,6 @@ export default {
 
 <style scoped>
 .type__form{
-  display: flex;
-  flex-direction: column;
   padding: 10px;
   border: 2px solid #0c20a1;
   border-radius: 5px;

@@ -5,6 +5,9 @@ import MySelect from "./MySelect";
 import MySearch from "./MySearch";
 import MyDialog from "./MyDialog";
 import Navbar from "./Navbar";
+import MyField from "./MyField"
+import MyErrorMessage from "./MyErrorMessage";
+import MyErrorList from "./MyErrorList";
 
 export default [
     MyButton,
@@ -14,4 +17,8 @@ export default [
     MySelect,
     MySearch,
     Navbar,
+    MyField,
+    MyErrorMessage,
+    MyErrorList
+
 ]

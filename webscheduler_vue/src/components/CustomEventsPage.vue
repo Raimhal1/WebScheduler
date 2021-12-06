@@ -55,12 +55,14 @@ export default {
   },
   beforeUnmount() {
     this.clearEventStore()
+    this.clearErrors()
   },
   methods: {
     ...mapMutations({
       setSearchQuery: 'event/setSearchQuery',
       setSelectedSort: 'event/setSelectedSort',
-      clearEventStore: 'event/clearEventStore'
+      clearEventStore: 'event/clearEventStore',
+      clearErrors: 'clearErrors'
     }),
     ...mapActions({
       loadMoreEvents: 'event/loadMoreEvents',

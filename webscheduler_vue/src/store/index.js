@@ -22,6 +22,9 @@ export default createStore({
         },
         setAdmin(state, bool){
             state.isAdmin = bool
+        },
+        clearErrors(state){
+            state.errors = []
         }
     },
     getters: {
@@ -30,10 +33,7 @@ export default createStore({
                Authorization: `Bearer ${state.accessToken}`,
            }
         },
-        getUserId(state){
-            console.log(state.user.user.id)
-            return state.user.user.id
-        }
+
     },
 
     modules: {

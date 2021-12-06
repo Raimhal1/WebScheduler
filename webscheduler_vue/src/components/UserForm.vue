@@ -1,52 +1,64 @@
 <template>
-  <form @submit.prevent method="post" class="user__form">
+  <Form v-slot="{ handleSubmit }" :validation-schema="schema" as="div" class="user__form">
     <h2 class="title"><slot name="header"></slot></h2>
-    Email : <my-input
-      v-model="user.email"
-      type="email"
-      placeholder="Email@email.com"
-    />
-    Username : <my-input
-      v-model="user.userName"
-      type="text"
-      placeholder="Username"
-    />
-    First name :<my-input
-      v-model="user.firstName"
-      type="text"
-      placeholder="Firstname"
-      v-focus
-    />
-    Last name : <my-input
-      v-model="user.lastName"
-      type="text"
-      placeholder="Lastname"
-    />
-    <slot name="password"></slot> : <my-input
-      v-model="user.password"
-      type="password"
-      placeholder="Password"
-    />
-    <my-button
-        @click="updateUser"
-        v-if="modified"
-    >
-      Save
-    </my-button>
-    <my-button
-        @click="register"
-        v-else
-    >
-      Register
-    </my-button>
-  </form>
+    <my-error-list :errors="errors"></my-error-list>
+    <form @submit="handleSubmit($event, action)" method="post" class="form">
+      Email : <my-field
+        v-model="user.email"
+        name="email"
+        placeholder="email@gmail.com"
+      />
+      <my-error-message name="email" />
+      Username : <my-field
+        v-model="user.userName"
+        name="username"
+        placeholder="Username"
+      />
+      <my-error-message name="username" />
+      First name : <my-field
+        v-model="user.firstName"
+        name="firstname"
+        placeholder="Firstname"
+      />
+      <my-error-message name="firstname" />
+      Last name : <my-field
+        v-model="user.lastName"
+        name="lastname"
+        placeholder="Lastname"
+      />
+      <my-error-message name="lastname" />
+      <slot name="password"></slot> :
+      <my-field
+        v-model="user.password"
+        name="password"
+        type="password"
+        placeholder="Password"
+      />
+      <my-error-message name="password" />
+      <my-button
+          type="submit"
+      >
+        <slot name="submit__name"></slot>
+      </my-button>
+    </form>
+  </Form>
 </template>
 
 <script>
 import {mapActions, mapState} from "vuex";
+import {Form} from 'vee-validate'
+
+import * as yup from 'yup'
+import MyField from "@/components/UI/MyField";
+import MyErrorMessage from "@/components/UI/MyErrorMessage";
+import MyErrorList from "./UI/MyErrorList";
 
 export default {
   name: "UserForm",
+  components: {
+    MyErrorList,
+    Form, MyField, MyErrorMessage
+  },
   props: {
     modified:{
       type: Boolean,
@@ -58,11 +70,35 @@ export default {
       register: 'user/register',
       updateUser: 'user/updateUser'
     }),
+    async action(){
+      if(this.modified)
+        this.updateUser()
+      else
+        this.register()
+    }
+
   },
   computed: {
     ...mapState({
       user: state => state.user.user,
+      errors: state => state.errors
     }),
+    schema() {
+      let schema = yup.object().shape({
+        email: yup.string().email().max(50).required().label('Email'),
+        username: yup.string().max(50).required().label('Username'),
+        firstname: yup.string().max(50).label('First name'),
+        lastname: yup.string().max(50).label('Last name'),
+      })
+
+      let password
+      if(!this.modified)
+        password = {password: yup.string().min(5).required().label('Password')}
+      else
+        password = {password: yup.string().min(5).label('Password')}
+      console.log(password)
+      return schema.shape(password)
+    },
   },
 }
 </script>

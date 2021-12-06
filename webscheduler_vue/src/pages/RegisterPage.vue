@@ -7,6 +7,9 @@
       <template v-slot:password>
         Password
       </template>
+      <template v-slot:submit__name>
+        Register
+      </template>
     </user-form>
   </div>
 </template>
@@ -21,9 +24,13 @@ export default {
   mounted() {
     this.clearUser()
   },
+  beforeUnmount() {
+    this.clearErrors()
+  },
   methods: {
     ...mapMutations({
-      clearUser: 'user/clearUser'
+      clearUser: 'user/clearUser',
+      clearErrors: 'clearErrors'
     }),
   },
 }

@@ -6,11 +6,11 @@ export const userModule = {
     state: () => ({
         users: [],
         user: {
-            firstName: null,
-            lastName: null,
-            userName: null,
-            email: null,
-            password: null
+            firstName: "",
+            lastName: "",
+            userName: "",
+            email: "",
+            password: ""
         },
         defaultRoot: 'account',
         defaultUserRoot: 'users',
@@ -23,11 +23,11 @@ export const userModule = {
         },
         clearUser(state){
             state.user = {
-                firstName: null,
-                lastName: null,
-                userName: null,
-                email: null,
-                password: null
+                firstName: "",
+                lastName: "",
+                userName: "",
+                email: "",
+                password: ""
             }
         },
         setUser(state, user){
@@ -49,13 +49,10 @@ export const userModule = {
             rootState.errors = []
             await instance
                 .post(state.defaultUserRoot, state.user)
-                .then(response => {
-                    response.data
-                    rootState.errors = []
-                })
+                .then(response => console.log(response))
                 .catch(error => {
                     console.log(error)
-                    rootState.errors.push(error)
+                    rootState.errors.push(error.response.data.error)
                 })
                 .then(() =>{
                     if(rootState.errors.length === 0)
@@ -81,16 +78,14 @@ export const userModule = {
                     console.log('ok')
                 })
                 .catch(error => {
-                    console.log(error.message)
-                    rootState.errors.push(error)
+                    console.log(error)
+                    rootState.errors.push("Incorrect email or password")
                 })
                 .then(() => {
                     if (rootState.errors.length === 0) {
                         dispatch('decodeRoleFromJWT')
                         router.push('/')
                     }
-                    else
-                        router.push('/login')
                 })
         },
         async logout({commit, rootState}){
@@ -113,9 +108,9 @@ export const userModule = {
                     commit('setUser', response.data)
                     rootState.errors = []
                 })
-                .catch(error =>{
+                .catch(error => {
                     console.log(error)
-                    rootState.errors.push(error)
+                    rootState.errors.push(error.response.data.error)
                 })
         },
         async getUserByEmail({state, rootState, rootGetters}, email){
@@ -123,9 +118,9 @@ export const userModule = {
             return await instance
                 .get(path, {headers: rootGetters.getHeaders})
                 .then(response => response.data)
-                .catch(error =>{
+                .catch(error => {
                     console.log(error)
-                    rootState.errors.push(error)
+                    rootState.errors.push(error.response.data.error)
                 })
         },
         async getUsers({state, commit, rootState, rootGetters}){
@@ -136,14 +131,10 @@ export const userModule = {
                     commit('setUsers', response.data)
                     rootState.errors = []
                 })
-                .catch(error =>{
+                .catch(error => {
                     console.log(error)
-                    rootState.errors.push(error)
+                    rootState.errors.push(error.response.data.error)
                 })
-                // .then(() => {
-                //     if(rootState.errors.lenght !== 0)
-                //         router.push('/login')
-                // })
         },
         async removeUser({state, commit, rootState, rootGetters}, user_id){
             const path = `${state.defaultUserRoot}/${user_id}/delete`
@@ -156,9 +147,9 @@ export const userModule = {
                     ),
                     rootState.errors = []
                 )
-                .catch(error =>{
+                .catch(error => {
                     console.log(error)
-                    rootState.errors.push(error)
+                    rootState.errors.push(error.response.data.error)
                 })
         },
         async decodeRoleFromJWT({rootState}){
@@ -173,7 +164,7 @@ export const userModule = {
                 .then(response => commit('setUser', response.data))
                 .catch(error => {
                     console.log(error)
-                    rootState.errors.push(error)
+                    rootState.errors.push(error.response.data.error)
                 })
         },
         async updateUser({state, rootState, rootGetters}){
@@ -183,7 +174,7 @@ export const userModule = {
                 .then(() => console.log('ok'))
                 .catch(error => {
                     console.log(error)
-                    rootState.errors.push(error)
+                    rootState.errors.push(error.response.data.error)
                 })
             console.log('ok')
         }

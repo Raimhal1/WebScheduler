@@ -9,9 +9,11 @@
       <template v-slot:create>
         <my-button @click="showDialog"> Create event </my-button>
         <my-dialog v-model:show="dialogVisible">
-          <event-form
-              :modified="false"
-          />
+          <event-form>
+            <template v-slot:submit__name>
+              Create
+            </template>
+          </event-form>
         </my-dialog>
       </template>
     </custom-events-page>

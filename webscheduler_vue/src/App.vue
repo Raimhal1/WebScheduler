@@ -37,6 +37,18 @@ body::-webkit-scrollbar {
   padding: 20px;
 }
 
+.form{
+  display: flex;
+  flex-direction: column;
+}
+
+.input {
+  border: 1px solid #0c20a1;
+  padding: 10px 15px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
 .user__page{
   display: flex;
   justify-content: center;
@@ -44,8 +56,6 @@ body::-webkit-scrollbar {
 
 .user__form{
   width: 400px;
-  display: flex;
-  flex-direction: column;
 }
 
 .observer{
@@ -62,5 +72,10 @@ body::-webkit-scrollbar {
 .page{
   margin: auto;
   width: 70vw;
+}
+
+.error{
+  color: rgba(255, 0, 0, 0.94);
+  font-size: 14px;
 }
 </style>

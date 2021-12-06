@@ -74,8 +74,8 @@ export const fileModule = {
                         commit('addBlob', blob)
                     })
                     .catch(error => {
-                        console.log(error.message)
-                        rootState.errors.push(error)
+                        console.log(error)
+                        rootState.errors.push(error.response.data.error)
                     })
                     .then(() => {
                         if(rootState.errors.length !== 0)
@@ -93,8 +93,8 @@ export const fileModule = {
                     rootState.errors = []
                 })
                 .catch(error => {
-                    console.log(error.message)
-                    rootState.errors.push(error)
+                    console.log(error)
+                    rootState.errors.push(error.response.data.error)
                 })
 
         },
@@ -113,8 +113,8 @@ export const fileModule = {
                     rootState.errors = []
                 })
                 .catch(error => {
-                    console.log(error.message)
-                    rootState.errors.push(error)
+                    console.log(error)
+                    rootState.errors.push(error.response.data.error)
                 })
         },
         async setBlobs({commit}, blobs){
@@ -143,10 +143,9 @@ export const fileModule = {
                     rootState.errors = []
                     console.log('ok')
                 })
-                .catch(error =>
-                {
-                    rootState.errors.push(error)
+                .catch(error => {
                     console.log(error)
+                    rootState.errors.push(error.response.data.error)
                 })
             await commit('setLoading', false)
         },
@@ -162,7 +161,7 @@ export const fileModule = {
                 })
                 .catch(error => {
                     console.log(error)
-                    rootState.errors.push(error)
+                    rootState.errors.push(error.response.data.error)
                 })
         },
         async addFileType({state, commit, rootState, rootGetters}){
@@ -178,7 +177,7 @@ export const fileModule = {
                 })
                 .catch(error => {
                     console.log(error)
-                    rootState.errors.push(error)
+                    rootState.errors.push(error.response.data.error)
                 })
 
 
@@ -193,7 +192,7 @@ export const fileModule = {
                 .then(() => console.log('ok'))
                 .catch(error => {
                     console.log(error)
-                    rootState.errors.push(error)
+                    rootState.errors.push(error.response.data.error)
                 })
 
         },
@@ -211,7 +210,7 @@ export const fileModule = {
                 })
                 .catch(error => {
                     console.log(error)
-                    rootState.errors.push(error)
+                    rootState.errors.push(error.response.data.error)
                 })
 
         }

@@ -8,10 +8,11 @@ export const eventModule = {
         allEvents: [],
         event: {
             eventName: "",
-            startEventDate: "",
-            endEventDate: "",
+            startEventDate : new Date().toISOString().slice(0,-8),
+            endEventDate: new Date().toISOString().slice(0,-8),
             shortDescription: "",
             description: "",
+            status: 0
         },
         isLoading: false,
         selectedSort: '',
@@ -20,14 +21,15 @@ export const eventModule = {
         defaultRoot: 'events',
         sortOptions: [
             {value: 'eventName', name: 'By name'},
-            {value: 'startEventDate', name: 'By date'}
+            {value: 'startEventDate', name: 'By date'},
+            {value: 'status', name: 'By status'},
         ],
     }),
     getters: {
         sortedEvents(state){
             const events = [...state.events, ...state.allEvents]
             const sortedList =  [...events].sort((event_a, event_b) =>
-                event_a[state.selectedSort]?.localeCompare(event_b[state.selectedSort]))
+                event_a[state.selectedSort]?.toString().localeCompare(event_b[state.selectedSort]))
             state.events = sortedList.splice(0, state.events.length)
             state.allEvents = sortedList
             return state.events
@@ -72,10 +74,11 @@ export const eventModule = {
         clearEvent(state){
             state.event = {
                 eventName: "",
-                startEventDate: null,
-                endEventDate: null,
+                startEventDate: new Date().toISOString().slice(0,-8),
+                endEventDate: new Date().toISOString().slice(0,-8),
                 shortDescription: "",
-                description: ""
+                description: "",
+                status: 0
             }
         },
         assignUser(state, email){
@@ -87,7 +90,7 @@ export const eventModule = {
         async createEvent({state, commit, rootState, rootGetters}) {
             console.log(state.event)
             await instance
-                .post('events', state.event, {headers: rootGetters.getHeaders})
+                .post(`${state.defaultRoot}`, state.event, {headers: rootGetters.getHeaders})
                 .then(response => {
                     console.log(response)
                     commit('pushEvent', state.event)
@@ -95,8 +98,8 @@ export const eventModule = {
                     rootState.errors = []
                 })
                 .catch(error => {
-                    console.log(error.message)
-                    rootState.errors.push(error)
+                    console.log(error)
+                    rootState.errors.push(error.response.data.error)
                 })
                 .then(() => {
                     if(rootState.errors.length !== 0)
@@ -115,7 +118,7 @@ export const eventModule = {
                 })
                 .catch(error => {
                     console.log(error)
-                    rootState.errors.push(error)
+                    rootState.errors.push(error.response.data.error)
                 })
                 .then(() => {
                     commit('setLoading', false)
@@ -143,8 +146,8 @@ export const eventModule = {
                     rootState.errors = []
                 })
                 .catch(error => {
-                    console.log(error.message)
-                    rootState.errors.push(error)
+                    console.log(error)
+                    rootState.errors.push(error.response.data.error)
                 })
                 .then(() => {
                     if(rootState.errors.length !== 0)
@@ -163,7 +166,7 @@ export const eventModule = {
                 })
                 .catch(error => {
                     console.log(error)
-                    rootState.errors.push(error)
+                    rootState.errors.push(error.response.data.error)
                 })
             console.log('ok')
         },
@@ -176,8 +179,8 @@ export const eventModule = {
                     rootState.errors = []
                 })
                 .catch(error => {
-                    console.log(error.message)
-                    rootState.errors.push(error)
+                    console.log(error)
+                    rootState.errors.push(error.response.data.error)
                 })
         },
         async assignToEvent({state, commit, rootState, rootGetters}, params){
@@ -192,8 +195,8 @@ export const eventModule = {
                     {headers: rootGetters.getHeaders})
                 .then(() => commit('assignUser', params[0]))
                 .catch(error => {
-                    console.log(error.message)
-                    rootState.errors.push(error)
+                    console.log(error)
+                    rootState.errors.push(error.response.data.error)
                 })
         }
     },

@@ -54,9 +54,13 @@ export default {
     this.getFileTypes()
     this.getUsers()
   },
+  beforeUnmount() {
+    this.clearErrors()
+  },
   methods: {
     ...mapMutations({
-      clearFileType: 'file/clearFileType'
+      clearFileType: 'file/clearFileType',
+      clearErrors: 'clearErrors'
     }),
     ...mapActions({
       getUsers: 'user/getUsers',
