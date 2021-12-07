@@ -24,6 +24,9 @@
     </div>
     <my-dialog v-model:show="fileTypeDialogVisible">
       <file-type-form>
+        <template v-slot:submit__name>
+          Add
+        </template>
       </file-type-form>
     </my-dialog>
   </div>

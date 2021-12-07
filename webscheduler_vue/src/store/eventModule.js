@@ -81,8 +81,8 @@ export const eventModule = {
                 status: 0
             }
         },
-        assignUser(state, email){
-            state.event.users.push({Email : email})
+        assignUser(state, user){
+            state.event.users.push(user)
         }
 
     },
@@ -92,7 +92,7 @@ export const eventModule = {
             await instance
                 .post(`${state.defaultRoot}`, state.event, {headers: rootGetters.getHeaders})
                 .then(response => {
-                    console.log(response)
+                    state.event.id = response.data
                     commit('pushEvent', state.event)
                     commit('clearEvent')
                     rootState.errors = []
@@ -183,7 +183,7 @@ export const eventModule = {
                     rootState.errors.push(error.response.data.error)
                 })
         },
-        async assignToEvent({state, commit, rootState, rootGetters}, params){
+        async assignToEvent({state, commit, dispatch, rootState, rootGetters}, params){
             const path = `${state.defaultRoot}/assign`
             console.log(path)
             console.log(params)
@@ -193,7 +193,13 @@ export const eventModule = {
                     EventId: params[1]
                     },
                     {headers: rootGetters.getHeaders})
-                .then(() => commit('assignUser', params[0]))
+                .then(async () => await commit(
+                    'assignUser',
+                    await dispatch('user/getUserByEmail',
+                        params[0],
+                        {root: true}
+                    ))
+                )
                 .catch(error => {
                     console.log(error)
                     rootState.errors.push(error.response.data.error)

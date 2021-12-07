@@ -21,6 +21,9 @@
     </table>
     <my-dialog v-model:show="fileTypeUpdateDialogVisible">
       <file-type-form :modified="true">
+        <template v-slot:submit__name>
+          Save
+        </template>
       </file-type-form>
     </my-dialog>
 </template>

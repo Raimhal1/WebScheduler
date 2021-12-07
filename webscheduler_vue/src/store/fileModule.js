@@ -6,7 +6,7 @@ export const fileModule = {
     state: () => ({
         fileTypes: [],
         file: {
-            fileType: '',
+            fileType: "",
             fileSize: 1
         },
         file_ids: [],
@@ -16,7 +16,11 @@ export const fileModule = {
         defaultRoot: 'file-settings/types',
         defaultEventRoot: 'events'
     }),
-
+    getters: {
+        getAllowedFileTypes(state) {
+            return state.fileTypes
+        }
+    },
     mutations: {
         setDefaultRoot(state, defaultRoot){
             state.defaultRoot = defaultRoot
@@ -56,9 +60,9 @@ export const fileModule = {
             await commit('setLoading', true)
             await dispatch('getEventsFilesIds', event_id)
 
-            await state.file_ids.forEach(id => {
+            await state.file_ids.forEach(async id => {
                 const path = `${state.defaultEventRoot}/${event_id}/files/${id}`
-                instance
+                await instance
                     .get(path, {
                         responseType: 'blob',
                         headers: rootGetters.getHeaders
@@ -124,10 +128,6 @@ export const fileModule = {
         async uploadFiles({commit, dispatch, rootState}, event_id){
             await commit('setLoading', true)
             const form = new FormData(document.querySelector('#uploadForm'))
-            var data = document.querySelector('#files')
-
-            for(let i = 0; i < data.files.length; i++)
-                form.append('files', data.files[i])
             console.log(form)
 
             const path = `events/${event_id}/files/add-files`
@@ -172,8 +172,10 @@ export const fileModule = {
                     fileType: state.file.fileType,
                     fileSize: state.file.fileSize
                 }, {headers: rootGetters.getHeaders})
-                .then(() => {
-                   commit('addAllowedFileType', state.file)
+                .then(response => {
+                    state.file.id = response.data
+                    commit('addAllowedFileType', state.file)
+                    commit('clearFileType')
                 })
                 .catch(error => {
                     console.log(error)

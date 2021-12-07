@@ -16,10 +16,9 @@
         Short description : {{ event.shortDescription }}
       </div>
       <div v-if="showFullInfo && event.description">
-        Info : {{ event.description }}
+        Long description : {{ event.description }}
       </div>
       <div v-if="showUsers">
-        <div>Users:</div>
         <div class="users">
           <div v-for="user in event.users" :key="user.email" class="user">
             {{user.userName}} ({{user.email}})

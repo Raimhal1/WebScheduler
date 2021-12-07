@@ -37,7 +37,7 @@ namespace WebScheduler.BLL.Events.Commands.AssignUser
 
 
             if (entity.Users.Any(u => u.Id == user.Id))
-                throw new Exception(message: "User already assigned");
+                throw new Exception(message: $"User {user.Email} already assigned");
 
             entity.Users.Add(user);
 
