@@ -21,7 +21,7 @@
       <div v-if="showUsers">
         <div class="users">
           <div v-for="user in event.users" :key="user.email" class="user">
-            {{user.userName}} ({{user.email}})
+            {{user.email}}
           </div>
         </div>
       </div>

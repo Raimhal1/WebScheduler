@@ -59,7 +59,6 @@ export const fileModule = {
             await commit('clearBlobs')
             await commit('setLoading', true)
             await dispatch('getEventsFilesIds', event_id)
-
             await state.file_ids.forEach(async id => {
                 const path = `${state.defaultEventRoot}/${event_id}/files/${id}`
                 await instance
@@ -74,7 +73,6 @@ export const fileModule = {
                                 type: response.headers['content-type']
                             })
                         blob.id = id
-                        console.log(blob)
                         commit('addBlob', blob)
                     })
                     .catch(error => {
@@ -94,7 +92,6 @@ export const fileModule = {
                 .get(path, {headers: rootGetters.getHeaders})
                 .then(response => {
                     commit('setFileIds', response.data)
-                    rootState.errors = []
                 })
                 .catch(error => {
                     console.log(error)
@@ -106,10 +103,10 @@ export const fileModule = {
             const event_id = ids[0]
             const file_id = ids[1]
             const path = `${state.defaultEventRoot}/${event_id}/files/${file_id}/delete`
+            rootState.errors = []
             await instance
                 .delete(path, {headers: rootGetters.getHeaders})
-                .then(response => {
-                    console.log(response)
+                .then(() => {
                     dispatch('setBlobs',
                         [...state.imageBlobs, ...state.textBlobs]
                             .filter(blob => blob.id !== file_id )
@@ -127,9 +124,8 @@ export const fileModule = {
         },
         async uploadFiles({commit, dispatch, rootState}, event_id){
             await commit('setLoading', true)
+            rootState.errors = []
             const form = new FormData(document.querySelector('#uploadForm'))
-            console.log(form)
-
             const path = `events/${event_id}/files/add-files`
 
             await instance
@@ -140,8 +136,6 @@ export const fileModule = {
                     }})
                 .then(() => {
                     dispatch('getEventFiles', event_id)
-                    rootState.errors = []
-                    console.log('ok')
                 })
                 .catch(error => {
                     console.log(error)
@@ -154,10 +148,7 @@ export const fileModule = {
             await commit('setAllowedFileTypes', [])
             await instance.get(path, {headers: rootGetters.getHeaders})
                 .then(response => {
-                    console.log(response.data)
                     commit('setAllowedFileTypes', response.data.allowedFileTypes)
-                    console.log(state.fileTypes)
-                    rootState.errors = []
                 })
                 .catch(error => {
                     console.log(error)
@@ -166,7 +157,7 @@ export const fileModule = {
         },
         async addFileType({state, commit, rootState, rootGetters}){
             const path = `${state.defaultRoot}/add`
-            console.log(state.file)
+            rootState.errors = []
             await instance
                 .post(path, {
                     fileType: state.file.fileType,
@@ -186,12 +177,12 @@ export const fileModule = {
         },
         async updateFileType({state, rootState, rootGetters}){
             const path = `${state.defaultRoot}/${state.file.id}/update`
+            rootState.errors = []
             await instance
                 .put(path, {
                     fileType: state.file.fileType,
                     fileSize: state.file.fileSize
                 }, {headers: rootGetters.getHeaders})
-                .then(() => console.log('ok'))
                 .catch(error => {
                     console.log(error)
                     rootState.errors.push(error.response.data.error)

@@ -50,8 +50,8 @@ export default {
     },
   },
   mounted() {
-    console.log(this.root)
-    this.getEventList(this.root)
+    if(this.$store.state.isAuth)
+      this.getEventList(this.root)
   },
   beforeUnmount() {
     this.clearEventStore()

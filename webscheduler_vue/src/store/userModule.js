@@ -33,6 +33,9 @@ export const userModule = {
         setUser(state, user){
             state.user = user
         },
+        pushUser(state, user){
+            state.users.push(user)
+        },
         setDefaultRoot(state, defaultRoot) {
             state.defaultRoot = defaultRoot
         },
@@ -49,7 +52,10 @@ export const userModule = {
             rootState.errors = []
             await instance
                 .post(state.defaultUserRoot, state.user)
-                .then(response => console.log(response))
+                .then(response => {
+                    state.user.id = response.data
+                    commit('pushUser', state.user)
+                })
                 .catch(error => {
                     console.log(error)
                     rootState.errors.push(error.response.data.error)
@@ -57,8 +63,6 @@ export const userModule = {
                 .then(() =>{
                     if(rootState.errors.length === 0)
                         router.push('/login')
-                    else
-                        router.push('/register')
                 })
             await commit('setLoading', false)
         },
@@ -74,8 +78,6 @@ export const userModule = {
                     rootState.accessToken = response.data.jwtToken
                     rootState.refreshToken = response.data.refreshToken
                     rootState.isAuth = true
-                    rootState.errors = []
-                    console.log('ok')
                 })
                 .catch(error => {
                     console.log(error)
@@ -94,6 +96,7 @@ export const userModule = {
             rootState.refreshToken = ''
             rootState.isAuth = false
             rootState.isAdmin = false
+            rootState.errors = []
             localStorage.accessToken = rootState.accessToken
             localStorage.refreshToken = rootState.refreshToken
             localStorage.isAuth = rootState.isAuth
@@ -106,7 +109,6 @@ export const userModule = {
                 .get(path, {headers: rootGetters.getHeaders})
                 .then(response => {
                     commit('setUser', response.data)
-                    rootState.errors = []
                 })
                 .catch(error => {
                     console.log(error)
@@ -124,12 +126,11 @@ export const userModule = {
                 })
         },
         async getUsers({state, commit, rootState, rootGetters}){
+            rootState.errors = []
             await instance
                 .get(state.defaultUserRoot, {headers: rootGetters.getHeaders})
                 .then(response => {
-                    console.log(response)
                     commit('setUsers', response.data)
-                    rootState.errors = []
                 })
                 .catch(error => {
                     console.log(error)
@@ -145,7 +146,6 @@ export const userModule = {
                         [...state.users]
                             .filter(user => user.id !== user_id )
                     ),
-                    rootState.errors = []
                 )
                 .catch(error => {
                     console.log(error)
@@ -155,7 +155,6 @@ export const userModule = {
         async decodeRoleFromJWT({rootState}){
             const payload = jwt_decode(rootState.accessToken)
             rootState.isAdmin = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] === 'Admin';
-            console.log(rootState.isAdmin)
         },
         async GetCurrentUser({state, commit, rootState, rootGetters}){
             const path = `${state.defaultUserRoot}/current`
@@ -169,14 +168,13 @@ export const userModule = {
         },
         async updateUser({state, rootState, rootGetters}){
             const path = `${state.defaultUserRoot}/${state.user.id}/update`
+            rootState.errors = []
             await instance
                 .put(path, state.user, {headers: rootGetters.getHeaders})
-                .then(() => console.log('ok'))
                 .catch(error => {
                     console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
-            console.log('ok')
         }
     },
     namespaced: true

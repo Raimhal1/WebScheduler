@@ -63,7 +63,6 @@ export default {
       getFileType: 'file/getFileType'
     }),
     async showUpdateDialog(id){
-      console.log(this.getFileType(id))
       this.setFileType(await this.getFileType(id))
       this.fileTypeUpdateDialogVisible = true
     }

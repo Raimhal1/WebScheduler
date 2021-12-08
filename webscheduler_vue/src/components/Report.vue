@@ -47,7 +47,6 @@ export default {
             },
           })
           .then(response => {
-            console.log(response.data)
             const link = document.createElement('a')
             link.href= window.URL.createObjectURL(new Blob([response.data]))
             if(extension === 'csv')

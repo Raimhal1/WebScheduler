@@ -54,11 +54,18 @@ export default {
     }
   },
   mounted() {
-    this.getFileTypes()
-    this.getUsers()
+    if(this.isAdmin) {
+        this.getUsers()
+        this.getFileTypes()
+    }
+    else {
+      this.$store.state.errors.push('You are not an admin')
+      this.$router.push('/login')
+    }
   },
   beforeUnmount() {
-    this.clearErrors()
+    if(this.isAdmin)
+      this.clearErrors()
   },
   methods: {
     ...mapMutations({
@@ -79,9 +86,10 @@ export default {
   },
   computed: {
     ...mapState({
+      isAdmin: state => state.isAdmin,
+      users: state => state.user.users,
       fileTypes: state => state.file.fileTypes,
       file: state => state.file.file,
-      users: state => state.user.users,
 
     }),
   },

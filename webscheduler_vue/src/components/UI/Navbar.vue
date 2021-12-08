@@ -29,7 +29,6 @@ export default {
   name: "Navbar",
   computed: {
     isAuth(){
-      console.log(JSON.parse(this.$store.state.isAuth))
       return JSON.parse(this.$store.state.isAuth)
     }
   }

@@ -22,7 +22,8 @@ export default {
   name: "AccountPage",
   components: {UserForm},
   mounted() {
-    this.getCurrentUser()
+    if(this.$store.state.isAuth)
+      this.getCurrentUser()
   },
   beforeUnmount() {
     this.clearErrors()

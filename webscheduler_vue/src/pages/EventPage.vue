@@ -22,11 +22,11 @@
       </div>
       <div class="text__files">
         <div v-for="blob in textBlobs" :key="blob.id">
-          <my-button>
             <a :href="getUrl(blob)" download class="text__file">
+              <my-button>
                 {{ getTextFileName(blob.type) }}
+              </my-button>
             </a>
-          </my-button>
           <my-button @click="removeFile([event.id, blob.id])" v-if="isCreator" class="file__btn">X</my-button>
         </div>
       </div>
@@ -92,9 +92,9 @@ export default {
   props: {
   },
   beforeUnmount() {
+    console.log('unmount')
     this.clearEvent()
     this.clearBlobs()
-    this.clearErrors()
   },
   async mounted() {
     if(this.isAuth) {
@@ -130,22 +130,18 @@ export default {
       return (window.history.state.back === '/my/events') || (Boolean(this.isAdmin))
     },
     emailsSchema(){
-      const schema = yup.object().shape({
-        emailList: yup.array()
-            .transform(function(value, originalValue) {
-              if (this.isType(value) && value !== null) {
-                return value;
-              }
-              return originalValue ? originalValue.split(/[\s,]+/) : [];
-            })
-            .required("At least one email is required")
-            .of(yup.string().email(({ value }) => `${value} is an invalid email.`))
-      });
-      console.log(schema)
-      return  schema
+      const isEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+      return yup.object().shape({
+              emailList: yup.string()
+              .required()
+              .test(
+                  'emails',
+                  'Invalid email address',
+                  (value) => value && value.split(', ').every(isEmail)
+              ),
+      })
     },
     filesSchema(){
-      console.log(this.fileTypes)
       const fileTypes = this.fileTypes
       const isCorrectFileType = (files) =>{
         let valid = true
@@ -174,8 +170,6 @@ export default {
             if (allowedFile?.fileSize === undefined)
               valid = false
             else {
-              console.log(size)
-              console.log(allowedFile.fileSize)
               if (size > allowedFile.fileSize) {
                 valid = false
               }
@@ -211,9 +205,7 @@ export default {
       this.uploadFiles(this.event.id)
     },
     async getAllowedExtensions(){
-      console.log(this.fileTypes)
       const allowedExtensions = [...(await this.fileTypes.map(t => t.fileType))].join(",.")
-      console.log(allowedExtensions)
       return `.${allowedExtensions}`
     },
     async showDialog() {
@@ -221,7 +213,6 @@ export default {
     },
     async show(){
       const files = document.querySelector("#files")
-      console.log(files)
       const accept = await this.getAllowedExtensions()
       files.setAttribute('accept', accept)
     },
@@ -245,7 +236,6 @@ export default {
       el.nextElementSibling.classList.toggle('close')
     },
     async AssignUsers(){
-      console.log(this.userEmails)
       var emails = this.userEmails.split(', ')
       await emails.forEach(async email => {
         await this.assignUser([email, this.event.id])
@@ -366,9 +356,7 @@ export default {
 .text__file{
   text-decoration: none;
   font-size: 14px;
-}
-.text__file:hover{
-  color: #ff8010;
+  border-radius: 0;
 }
 
 .file__btn{

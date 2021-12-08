@@ -96,7 +96,6 @@ export default {
         password = {password: yup.string().min(5).required().label('Password')}
       else
         password = {password: yup.string().min(5).label('Password')}
-      console.log(password)
       return schema.shape(password)
     },
   },

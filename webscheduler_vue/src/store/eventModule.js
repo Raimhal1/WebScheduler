@@ -88,7 +88,7 @@ export const eventModule = {
     },
     actions: {
         async createEvent({state, commit, rootState, rootGetters}) {
-            console.log(state.event)
+            rootState.errors = []
             await instance
                 .post(`${state.defaultRoot}`, state.event, {headers: rootGetters.getHeaders})
                 .then(response => {
@@ -100,10 +100,7 @@ export const eventModule = {
                 .catch(error => {
                     console.log(error)
                     rootState.errors.push(error.response.data.error)
-                })
-                .then(() => {
-                    if(rootState.errors.length !== 0)
-                        router.push('/login')
+                    router.push('/login')
                 })
         },
         async getEventList({commit, rootState, dispatch, rootGetters}, path) {
@@ -114,7 +111,6 @@ export const eventModule = {
                 .then(res => {
                     commit('setAllEvents', res.data)
                     dispatch('loadMoreEvents')
-                    rootState.errors = []
                 })
                 .catch(error => {
                     console.log(error)
@@ -139,67 +135,55 @@ export const eventModule = {
         },
         async getEvent({state, commit, rootState, rootGetters}, event_id){
             const path = `${state.defaultRoot}/${event_id}`
+            rootState.errors = []
             await instance
                 .get(path, {headers: rootGetters.getHeaders})
                 .then(res => {
                     commit('setEvent', res.data)
-                    rootState.errors = []
                 })
                 .catch(error => {
                     console.log(error)
-                    rootState.errors.push(error.response.data.error)
-                })
-                .then(() => {
-                    if(rootState.errors.length !== 0)
+                    console.log('error')
+                    if(error.headers.status === 401) {
+                        rootState.errors.push("You are not a participant in the event")
                         router.push('/login')
+                    }
+                    else
+                        router.back()
                 })
             return state.event
         },
         async updateEvent({state, rootState, rootGetters}) {
-            console.log(state.event.id)
+            rootState.errors = []
             const path = `${state.defaultRoot}/${state.event.id}/update`
             await instance
                 .put(path, state.event, {headers: rootGetters.getHeaders})
-                .then(() => {
-                    console.log('ok')
-                    rootState.errors = []
-                })
                 .catch(error => {
                     console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
-            console.log('ok')
         },
         async removeEvent({state, commit, rootState, rootGetters}, event_id){
             const path = `${state.defaultRoot}/${event_id}/delete`
             await instance.delete(path, {headers: rootGetters.getHeaders})
-                .then( res => {
-                    console.log(res)
+                .then(() => {
                     commit('setEvents', state.events.filter(x => x.id !== event_id ))
-                    rootState.errors = []
                 })
                 .catch(error => {
                     console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
         },
-        async assignToEvent({state, commit, dispatch, rootState, rootGetters}, params){
+        async assignToEvent({state, commit, rootState, rootGetters}, params){
             const path = `${state.defaultRoot}/assign`
-            console.log(path)
-            console.log(params)
+            rootState.errors = []
             await instance
                 .put(path, {
                     Email: params[0],
                     EventId: params[1]
                     },
                     {headers: rootGetters.getHeaders})
-                .then(async () => await commit(
-                    'assignUser',
-                    await dispatch('user/getUserByEmail',
-                        params[0],
-                        {root: true}
-                    ))
-                )
+                .then(() => commit('assignUser', {email: params[0]}))
                 .catch(error => {
                     console.log(error)
                     rootState.errors.push(error.response.data.error)

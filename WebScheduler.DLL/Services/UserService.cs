@@ -29,7 +29,7 @@ namespace WebScheduler.BLL.Services
         {
             if (await _userContext.Users.SingleOrDefaultAsync(u =>
                  u.Email == model.Email, cancellationToken) != null)
-                throw new InvalidCastException("User with this email already exists");
+                throw new InvalidCastException($"User with this email ({model.Email}) already exists");
 
             var user = _mapper.Map<User>(model);
             user.Id = Guid.NewGuid();
