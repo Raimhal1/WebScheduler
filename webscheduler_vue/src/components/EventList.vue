@@ -5,7 +5,8 @@
         <event-item
             v-for="event in events"
             :event="event"
-            :creator="creator"
+            :isCreator="isCreator"
+            :is-list-component="true"
             :key="event.id"
             @remove="$emit('remove', event.id)"
         />
@@ -13,7 +14,7 @@
     </div>
   </div>
   <div  v-else class="empty__list">
-    <h3 style="color: #ec2020">
+    <h3 style="color: rgba(109, 165, 252, 0.9)">
       List is empty
     </h3>
   </div>
@@ -30,9 +31,10 @@ export default {
       type: Array,
       required: true
     },
-    creator:{
-      type: Boolean,
-      default: false
+  },
+  computed: {
+    isCreator(){
+      return JSON.parse(localStorage.getItem('isAdmin')) || window.location.pathname.includes('my/')
     }
   }
 }

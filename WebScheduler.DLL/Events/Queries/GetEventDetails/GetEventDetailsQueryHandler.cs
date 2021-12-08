@@ -42,7 +42,7 @@ namespace WebScheduler.BLL.Events.Queries.GetEventDetails
             if (role == null)
             {
                 expression = e => e.UserId == request.UserId
-                || e.Users.Any(u => e.UserId == request.UserId);
+                || e.Users.Any(u => u.Id == request.UserId);
             }
             else
                 expression = e => true;
@@ -56,7 +56,7 @@ namespace WebScheduler.BLL.Events.Queries.GetEventDetails
                 throw new NotFoundException(nameof(Event), request.Id);
 
             var eventVm = _mapper.Map<EventDetailsVm>(entity);
-            eventVm.Users = _mapper.Map<List<UserVm>>(entity.Users);
+            eventVm.Users = _mapper.Map<List<UserDto>>(entity.Users);
 
             return eventVm;
         }

@@ -39,8 +39,6 @@ namespace WebScheduler
             services.AddPersistence(Configuration);
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-
-            
            
 
             services.AddCors(option =>

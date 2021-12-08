@@ -16,8 +16,7 @@ namespace WebScheduler.BLL.Events.Commands.CreateEvent
         private readonly IEventDbContext _context;
         private readonly IUserDbContext _users;
 
-        public CreateEventCommandHandler(IEventDbContext context, IUserDbContext users,
-            IEventFileService fileService, IMapper mapper) =>
+        public CreateEventCommandHandler(IEventDbContext context, IUserDbContext users) =>
             (_context, _users) = (context, users);
             
 

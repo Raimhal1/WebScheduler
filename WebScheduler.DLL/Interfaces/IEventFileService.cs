@@ -9,7 +9,8 @@ namespace WebScheduler.BLL.Interfaces
 {
     public interface IEventFileService
     {
-        Task<EventFileDto> GetFile(Guid fileId, Guid eventId);
+        Task<EventFileDto> GetFile(Guid fileId, Guid eventId, CancellationToken cancellation);
+        Task<List<Guid>> GetFilesIds(Guid eventId, CancellationToken cancellation);
         Task AddFilesToEvent(Guid eventId, IList<IFormFile> files, CancellationToken cancellationToken);
         Task ChangeFileName(Guid fileId, Guid eventId, string Name, CancellationToken cancellationToken);
         Task DeleteFileFromEvent(Guid fileId, Guid eventId, CancellationToken cancellationToken);

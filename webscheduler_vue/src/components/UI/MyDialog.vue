@@ -7,21 +7,11 @@
 </template>
 
 <script>
+import toggleEventFormMixin from "@/mixins/toggleEventFormMixin";
+
 export default {
-  name: "MyEventDialog",
-  props: {
-    show:{
-      type: Boolean,
-      default: false
-    }
-  },
-  methods: {
-    hideDialog(){
-      this.$emit('update:show', false)
-    }
-  }
-
-
+  name: "MyDialog",
+  mixins: [toggleEventFormMixin]
 }
 </script>
 
@@ -34,6 +24,7 @@ export default {
   background: rgba(0, 0, 0, 0.5);
   position: fixed;
   display: flex;
+  z-index: 100;
 }
 
 .dialog__content{

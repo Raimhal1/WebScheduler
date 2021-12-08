@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using WebScheduler.BLL.DtoModels;
@@ -28,7 +29,7 @@ namespace WebScheduler.BLL.Services
         {
             if (await _userContext.Users.SingleOrDefaultAsync(u =>
                  u.Email == model.Email, cancellationToken) != null)
-                throw new InvalidCastException("A user with this email already exists");
+                throw new InvalidCastException($"User with this email ({model.Email}) already exists");
 
             var user = _mapper.Map<User>(model);
             user.Id = Guid.NewGuid();
@@ -61,8 +62,16 @@ namespace WebScheduler.BLL.Services
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
             user.UserName = user.UserName;
-            user.Email = model.Email;
-            user.Password = Hasher.GetSaltedHash(model.Password, user.Salt);
+
+            if (!string.IsNullOrEmpty(model.Email) && model.Email != user.Email)
+            {
+                if (await _userContext.Users.AnyAsync(u => u.Email == model.Email))
+                    throw new Exception(message: "A user with the same email address already exists");
+                user.Email = model.Email;
+            }
+
+            if (!string.IsNullOrEmpty(model.Password)) 
+                user.Password = Hasher.GetSaltedHash(model.Password, user.Salt);
 
             _userContext.Users.Update(user);
 
@@ -75,42 +84,49 @@ namespace WebScheduler.BLL.Services
             {
                 var user = await _userContext.Users.FindAsync(new object[] { id }, cancellationToken);
                 if (user == null)
-                {
                     throw new NotFoundException(nameof(User), id);
-                }
                 _userContext.Users.Remove(user);
                 await _userContext.SaveChangesAsync(cancellationToken);   
                 
             }
         }
-
-        public async Task<UserListVm> GetAll()
+        public async Task<List<UserDto>> GetAll()
         {
-            var users = await _userContext.Users
+            return await _userContext.Users
                 .Include(u=> u.Events)
                 .Include(u=> u.RefreshTokens)
                 .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
-
-            var userListVm = new UserListVm { Users = users };
-
-            for (int i = 0; i < userListVm.Users.Count; i++)
-                userListVm.Users[i].Events = _mapper.Map<List<EventDto>>(users[i].Events);
-
-            return userListVm;
         }
 
-        public async Task<UserDto> GetByIdAsync(Guid id)
+        public async Task<UserDto> GetByIdAsync(Guid id) 
+        { 
+            Expression<Func<User, bool>> expression = u => u.Id == id;
+
+            var user = await getUser(expression, id);
+
+            return _mapper.Map<UserDto>(user);
+        }
+
+        public async Task<User> getUser(Expression<Func<User, bool>> expression, object key)
         {
             var user = await _userContext.Users
-                .Include(u=>u.Events)
-                .FirstOrDefaultAsync(u => u.Id == id);
+                .Include(u => u.Roles)
+                .Include(u => u.Events)
+                .FirstOrDefaultAsync(expression);
 
             if (user == null)
-                throw new NotFoundException(nameof(User), id);
-            var userDto = _mapper.Map<UserDto>(user);
-            userDto.Events = _mapper.Map<List<EventDto>>(user.Events);
-            return userDto;
+                throw new NotFoundException(nameof(User), key);
+
+            return user;
+
+        }
+
+        public async Task<Guid> getIdFromEmail(string email)
+        {
+            Expression<Func<User, bool>> expression = u => u.Email == email;
+            var user = await getUser(expression, email);
+            return user.Id;
         }
     }
 }

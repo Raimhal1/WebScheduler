@@ -9,7 +9,7 @@ namespace WebScheduler.BLL.Events.Commands.UpdateEvent
         public UpdateEventCommandValidator()
         {
             RuleFor(updateEventCommand =>
-                updateEventCommand.EventName).NotEmpty().MaximumLength(250);
+                updateEventCommand.EventName).NotEmpty().MaximumLength(50);
             RuleFor(updateEventCommand =>
                updateEventCommand.UserId).NotEqual(Guid.Empty);
             RuleFor(updateEventCommand =>
@@ -20,9 +20,9 @@ namespace WebScheduler.BLL.Events.Commands.UpdateEvent
                 updateEventCommand.EndEventDate).Must(DateValidator.BeAValidDate)
                 .GreaterThan(updateEventCommand => updateEventCommand.StartEventDate);
             RuleFor(updateEventCommand =>
-                updateEventCommand.ShortDescription).NotEmpty().MaximumLength(250);
+                updateEventCommand.ShortDescription).MaximumLength(50);
             RuleFor(updateEventCommand =>
-                updateEventCommand.Description).NotEmpty().MaximumLength(5000);
+                updateEventCommand.Description).MaximumLength(2000);
         }
     }
 }

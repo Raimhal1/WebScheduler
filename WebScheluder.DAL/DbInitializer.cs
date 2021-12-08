@@ -11,59 +11,56 @@ namespace WebScheluder.DAL
     {
         public static void Initialize(WebSchedulerContext context)
         {
-            using (context)
-            {
-                context.Database.EnsureCreated();
-            }
+            context.Database.EnsureCreated();
         }
 
         public static void DataSeed(WebSchedulerContext context)
         {
-            using (context)
+            if (!context.Users.Any())
             {
-                if (!context.Users.Any())
+                var adminRoleName = "Admin";
+                var userRoleName = "User";
+
+                var adminRole = context.Roles
+                    .FirstOrDefault(r => r.Name == adminRoleName);
+
+                if (adminRole == null)
                 {
-                    var adminRoleName = "Admin";
-                    var userRoleName = "User";
 
-                    var adminRole = context.Roles
-                        .FirstOrDefault(r => r.Name == adminRoleName);
-
-                    if (adminRole == null) {
-
-                        adminRole = new Role
-                        {
-                            Id = 1,
-                            Name = adminRoleName
-                        };
-
-                        var userRole = new Role
-                        {
-                            Id = 2,
-                            Name = userRoleName
-                        };
-                        context.Roles.AddRangeAsync(adminRole, userRole);
-                    }
-
-                    var salt = Hasher.GenerateSalt(size: 16);
-
-                    User admin = new User
+                    adminRole = new Role
                     {
-                        Id = Guid.NewGuid(),
-                        FirstName = "Admin",
-                        LastName = "Admin",
-                        UserName = "Admin",
-                        Email = "admin_root@gmail.com",
-                        Salt = salt,
-                        Password = Hasher
-                            .GetSaltedHash(password: "adminpass", salt: salt),
-                        Roles = new List<Role> { adminRole }
+                        Id = 1,
+                        Name = adminRoleName
                     };
 
-                    context.Users.Add(admin);
-                    context.SaveChanges();
+                    var userRole = new Role
+                    {
+                        Id = 2,
+                        Name = userRoleName
+                    };
+                    context.Roles.AddRangeAsync(adminRole, userRole);
                 }
+
+                var salt = Hasher.GenerateSalt(size: 16);
+
+                User admin = new User
+                {
+                    Id = Guid.NewGuid(),
+                    FirstName = "Admin",
+                    LastName = "Admin",
+                    UserName = "Admin",
+                    Email = "admin@gmail.com",
+                    Salt = salt,
+                    Password = Hasher
+                        .GetSaltedHash(password: "admin", salt: salt),
+                    Roles = new List<Role> { adminRole }
+                };
+
+                context.Users.Add(admin);
+                context.SaveChanges();
             }
+                
+            
         }
     }
 }
