@@ -5,7 +5,6 @@ import router from "@/router/router";
 export const eventModule = {
     state: () => ({
         events: [],
-        allEvents: [],
         event: {
             eventName: "",
             startEventDate : new Date().toISOString().slice(0,-8),
@@ -17,6 +16,7 @@ export const eventModule = {
         isLoading: false,
         selectedSort: '',
         searchQuery: '',
+        page: 0,
         limit: 25,
         defaultRoot: 'events',
         sortOptions: [
@@ -27,12 +27,8 @@ export const eventModule = {
     }),
     getters: {
         sortedEvents(state){
-            const events = [...state.events, ...state.allEvents]
-            const sortedList =  [...events].sort((event_a, event_b) =>
+            return [...state.events].sort((event_a, event_b) =>
                 event_a[state.selectedSort]?.toString().localeCompare(event_b[state.selectedSort]))
-            state.events = sortedList.splice(0, state.events.length)
-            state.allEvents = sortedList
-            return state.events
         },
         sortedAndSearchedEvents(state, getters){
             return getters.sortedEvents.filter(e =>
@@ -43,8 +39,8 @@ export const eventModule = {
         setEvents(state, events){
             state.events = events;
         },
-        setAllEvents(state, events){
-            state.allEvents = events;
+        addEvents(state, events){
+            state.events = [...state.events, ...events];
         },
         setEvent(state, event){
             state.event = event;
@@ -69,7 +65,7 @@ export const eventModule = {
         },
         clearEventStore(state){
             state.events = []
-            state.allEvents = []
+            state.page = 0
         },
         clearEvent(state){
             state.event = {
@@ -103,14 +99,19 @@ export const eventModule = {
                     router.push('/login')
                 })
         },
-        async getEventList({commit, rootState, dispatch, rootGetters}, path) {
-            await commit('clearEventStore')
-            await commit('setLoading', true)
+        async getEventList({state, commit, rootState, rootGetters}, path) {
+            if(state.events.length === 0)
+                commit('setLoading', true)
+            state.page += 1
             await instance
-                .get(path, {headers: rootGetters.getHeaders})
+                .get(path, {
+                    params: {
+                        skip: (state.page - 1) * state.limit,
+                        take: state.limit
+                    },
+                    headers: rootGetters.getHeaders})
                 .then(res => {
-                    commit('setAllEvents', res.data)
-                    dispatch('loadMoreEvents')
+                    commit('addEvents', res.data)
                 })
                 .catch(error => {
                     console.log(error)
@@ -121,17 +122,6 @@ export const eventModule = {
                     if(rootState.errors.length !== 0)
                         router.push('/login')
                 })
-        },
-        async loadMoreEvents({state, commit, dispatch}){
-            const events = await dispatch('getMoreEvents')
-            commit('setEvents' , [...state.events, ...events])
-        },
-        async getMoreEvents({state}, len=state.limit){
-            if(state.allEvents.length >= len)
-                return state.allEvents.splice(0, len)
-            else {
-                return state.allEvents.splice(0, state.allEvents.length)
-            }
         },
         async getEvent({state, commit, rootState, rootGetters}, event_id){
             const path = `${state.defaultRoot}/${event_id}`

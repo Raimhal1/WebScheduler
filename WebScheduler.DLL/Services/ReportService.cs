@@ -110,7 +110,7 @@ namespace WebScheduler.BLL.Services
         private async Task<ReportDto> GetReportTemplate(IEventDbContext _context, IMapper _mapper,
             Expression<Func<Event, bool>> expression, string extension, Guid userId, CancellationToken cancellationToken)
         {
-            var eventQuery = await LookUp.GetLookupEventList(_context, _mapper, expression, cancellationToken);
+            var eventQuery = await LookUp.GetLookupEventListAll(_context, _mapper, expression, cancellationToken);
 
             var content = ReportDictionary[extension].Invoke(eventQuery);
             var now = DateTime.UtcNow;

@@ -39,7 +39,7 @@ namespace WebScheduler.BLL.Events.Queries.GetEventList
             else
                 expression = e => true;
 
-            var eventQuery = await LookUp.GetLookupEventList(_context, _mapper, expression, cancellationToken);
+            var eventQuery = await LookUp.GetLookupEventList(_context, _mapper, expression, request.Skip, request.Take, cancellationToken);
 
             return new EventListVm {Events = eventQuery };
         }
