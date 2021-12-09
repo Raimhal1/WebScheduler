@@ -26,7 +26,7 @@
       Loading...
     </div>
     <div
-        v-intersection="loadMoreEvents"
+        v-intersection:[root]="getEventList"
         class="observer"
     >
     </div>

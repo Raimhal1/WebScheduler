@@ -17,7 +17,21 @@ namespace WebScheduler.BLL.Events
     public static class LookUp
     {
         public static async Task<List<EventLookupDto>> GetLookupEventList(IEventDbContext _context,
-            IMapper _mapper, Expression<Func<Event, bool>> expression, CancellationToken cancellationToken)
+            IMapper _mapper, Expression<Func<Event, bool>> expression, int skip, int take,
+            CancellationToken cancellationToken)
+        {
+            return await _context.Events
+                .Include(e => e.Users)
+                .Where(expression)
+                .Skip(skip)
+                .Take(take)
+                .ProjectTo<EventLookupDto>(_mapper.ConfigurationProvider)
+                .ToListAsync(cancellationToken);
+        }
+
+        public static async Task<List<EventLookupDto>> GetLookupEventListAll(IEventDbContext _context,
+            IMapper _mapper, Expression<Func<Event, bool>> expression,
+            CancellationToken cancellationToken)
         {
             return await _context.Events
                 .Include(e => e.Users)

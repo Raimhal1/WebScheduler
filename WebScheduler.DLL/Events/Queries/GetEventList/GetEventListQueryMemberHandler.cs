@@ -24,7 +24,7 @@ namespace WebScheduler.BLL.Events.Queries.GetEventList
             Expression<Func<Event, bool>> expression = e => 
                 e.Users.Any(u => u.Id == request.UserId && u.Id != e.UserId);
 
-            var eventQuery = await LookUp.GetLookupEventList(_context, _mapper, expression, cancellationToken);
+            var eventQuery = await LookUp.GetLookupEventList(_context, _mapper, expression, request.Skip, request.Take, cancellationToken);
 
             return new EventListVm { Events = eventQuery};
         }

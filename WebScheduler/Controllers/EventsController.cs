@@ -31,11 +31,13 @@ namespace WebScheduler.Controllers
 
         [HttpGet]
         [Route("api/my/events")]
-        public async Task<ActionResult<EventListVm>> GetEvents()
+        public async Task<ActionResult<EventListVm>> GetEvents(int skip = 0, int take = 25)
         {
             var query = new GetEventListQuery
             {
-                UserId = UserId
+                UserId = UserId,
+                Skip = skip,
+                Take = take
             };
             var vm = await Mediator.Send(query);
             return Ok(vm.Events);
@@ -43,11 +45,13 @@ namespace WebScheduler.Controllers
 
         [HttpGet]
         [Route("api/events")]
-        public async Task<ActionResult<EventListVm>> GetEventsMember()
+        public async Task<ActionResult<EventListVm>> GetEventsMember(int skip = 0, int take = 25)
         {
             var query = new GetEventListQueryMember
             {
-                UserId = UserId
+                UserId = UserId,
+                Skip = skip,
+                Take = take
             };
             var vm = await Mediator.Send(query);
             return Ok(vm.Events);

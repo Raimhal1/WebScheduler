@@ -6,13 +6,13 @@
         v-model="event.eventName"
         placeholder="Event name"
         name="name"
+        v-focus
       />
       <my-error-message name="name" />
       Start : <my-field
         v-model="event.startEventDate"
         type="datetime-local"
         name="start"
-        v-focus
       />
       <my-error-message name="start" />
       End : <my-field
