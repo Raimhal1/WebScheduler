@@ -23,6 +23,10 @@
           Log in
         </my-button>
       </form>
+      <p>
+        I don't have an account :
+        <router-link to="/register" class="link">Sign up</router-link>
+      </p>
     </Form>
   </div>
 </template>

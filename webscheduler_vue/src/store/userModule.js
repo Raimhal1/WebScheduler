@@ -21,6 +21,9 @@ export const userModule = {
         setUsers(state, users){
             state.users = users
         },
+        clearUsers(state){
+            state.users = []
+        },
         clearUser(state){
             state.user = {
                 firstName: "",
@@ -89,19 +92,6 @@ export const userModule = {
                         router.push('/')
                     }
                 })
-        },
-        async logout({commit, rootState}){
-            commit('clearUser')
-            rootState.accessToken = ''
-            rootState.refreshToken = ''
-            rootState.isAuth = false
-            rootState.isAdmin = false
-            rootState.errors = []
-            localStorage.accessToken = rootState.accessToken
-            localStorage.refreshToken = rootState.refreshToken
-            localStorage.isAuth = rootState.isAuth
-            localStorage.isAdmin = rootState.isAdmin
-
         },
         async getUserById({state, commit, rootState, rootGetters}, user_id){
             const path = `${state.defaultUserRoot}/${user_id}`

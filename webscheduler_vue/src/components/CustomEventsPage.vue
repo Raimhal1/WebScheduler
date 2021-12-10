@@ -50,8 +50,10 @@ export default {
     },
   },
   mounted() {
-    if(this.$store.state.isAuth)
+    if(this.isAuth)
       this.getEventList(this.root)
+    else
+      this.$router.push('/login')
   },
   beforeUnmount() {
     this.clearEventStore()
@@ -73,6 +75,7 @@ export default {
   },
   computed: {
     ...mapState({
+      isAuth: state => state.isAuth,
       events: state => state.event.events,
       isEventListLoading: state => state.event.isLoading,
       selectedSort: state => state.event.selectedSort,

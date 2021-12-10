@@ -12,9 +12,7 @@
         <router-link to="/account"><my-button>Account</my-button></router-link>
         <router-link to="/">
           <my-button
-            @click="
-            this.$store.dispatch('user/logout');
-            this.$router.push('/login');"
+            @click="this.$store.dispatch('logout')"
           >
             Log out
           </my-button>

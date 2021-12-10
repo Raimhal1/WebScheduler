@@ -78,4 +78,11 @@ body::-webkit-scrollbar {
   color: rgba(255, 0, 0, 0.94);
   font-size: 14px;
 }
+
+.link{
+  text-decoration: none;
+}
+.link:hover{
+  text-decoration: underline;
+}
 </style>

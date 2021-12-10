@@ -102,6 +102,9 @@ export default {
       await this.getEventFiles(this.event.id)
       await this.getAllowedFileExtensions()
     }
+    else
+      this.$router.push('/login')
+
   },
   data(){
     return{

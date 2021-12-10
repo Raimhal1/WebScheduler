@@ -52,6 +52,9 @@ export const fileModule = {
         },
         clearFileType(state){
             state.file = []
+        },
+        clearFileTypes(state){
+            state.fileTypes = []
         }
     },
     actions: {
