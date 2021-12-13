@@ -100,7 +100,7 @@ export const fileModule = {
                 })
 
         },
-        async removeFile({state, dispatch, rootState, rootGetters}, ids){
+        async removeFile({state, commit, dispatch, rootState, rootGetters}, ids){
             const event_id = ids[0]
             const file_id = ids[1]
             const path = `${state.defaultEventRoot}/${event_id}/files/${file_id}/delete`
@@ -112,7 +112,8 @@ export const fileModule = {
                         [...state.imageBlobs, ...state.textBlobs]
                             .filter(blob => blob.id !== file_id )
                     )
-                    rootState.errors = []
+                    commit('setFileIds', [...state.file_ids.filter(id => id !== file_id)])
+
                 })
                 .catch(error => {
                     rootState.errors.push(error.response.data.error)
