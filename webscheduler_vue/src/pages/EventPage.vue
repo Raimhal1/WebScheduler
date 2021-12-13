@@ -92,9 +92,9 @@ export default {
   props: {
   },
   beforeUnmount() {
-    console.log('unmount')
     this.clearEvent()
     this.clearBlobs()
+    this.clearErrors()
   },
   async mounted() {
     if(this.isAuth) {

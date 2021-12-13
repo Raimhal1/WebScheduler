@@ -14,7 +14,7 @@ export const eventModule = {
             status: 0
         },
         isLoading: false,
-        selectedSort: '',
+        selectedSort: 'eventName',
         searchQuery: '',
         page: 0,
         limit: 25,
@@ -94,7 +94,6 @@ export const eventModule = {
                     rootState.errors = []
                 })
                 .catch(error => {
-                    console.log(error)
                     rootState.errors.push(error.response.data.error)
                     router.push('/login')
                 })
@@ -114,7 +113,6 @@ export const eventModule = {
                     commit('addEvents', res.data)
                 })
                 .catch(error => {
-                    console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
                 .then(() => {
@@ -132,8 +130,6 @@ export const eventModule = {
                     commit('setEvent', res.data)
                 })
                 .catch(error => {
-                    console.log(error)
-                    console.log('error')
                     if(error.headers.status === 401) {
                         rootState.errors.push("You are not a participant in the event")
                         router.push('/login')
@@ -149,7 +145,6 @@ export const eventModule = {
             await instance
                 .put(path, state.event, {headers: rootGetters.getHeaders})
                 .catch(error => {
-                    console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
         },
@@ -160,7 +155,6 @@ export const eventModule = {
                     commit('setEvents', state.events.filter(x => x.id !== event_id ))
                 })
                 .catch(error => {
-                    console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
         },
@@ -175,7 +169,6 @@ export const eventModule = {
                     {headers: rootGetters.getHeaders})
                 .then(() => commit('assignUser', {email: params[0]}))
                 .catch(error => {
-                    console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
         }

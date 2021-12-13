@@ -25,6 +25,7 @@ namespace WebScheduler.BLL.Events
                 .Where(expression)
                 .Skip(skip)
                 .Take(take)
+                .OrderBy(e => e.EventName)
                 .ProjectTo<EventLookupDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
         }

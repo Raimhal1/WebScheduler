@@ -60,7 +60,6 @@ export const userModule = {
                     commit('pushUser', state.user)
                 })
                 .catch(error => {
-                    console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
                 .then(() =>{
@@ -82,8 +81,7 @@ export const userModule = {
                     rootState.refreshToken = response.data.refreshToken
                     rootState.isAuth = true
                 })
-                .catch(error => {
-                    console.log(error)
+                .catch(() => {
                     rootState.errors.push("Incorrect email or password")
                 })
                 .then(() => {
@@ -101,7 +99,6 @@ export const userModule = {
                     commit('setUser', response.data)
                 })
                 .catch(error => {
-                    console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
         },
@@ -111,7 +108,6 @@ export const userModule = {
                 .get(path, {headers: rootGetters.getHeaders})
                 .then(response => response.data)
                 .catch(error => {
-                    console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
         },
@@ -123,7 +119,6 @@ export const userModule = {
                     commit('setUsers', response.data)
                 })
                 .catch(error => {
-                    console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
         },
@@ -138,7 +133,6 @@ export const userModule = {
                     ),
                 )
                 .catch(error => {
-                    console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
         },
@@ -152,7 +146,6 @@ export const userModule = {
                 .get(path, {headers: rootGetters.getHeaders})
                 .then(response => commit('setUser', response.data))
                 .catch(error => {
-                    console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
         },
@@ -162,7 +155,6 @@ export const userModule = {
             await instance
                 .put(path, state.user, {headers: rootGetters.getHeaders})
                 .catch(error => {
-                    console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
         }

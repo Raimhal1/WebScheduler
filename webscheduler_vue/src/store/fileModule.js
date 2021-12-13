@@ -79,7 +79,6 @@ export const fileModule = {
                         commit('addBlob', blob)
                     })
                     .catch(error => {
-                        console.log(error)
                         rootState.errors.push(error.response.data.error)
                     })
                     .then(() => {
@@ -97,7 +96,6 @@ export const fileModule = {
                     commit('setFileIds', response.data)
                 })
                 .catch(error => {
-                    console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
 
@@ -117,7 +115,6 @@ export const fileModule = {
                     rootState.errors = []
                 })
                 .catch(error => {
-                    console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
         },
@@ -141,7 +138,6 @@ export const fileModule = {
                     dispatch('getEventFiles', event_id)
                 })
                 .catch(error => {
-                    console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
             await commit('setLoading', false)
@@ -154,7 +150,6 @@ export const fileModule = {
                     commit('setAllowedFileTypes', response.data.allowedFileTypes)
                 })
                 .catch(error => {
-                    console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
         },
@@ -172,7 +167,6 @@ export const fileModule = {
                     commit('clearFileType')
                 })
                 .catch(error => {
-                    console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
 
@@ -187,7 +181,6 @@ export const fileModule = {
                     fileSize: state.file.fileSize
                 }, {headers: rootGetters.getHeaders})
                 .catch(error => {
-                    console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
 
@@ -205,7 +198,6 @@ export const fileModule = {
                     )
                 })
                 .catch(error => {
-                    console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
 
