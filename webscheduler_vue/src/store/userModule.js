@@ -21,6 +21,9 @@ export const userModule = {
         setUsers(state, users){
             state.users = users
         },
+        clearUsers(state){
+            state.users = []
+        },
         clearUser(state){
             state.user = {
                 firstName: "",
@@ -57,7 +60,6 @@ export const userModule = {
                     commit('pushUser', state.user)
                 })
                 .catch(error => {
-                    console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
                 .then(() =>{
@@ -79,8 +81,7 @@ export const userModule = {
                     rootState.refreshToken = response.data.refreshToken
                     rootState.isAuth = true
                 })
-                .catch(error => {
-                    console.log(error)
+                .catch(() => {
                     rootState.errors.push("Incorrect email or password")
                 })
                 .then(() => {
@@ -90,19 +91,6 @@ export const userModule = {
                     }
                 })
         },
-        async logout({commit, rootState}){
-            commit('clearUser')
-            rootState.accessToken = ''
-            rootState.refreshToken = ''
-            rootState.isAuth = false
-            rootState.isAdmin = false
-            rootState.errors = []
-            localStorage.accessToken = rootState.accessToken
-            localStorage.refreshToken = rootState.refreshToken
-            localStorage.isAuth = rootState.isAuth
-            localStorage.isAdmin = rootState.isAdmin
-
-        },
         async getUserById({state, commit, rootState, rootGetters}, user_id){
             const path = `${state.defaultUserRoot}/${user_id}`
             await instance
@@ -111,7 +99,6 @@ export const userModule = {
                     commit('setUser', response.data)
                 })
                 .catch(error => {
-                    console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
         },
@@ -121,7 +108,6 @@ export const userModule = {
                 .get(path, {headers: rootGetters.getHeaders})
                 .then(response => response.data)
                 .catch(error => {
-                    console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
         },
@@ -133,7 +119,6 @@ export const userModule = {
                     commit('setUsers', response.data)
                 })
                 .catch(error => {
-                    console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
         },
@@ -148,7 +133,6 @@ export const userModule = {
                     ),
                 )
                 .catch(error => {
-                    console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
         },
@@ -162,7 +146,6 @@ export const userModule = {
                 .get(path, {headers: rootGetters.getHeaders})
                 .then(response => commit('setUser', response.data))
                 .catch(error => {
-                    console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
         },
@@ -172,7 +155,6 @@ export const userModule = {
             await instance
                 .put(path, state.user, {headers: rootGetters.getHeaders})
                 .catch(error => {
-                    console.log(error)
                     rootState.errors.push(error.response.data.error)
                 })
         }

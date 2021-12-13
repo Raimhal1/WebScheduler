@@ -97,7 +97,7 @@ namespace WebScheduler.Controllers
         }
 
         [HttpPut]
-        [Route("api/events/{eventid}/assign")]
+        [Route("api/events/{eventId}/assign")]
         public async Task<IActionResult> AssignUserToEvent(Guid eventId)
         {
             var command = new AssignUserCommand
@@ -110,7 +110,7 @@ namespace WebScheduler.Controllers
         }
 
         [HttpPut]
-        [Route("api/events/{eventid}/assign/{userId}")]
+        [Route("api/events/{eventId}/assign/{userId}")]
         public async Task<IActionResult> AssignUserToEventById(Guid eventId, Guid userId)
         {
             var command = new AssignUserCommand

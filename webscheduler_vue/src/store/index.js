@@ -35,6 +35,20 @@ export default createStore({
         },
 
     },
+    actions: {
+        async logout({state}){
+            state.accessToken = ''
+            state.refreshToken = ''
+            state.isAuth = false
+            state.isAdmin = false
+            state.errors = []
+            localStorage.accessToken = state.accessToken
+            localStorage.refreshToken = state.refreshToken
+            localStorage.isAuth = state.isAuth
+            localStorage.isAdmin = state.isAdmin
+
+        },
+    },
 
     modules: {
         event: eventModule,

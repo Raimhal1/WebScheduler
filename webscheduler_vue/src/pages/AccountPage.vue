@@ -22,8 +22,10 @@ export default {
   name: "AccountPage",
   components: {UserForm},
   mounted() {
-    if(this.$store.state.isAuth)
+    if(this.isAuth)
       this.getCurrentUser()
+    else
+      this.$router.push('/login')
   },
   beforeUnmount() {
     this.clearErrors()
@@ -35,6 +37,7 @@ export default {
   },
   computed: {
     ...mapState({
+      isAuth: state => state.isAuth,
       user: state => state.user.user,
     }),
   },

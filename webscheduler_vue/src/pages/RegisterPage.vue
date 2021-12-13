@@ -10,6 +10,12 @@
       <template v-slot:submit__name>
         Register
       </template>
+      <template v-slot:link>
+        <p>
+          I already have an account :
+          <router-link to="/login" class="link">Log in</router-link>
+        </p>
+      </template>
     </user-form>
   </div>
 </template>

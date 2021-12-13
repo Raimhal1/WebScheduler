@@ -40,6 +40,7 @@
       >
         <slot name="submit__name"></slot>
       </my-button>
+      <slot name="link"></slot>
     </form>
   </Form>
 </template>

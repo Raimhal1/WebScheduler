@@ -99,7 +99,6 @@ namespace WebScheduler.BLL.Services
         public async Task<ReportDto> CreateEventsReportForNextMonth(Guid id, string extension, CancellationToken cancellationToken)
         {
             var now = DateTime.UtcNow;
-
             Expression<Func<Event,bool>> expression = e =>
                 e.StartEventDate >= now 
                 && e.StartEventDate <= now.AddDays(30);

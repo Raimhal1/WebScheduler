@@ -92,9 +92,9 @@ export default {
   props: {
   },
   beforeUnmount() {
-    console.log('unmount')
     this.clearEvent()
     this.clearBlobs()
+    this.clearErrors()
   },
   async mounted() {
     if(this.isAuth) {
@@ -102,6 +102,9 @@ export default {
       await this.getEventFiles(this.event.id)
       await this.getAllowedFileExtensions()
     }
+    else
+      this.$router.push('/login')
+
   },
   data(){
     return{

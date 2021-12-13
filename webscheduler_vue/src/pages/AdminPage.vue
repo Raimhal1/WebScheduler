@@ -54,7 +54,7 @@ export default {
     }
   },
   mounted() {
-    if(this.isAdmin) {
+    if(this.isAdmin && this.isAuth) {
         this.getUsers()
         this.getFileTypes()
     }
@@ -66,11 +66,14 @@ export default {
   beforeUnmount() {
     if(this.isAdmin)
       this.clearErrors()
+    this.clearUsers()
   },
   methods: {
     ...mapMutations({
       clearFileType: 'file/clearFileType',
-      clearErrors: 'clearErrors'
+      clearErrors: 'clearErrors',
+      clearUsers: 'user/clearUsers',
+      clearFileTypes: 'file/clearFileTypes'
     }),
     ...mapActions({
       getUsers: 'user/getUsers',
@@ -87,6 +90,7 @@ export default {
   computed: {
     ...mapState({
       isAdmin: state => state.isAdmin,
+      isAuth: state => state.isAuth,
       users: state => state.user.users,
       fileTypes: state => state.file.fileTypes,
       file: state => state.file.file,
