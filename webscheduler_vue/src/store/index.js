@@ -2,7 +2,7 @@ import {createStore} from 'vuex'
 import {eventModule} from "./eventModule"
 import {userModule} from "./userModule"
 import {fileModule} from "./fileModule"
-
+// import jwt_decode from "jwt-decode";
 
 export default createStore({
     state: {
@@ -11,6 +11,7 @@ export default createStore({
         accessToken: '',
         refreshToken: '',
         errors: [],
+        tokenExp: null,
     },
     mutations: {
         setTokens(state, {access, refresh}){
@@ -22,6 +23,9 @@ export default createStore({
         },
         setAdmin(state, bool){
             state.isAdmin = bool
+        },
+        setExp(state, exp){
+            state.tokenExp = exp
         },
         clearErrors(state){
             state.errors = []
@@ -41,11 +45,13 @@ export default createStore({
             state.refreshToken = ''
             state.isAuth = false
             state.isAdmin = false
+            state.tokenExp = null
             state.errors = []
             localStorage.accessToken = state.accessToken
             localStorage.refreshToken = state.refreshToken
             localStorage.isAuth = state.isAuth
             localStorage.isAdmin = state.isAdmin
+            localStorage.tokenExp = state.tokenExp
 
         },
     },

@@ -53,6 +53,7 @@ export default {
       localStorage.refreshToken = this.refreshToken
       localStorage.isAuth = this.isAuth
       localStorage.isAdmin = this.isAdmin
+      localStorage.tokenExp = this.tokenExp
     }
     this.clearErrors()
   },
@@ -63,6 +64,7 @@ export default {
       isAuth: state => state.isAuth,
       isAdmin: state => state.isAdmin,
       user: state => state.user.user,
+      tokenExp: state => state.tokenExp,
       errors: state => state.errors
     }),
     schema() {
