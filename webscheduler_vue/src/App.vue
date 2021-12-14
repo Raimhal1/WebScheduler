@@ -5,18 +5,30 @@
     </div>
 </template>
 <script>
-
 export default {
   mounted() {
-    if(JSON.parse(localStorage.getItem('isAuth'))){
+    console.log('show')
+    console.log()
+    if (Date.now() >= localStorage.getItem('tokenExp') * 1000) {
+      this.$store.dispatch('logout')
+      this.$store.errors.push('Token expired')
+    }
+    else if(JSON.parse(localStorage.getItem('isAuth'))){
       this.$store.commit('setTokens', {
         access: localStorage.getItem('accessToken'),
         refresh: localStorage.getItem('refreshToken')
       })
       this.$store.commit('setAuth', JSON.parse(localStorage.getItem('isAuth')))
       this.$store.commit('setAdmin', JSON.parse(localStorage.getItem('isAdmin')))
+      this.$store.commit('setExp', JSON.parse(localStorage.getItem('tokenExp')))
     }
   },
+
+  methods: {
+    check_jwt(){
+
+    }
+  }
 }
 </script>
 
