@@ -23,12 +23,6 @@ export default {
       this.$store.commit('setExp', JSON.parse(localStorage.getItem('tokenExp')))
     }
   },
-
-  methods: {
-    check_jwt(){
-
-    }
-  }
 }
 </script>
 

@@ -41,14 +41,16 @@ namespace WebScheduler
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
            
 
-            services.AddCors(option =>
+            services.AddCors(options =>
             {
-                option.AddPolicy("AllowAll", policy =>
-                {
-                    policy.AllowAnyHeader();
-                    policy.AllowAnyMethod();
-                    policy.AllowAnyOrigin();
-                });
+                 options.AddPolicy(name: "MyCors",
+                      builder =>
+                      {
+                          builder
+                          .WithOrigins("http://localhost:3000","http://localhost:8080", "http://192.168.0.108:3000")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                      });
             });
 
         }
@@ -63,7 +65,7 @@ namespace WebScheduler
             app.UseCustomExceptionHandler();
             app.UseRouting();
             app.UseHttpsRedirection();
-            app.UseCors("AllowAll");
+            app.UseCors("MyCors");
 
             app.UseAuthentication();
             app.UseAuthorization();

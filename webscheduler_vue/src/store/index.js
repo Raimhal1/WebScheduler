@@ -2,7 +2,6 @@ import {createStore} from 'vuex'
 import {eventModule} from "./eventModule"
 import {userModule} from "./userModule"
 import {fileModule} from "./fileModule"
-// import jwt_decode from "jwt-decode";
 
 export default createStore({
     state: {
